@@ -9758,6 +9758,11 @@ var DashupUISelect = function DashupUISelect() {
         return _objectSpread2(_objectSpread2({}, provided), {}, {
           zIndex: 999999
         });
+      },
+      menuPortal: function menuPortal(base) {
+        return _objectSpread2(_objectSpread2({}, base), {}, {
+          zIndex: 999999
+        });
       }
     }),
     theme: props.theme ? props.theme : function (theme) {

@@ -46,7 +46,8 @@ const DashupUISelect = (props = {}) => {
         ...(props.styles || {}),
         
         // Fixes the overlapping problem of the component
-        menu : provided => ({ ...provided, zIndex : 999999 })
+        menu : provided => ({ ...provided, zIndex : 999999 }),
+        menuPortal : base => ({ ...base, zIndex : 999999 }),
       } }
       theme={ props.theme ? props.theme : (theme) => {
         
