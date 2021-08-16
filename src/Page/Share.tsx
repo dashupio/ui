@@ -150,9 +150,15 @@ const DashupUIPageShare = (props = {}) => {
   // return JSX
   return (
     <DashupContext.Consumer>
-      { ({ page, dashup, getPageStruct }) => {
+      { ({ page, guest, dashup, getPageStruct }) => {
         // load shares
         if (!shares && props.show) loadShares(page, dashup);
+
+        // shares page
+        const shareP = guest.page('shares');
+        const sForm = shareP && Array.from(guest.get('pages').values()).find((p) => p.get('type') === 'form' && p.get('data.model') === shareP.get('_id'));
+        const sFields = sForm && sForm.get('data.fields');
+        const categories = sFields && (sFields || []).find((f) => f.name === 'categories');
 
         // get struct
         const struct = page.get('type') && getPageStruct(page.get('type'));
@@ -231,6 +237,18 @@ const DashupUIPageShare = (props = {}) => {
                         onChange={ (f, val) => setShare('image', val) }
                         setPrevent={ setPrevent }
                         />
+                      { !!categories && (
+                        <View
+                          type="field"
+                          view="input"
+                          struct="select"
+                          field={ categories }
+                          item={ new dashup.Model() }
+                          value={ share.categories }
+                          dashup={ dashup }
+                          onChange={ (f, val) => setShare('categories', val) }
+                          />
+                      ) }
                       <View
                         type="field"
                         view="input"

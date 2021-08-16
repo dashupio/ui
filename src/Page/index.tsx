@@ -51,6 +51,7 @@ const DashupUIPage = (props = {}) => {
       icon      : props.icon || (props.page && props.page.get('icon')) || 'pencil fa',
       color     : props.color || getColor(),
       title     : props.title || (props.page && props.page.get('name')),
+      guest     : props.guest,
       dashup    : props.dashup,
       loading   : props.loading,
       centered  : props.centered,

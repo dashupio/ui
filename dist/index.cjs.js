@@ -12169,10 +12169,20 @@ var DashupUIPageShare = function DashupUIPageShare() {
     var _struct$data;
 
     var page = _ref4.page,
+        guest = _ref4.guest,
         dashup = _ref4.dashup,
         getPageStruct = _ref4.getPageStruct;
     // load shares
-    if (!shares && props.show) loadShares(page, dashup); // get struct
+    if (!shares && props.show) loadShares(page, dashup); // shares page
+
+    var shareP = guest.page('shares');
+    var sForm = shareP && Array.from(guest.get('pages').values()).find(function (p) {
+      return p.get('type') === 'form' && p.get('data.model') === shareP.get('_id');
+    });
+    var sFields = sForm && sForm.get('data.fields');
+    var categories = sFields && (sFields || []).find(function (f) {
+      return f.name === 'categories';
+    }); // get struct
 
     var struct = page.get('type') && getPageStruct(page.get('type')); // return jsx
 
@@ -12242,6 +12252,17 @@ var DashupUIPageShare = function DashupUIPageShare() {
         return setShare('image', val);
       },
       setPrevent: setPrevent
+    }), !!categories && /*#__PURE__*/React__default['default'].createElement(View__default['default'], {
+      type: "field",
+      view: "input",
+      struct: "select",
+      field: categories,
+      item: new dashup.Model(),
+      value: share.categories,
+      dashup: dashup,
+      onChange: function onChange(f, val) {
+        return setShare('categories', val);
+      }
     }), /*#__PURE__*/React__default['default'].createElement(View__default['default'], {
       type: "field",
       view: "input",
@@ -13058,6 +13079,7 @@ var DashupUIPage = function DashupUIPage() {
       icon: props.icon || props.page && props.page.get('icon') || 'pencil fa',
       color: props.color || getColor(),
       title: props.title || props.page && props.page.get('name'),
+      guest: props.guest,
       dashup: props.dashup,
       loading: props.loading,
       centered: props.centered,
