@@ -11967,9 +11967,16 @@ var DashupUIPageShare = function DashupUIPageShare() {
       setRemoving = _useState12[1]; // get type
 
 
-  var getType = function getType() {
+  var getType = function getType(struct, page) {
     // map
-    return ['Link', 'Marketplace'].map(function (label) {
+    return ['Link', 'Marketplace'].filter(function (item) {
+      var _struct$data;
+
+      // check item
+      if (item === 'Marketplace' && (!(struct !== null && struct !== void 0 && (_struct$data = struct.data) !== null && _struct$data !== void 0 && _struct$data.share) || page.get('link'))) return false; // return true
+
+      return true;
+    }).map(function (label) {
       // set value
       var value = label.toLowerCase(); // return value
 
@@ -12132,7 +12139,7 @@ var DashupUIPageShare = function DashupUIPageShare() {
 
 
   return /*#__PURE__*/React.createElement(DashupContext$3.Consumer, null, function (_ref4) {
-    var _struct$data;
+    var _struct$data2, _struct$data2$share;
 
     var page = _ref4.page,
         guest = _ref4.guest,
@@ -12157,9 +12164,9 @@ var DashupUIPageShare = function DashupUIPageShare() {
       onHide: props.onHide
     }, /*#__PURE__*/React.createElement(Modal.Header, {
       closeButton: true
-    }, /*#__PURE__*/React.createElement(Modal.Title, null, "Share ", page.get('name'))), /*#__PURE__*/React.createElement(Modal.Body, null, share ? /*#__PURE__*/React.createElement(React.Fragment, null, !!(struct !== null && struct !== void 0 && (_struct$data = struct.data) !== null && _struct$data !== void 0 && _struct$data.share) && /*#__PURE__*/React.createElement("div", {
+    }, /*#__PURE__*/React.createElement(Modal.Title, null, "Share ", page.get('name'))), /*#__PURE__*/React.createElement(Modal.Body, null, share ? /*#__PURE__*/React.createElement(React.Fragment, null, !!(struct !== null && struct !== void 0 && (_struct$data2 = struct.data) !== null && _struct$data2 !== void 0 && (_struct$data2$share = _struct$data2.share) !== null && _struct$data2$share !== void 0 && _struct$data2$share.pages) && /*#__PURE__*/React.createElement("div", {
       className: "mb-3"
-    }, /*#__PURE__*/React.createElement("p", null, "The following pages will also be shared:"), /*#__PURE__*/React.createElement("div", null, getShares(dashup, page, struct.data.share).map(function (sPage) {
+    }, /*#__PURE__*/React.createElement("p", null, "The following pages will also be shared:"), /*#__PURE__*/React.createElement("div", null, getShares(dashup, page, struct.data.share.pages).map(function (sPage) {
       // get color
       var color = sPage.get('color'); // return jsx
 
@@ -12184,8 +12191,8 @@ var DashupUIPageShare = function DashupUIPageShare() {
     }, /*#__PURE__*/React.createElement("label", {
       className: "form-label"
     }, "Share Type"), /*#__PURE__*/React.createElement(DashupUISelect, {
-      options: getType(),
-      value: getType().filter(function (v) {
+      options: getType(struct, page),
+      value: getType(struct, page).filter(function (v) {
         return v.selected;
       }),
       onChange: function onChange(value) {
@@ -12242,23 +12249,6 @@ var DashupUIPageShare = function DashupUIPageShare() {
       dashup: dashup,
       onChange: function onChange(f, val) {
         return setShare('description', val);
-      }
-    }), /*#__PURE__*/React.createElement(View, {
-      type: "field",
-      view: "input",
-      struct: "product",
-      field: {
-        uuid: 'price',
-        label: 'Product'
-      },
-      item: new dashup.Model(),
-      value: share.price || {
-        type: 'simple',
-        price: 0
-      },
-      dashup: dashup,
-      onChange: function onChange(f, val) {
-        return setShare('price', val);
       }
     }))) : removing ? /*#__PURE__*/React.createElement("div", {
       className: "py-5 text-center"

@@ -21,9 +21,15 @@ const DashupUIPageShare = (props = {}) => {
   const [removing, setRemoving] = useState(null);
 
   // get type
-  const getType = () => {
+  const getType = (struct, page) => {
     // map
-    return ['Link', 'Marketplace'].map((label) => {
+    return ['Link', 'Marketplace'].filter((item) => {
+      // check item
+      if (item === 'Marketplace' && (!struct?.data?.share || page.get('link'))) return false;
+
+      // return true
+      return true;
+    }).map((label) => {
       // set value
       const value = label.toLowerCase();
 
@@ -174,13 +180,13 @@ const DashupUIPageShare = (props = {}) => {
             <Modal.Body>
               { share ? (
                 <>
-                  { !!struct?.data?.share && (
+                  { !!struct?.data?.share?.pages && (
                     <div className="mb-3">
                       <p>
                         The following pages will also be shared:
                       </p>
                       <div>
-                        { getShares(dashup, page, struct.data.share).map((sPage) => {
+                        { getShares(dashup, page, struct.data.share.pages).map((sPage) => {
                           // get color
                           const color = sPage.get('color');
 
@@ -208,7 +214,7 @@ const DashupUIPageShare = (props = {}) => {
                     <label className="form-label">
                       Share Type
                     </label>
-                    <Select options={ getType() } value={ getType().filter((v) => v.selected) } onChange={ (value) => setShare('type', value?.value) } />
+                    <Select options={ getType(struct, page) } value={ getType(struct, page).filter((v) => v.selected) } onChange={ (value) => setShare('type', value?.value) } />
                   </div>
                   <div className="mb-3">
                     <label className="form-label">
@@ -262,6 +268,7 @@ const DashupUIPageShare = (props = {}) => {
                         dashup={ dashup }
                         onChange={ (f, val) => setShare('description', val) }
                         />
+                      { /*
                       <View
                         type="field"
                         view="input"
@@ -275,6 +282,7 @@ const DashupUIPageShare = (props = {}) => {
                         dashup={ dashup }
                         onChange={ (f, val) => setShare('price', val) }
                         />
+                      */ }
                     </>
                   ) }
                 </>
