@@ -12187,7 +12187,7 @@ var DashupUIPageShare = function DashupUIPageShare() {
     // load shares
     if (!shares && props.show) loadShares(page, dashup); // shares page
 
-    var shareP = guest.page('shares');
+    var shareP = guest && guest.page('shares');
     var sForm = shareP && Array.from(guest.get('pages').values()).find(function (p) {
       return p.get('type') === 'form' && p.get('data.model') === shareP.get('_id');
     });

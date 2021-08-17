@@ -161,7 +161,7 @@ const DashupUIPageShare = (props = {}) => {
         if (!shares && props.show) loadShares(page, dashup);
 
         // shares page
-        const shareP = guest.page('shares');
+        const shareP = guest && guest.page('shares');
         const sForm = shareP && Array.from(guest.get('pages').values()).find((p) => p.get('type') === 'form' && p.get('data.model') === shareP.get('_id'));
         const sFields = sForm && sForm.get('data.fields');
         const categories = sFields && (sFields || []).find((f) => f.name === 'categories');
