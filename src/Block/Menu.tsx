@@ -9,6 +9,26 @@ const DashupUIBlockMenu = (props = {}) => {
   // selected
   const [selected, setSelected] = useState(null);
 
+  // colors
+  const colors = ['primary', 'info', 'success', 'warning', 'danger'];
+
+  // available
+  props.available.sort((a, b) => {
+    // return sort
+    return a.title.toLowerCase().localeCompare(b.title.toLowerCase());
+  }).forEach((item, i) => {
+    // i
+    let t = i;
+
+    // while
+    while (t > (colors.length - 1)) {
+      t = t - colors.length;
+    }
+
+    // color
+    item.color = item.color || colors[t];
+  });
+
   return (
     <Offcanvas show={ props.show } onHide={ props.onHide }>
       <Offcanvas.Header closeButton>
@@ -32,12 +52,19 @@ const DashupUIBlockMenu = (props = {}) => {
                   className={ `card border border-${selected === action.type ? 'primary text-primary' : 'secondary text-body'} mb-2` }
                   >
                   <div className="card-body">
-                    <div className="d-flex w-100 justify-content-between">
-                      <h5 className="mb-1">
-                        { action.title }
-                      </h5>
+                    <div className="row">
+                      <div className="flex-0">
+                        <i className={ `${action.icon} h4 fa-fw mx-3 my-3${action.color ? ` text-${action.color}` : ''}` } />
+                      </div>
+                      <div className="col d-flex flex-1 align-items-center">
+                        <div className="w-100">
+                          <h5 className="mb-1">
+                            { action.title }
+                          </h5>
+                          <p className="m-0">{ action.description }</p>
+                        </div>
+                      </div>
                     </div>
-                    <p className="m-0">{ action.description }</p>
                   </div>
                 </a>
               );

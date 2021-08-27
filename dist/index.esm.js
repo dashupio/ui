@@ -803,7 +803,7 @@ var DashupUIPageMenu = function DashupUIPageMenu() {
         return props.onShare(e);
       }
     }, /*#__PURE__*/React.createElement("i", {
-      className: "fat fa-share"
+      className: "fa fa-fw fa-share"
     }))), props.onMinimise && page && dashup.can(page, 'manage') && /*#__PURE__*/React.createElement(OverlayTrigger, {
       overlay: /*#__PURE__*/React.createElement(Tooltip, null, "Minimise Page"),
       placement: "bottom"
@@ -813,7 +813,7 @@ var DashupUIPageMenu = function DashupUIPageMenu() {
         return props.onConfig(e);
       }
     }, /*#__PURE__*/React.createElement("i", {
-      className: "fat fa-minus"
+      className: "fa fa-fw fa-minus"
     }))), props.onConfig && page && dashup.can(page, 'manage') && /*#__PURE__*/React.createElement(OverlayTrigger, {
       overlay: /*#__PURE__*/React.createElement(Tooltip, null, "Page Settings"),
       placement: "bottom"
@@ -823,7 +823,7 @@ var DashupUIPageMenu = function DashupUIPageMenu() {
         return props.onConfig(e);
       }
     }, /*#__PURE__*/React.createElement("i", {
-      className: "fat fa-ellipsis-h"
+      className: "fa fa-fw fa-ellipsis-h"
     }))))));
   });
 }; // export default page menu
@@ -4829,20 +4829,20 @@ var DashupUIChatEmbed = function DashupUIChatEmbed() {
     var duration = moment.duration(time * 100); // humanize
 
     return duration.humanize();
-  }; // return jsx
+  }; // render body
 
 
-  return /*#__PURE__*/React.createElement(DashupUIContext$f.Consumer, null, function (data) {
-    var _props$embed$data, _props$embed$data2, _props$embed$data3, _props$embed$data4, _props$embed$data5, _props$embed$data6, _props$embed$data7, _props$embed$data7$fa, _props$embed$data8, _props$embed$data9, _props$embed$data9$au, _props$embed$data10, _props$embed$data11;
+  var renderBody = function renderBody(data) {
+    var _props$embed$data, _props$embed$data2, _props$embed$data3, _props$embed$data4, _props$embed$data5, _props$embed$data6, _props$embed$data7, _props$embed$data8, _props$embed$data8$fa, _props$embed$data9, _props$embed$data10, _props$embed$data10$a, _props$embed$data11, _props$embed$data12, _props$embed$data13, _props$embed$data14, _props$embed$data15, _props$embed$data16, _props$embed$data17;
 
     // return jsx
     return /*#__PURE__*/React.createElement("div", {
-      className: "row row-eq-height embed-".concat((_props$embed$data = props.embed.data) === null || _props$embed$data === void 0 ? void 0 : _props$embed$data.type)
+      className: "row row-eq-height embed-".concat(props.embed.type)
     }, !props.embed.loading && !!dotProp.get(props.embed, 'data.images.0.url') && /*#__PURE__*/React.createElement("div", {
       className: "d-flex align-items-center ".concat(!props.message || !show ? 'col-md-4' : 'col-12 mb-2')
     }, /*#__PURE__*/React.createElement("div", {
       className: "embed text-center w-100"
-    }, show && !!((_props$embed$data2 = props.embed.data) !== null && _props$embed$data2 !== void 0 && _props$embed$data2.html) ? /*#__PURE__*/React.createElement("div", {
+    }, show && !!((_props$embed$data = props.embed.data) !== null && _props$embed$data !== void 0 && _props$embed$data.html) ? /*#__PURE__*/React.createElement("div", {
       className: "ratio ratio-16x9 rounded",
       dangerouslySetInnerHTML: {
         __html: props.embed.data.html
@@ -4850,7 +4850,7 @@ var DashupUIChatEmbed = function DashupUIChatEmbed() {
     }) : /*#__PURE__*/React.createElement("div", {
       className: "ratio ratio-16x9"
     }, /*#__PURE__*/React.createElement("a", {
-      href: (_props$embed$data3 = props.embed.data) === null || _props$embed$data3 === void 0 ? void 0 : _props$embed$data3.url,
+      href: (_props$embed$data2 = props.embed.data) === null || _props$embed$data2 === void 0 ? void 0 : _props$embed$data2.url,
       target: "_blank",
       onClick: function onClick(e) {
         return !setShow(true) && e.preventDefault();
@@ -4859,7 +4859,7 @@ var DashupUIChatEmbed = function DashupUIChatEmbed() {
       style: {
         backgroundImage: "url(".concat(dotProp.get(props.embed, 'data.images.0.url'))
       }
-    })))), /*#__PURE__*/React.createElement("div", {
+    })))), !!((_props$embed$data3 = props.embed.data) !== null && _props$embed$data3 !== void 0 && _props$embed$data3.title) && !!((_props$embed$data4 = props.embed.data) !== null && _props$embed$data4 !== void 0 && _props$embed$data4.provider) && /*#__PURE__*/React.createElement("div", {
       className: "d-flex align-items-center ".concat(dotProp.get(props.embed, 'data.images.0.url') ? 'col-md-8' : 'col')
     }, props.embed.loading ? /*#__PURE__*/React.createElement("div", {
       className: "w-100 embed-title"
@@ -4868,13 +4868,13 @@ var DashupUIChatEmbed = function DashupUIChatEmbed() {
     }, /*#__PURE__*/React.createElement("div", {
       className: "embed-title text-overflow"
     }, /*#__PURE__*/React.createElement("a", {
-      href: (_props$embed$data4 = props.embed.data) === null || _props$embed$data4 === void 0 ? void 0 : _props$embed$data4.url,
+      href: (_props$embed$data5 = props.embed.data) === null || _props$embed$data5 === void 0 ? void 0 : _props$embed$data5.url,
       target: "_blank"
     }, /*#__PURE__*/React.createElement("b", {
       className: "d-block"
-    }, (_props$embed$data5 = props.embed.data) === null || _props$embed$data5 === void 0 ? void 0 : _props$embed$data5.title))), /*#__PURE__*/React.createElement("div", {
+    }, (_props$embed$data6 = props.embed.data) === null || _props$embed$data6 === void 0 ? void 0 : _props$embed$data6.title))), /*#__PURE__*/React.createElement("div", {
       className: "embed-meta d-flex align-items-center"
-    }, !!((_props$embed$data6 = props.embed.data) !== null && _props$embed$data6 !== void 0 && _props$embed$data6.provider) && /*#__PURE__*/React.createElement(React.Fragment, null, !!((_props$embed$data7 = props.embed.data) !== null && _props$embed$data7 !== void 0 && (_props$embed$data7$fa = _props$embed$data7.favicon) !== null && _props$embed$data7$fa !== void 0 && _props$embed$data7$fa.url) && /*#__PURE__*/React.createElement("a", {
+    }, !!((_props$embed$data7 = props.embed.data) !== null && _props$embed$data7 !== void 0 && _props$embed$data7.provider) && /*#__PURE__*/React.createElement(React.Fragment, null, !!((_props$embed$data8 = props.embed.data) !== null && _props$embed$data8 !== void 0 && (_props$embed$data8$fa = _props$embed$data8.favicon) !== null && _props$embed$data8$fa !== void 0 && _props$embed$data8$fa.url) && /*#__PURE__*/React.createElement("a", {
       href: props.embed.data.provider.url,
       target: "_blank",
       title: props.embed.data.provider.name
@@ -4885,14 +4885,38 @@ var DashupUIChatEmbed = function DashupUIChatEmbed() {
       href: props.embed.data.provider.url,
       target: "_blank",
       title: props.embed.data.provider.name
-    }, props.embed.data.provider.name)), !!((_props$embed$data8 = props.embed.data) !== null && _props$embed$data8 !== void 0 && _props$embed$data8.provider) && !!((_props$embed$data9 = props.embed.data) !== null && _props$embed$data9 !== void 0 && (_props$embed$data9$au = _props$embed$data9.author) !== null && _props$embed$data9$au !== void 0 && _props$embed$data9$au.name) && /*#__PURE__*/React.createElement("span", {
+    }, props.embed.data.provider.name)), !!((_props$embed$data9 = props.embed.data) !== null && _props$embed$data9 !== void 0 && _props$embed$data9.provider) && !!((_props$embed$data10 = props.embed.data) !== null && _props$embed$data10 !== void 0 && (_props$embed$data10$a = _props$embed$data10.author) !== null && _props$embed$data10$a !== void 0 && _props$embed$data10$a.name) && /*#__PURE__*/React.createElement("span", {
       className: "sep mx-1"
-    }, "|"), !!((_props$embed$data10 = props.embed.data) !== null && _props$embed$data10 !== void 0 && _props$embed$data10.author) && /*#__PURE__*/React.createElement("a", {
+    }, "|"), !!((_props$embed$data11 = props.embed.data) !== null && _props$embed$data11 !== void 0 && _props$embed$data11.author) && /*#__PURE__*/React.createElement("a", {
       href: props.embed.data.author.url,
       target: "_blank"
-    }, props.embed.data.author.name), !!((_props$embed$data11 = props.embed.data) !== null && _props$embed$data11 !== void 0 && _props$embed$data11.duration) && /*#__PURE__*/React.createElement("span", {
+    }, props.embed.data.author.name), !!((_props$embed$data12 = props.embed.data) !== null && _props$embed$data12 !== void 0 && _props$embed$data12.duration) && /*#__PURE__*/React.createElement("span", {
       className: "ms-2 text-muted"
-    }, getDuration(props.embed.data.duration))))));
+    }, getDuration(props.embed.data.duration))))), props.embed.type === 'note' && /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("div", {
+      className: "mb-2"
+    }, /*#__PURE__*/React.createElement("i", {
+      className: "fa fa-fw fa-sticky-note me-2"
+    }), " Note"), /*#__PURE__*/React.createElement("pre", {
+      className: "m-0"
+    }, (_props$embed$data13 = props.embed.data) === null || _props$embed$data13 === void 0 ? void 0 : _props$embed$data13.body)), props.embed.type === 'sms' && /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("div", {
+      className: "mb-2"
+    }, /*#__PURE__*/React.createElement("i", {
+      className: "fa fa-fw fa-sms me-2"
+    }), " ", (_props$embed$data14 = props.embed.data) === null || _props$embed$data14 === void 0 ? void 0 : _props$embed$data14.title), /*#__PURE__*/React.createElement("pre", {
+      className: "m-0"
+    }, (_props$embed$data15 = props.embed.data) === null || _props$embed$data15 === void 0 ? void 0 : _props$embed$data15.body)), props.embed.type === 'email' && /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("div", {
+      className: "mb-2"
+    }, /*#__PURE__*/React.createElement("i", {
+      className: "fa fa-fw fa-envelope-open-text me-2"
+    }), " ", (_props$embed$data16 = props.embed.data) === null || _props$embed$data16 === void 0 ? void 0 : _props$embed$data16.title), /*#__PURE__*/React.createElement("pre", {
+      className: "m-0"
+    }, (_props$embed$data17 = props.embed.data) === null || _props$embed$data17 === void 0 ? void 0 : _props$embed$data17.body)));
+  }; // return jsx
+
+
+  return props.noChat ? renderBody() : /*#__PURE__*/React.createElement(DashupUIContext$f.Consumer, null, function (data) {
+    // render body
+    return renderBody();
   });
 }; // export default page menu
 
@@ -5051,6 +5075,7 @@ var Element$1 = function Element() {
 var allEmbeds = {}; // chat input
 
 var DashupUIChatInput = function DashupUIChatInput() {
+  var props = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
   // editor
   var editor = useMemo(function () {
     return withMentions(withReact(createEditor()));
@@ -5226,33 +5251,48 @@ var DashupUIChatInput = function DashupUIChatInput() {
                 message: text
               };
               allEmbeds[embedId] = [];
-              setEmbeds(_toConsumableArray(allEmbeds[embedId])); // emit message
-
-              data.onMessage(newMessage); // set embeds
+              setEmbeds(_toConsumableArray(allEmbeds[embedId])); // set embeds
 
               Transforms.select(editor, Editor.start(editor, [])); // set value
 
-              setValue(emptyState); // call join
+              setValue(emptyState); // on send
+
+              if (!props.onSend) {
+                _context.next = 16;
+                break;
+              }
 
               _context.next = 14;
+              return props.onSend(e, newMessage);
+
+            case 14:
+              _context.next = 21;
+              break;
+
+            case 16:
+              // emit message
+              data.onMessage(newMessage); // call join
+
+              _context.next = 19;
               return data.dashup.action({
                 type: 'page',
                 struct: 'channel'
               }, 'send', newMessage);
 
-            case 14:
+            case 19:
               message = _context.sent;
 
               // check if success
               if (!message && typeof eden !== 'undefined') {
                 // alert error message
                 eden.alert.error('Failed to send');
-              } // update
+              }
 
-
+            case 21:
+              // update
               setPosting(false);
 
-            case 17:
+            case 22:
             case "end":
               return _context.stop();
           }
@@ -5483,9 +5523,9 @@ var DashupUIChatInput = function DashupUIChatInput() {
     return function () {
       delete allEmbeds[embedId];
     };
-  }, [embedId]); // return jsx
+  }, [embedId]); // create body
 
-  return /*#__PURE__*/React.createElement(DashupUIContext$e.Consumer, null, function (data) {
+  var renderBody = function renderBody(data) {
     // return jsx
     return /*#__PURE__*/React.createElement(React.Fragment, null, !!embeds.length && /*#__PURE__*/React.createElement("div", {
       className: "chat-embeds mb-3"
@@ -5550,6 +5590,12 @@ var DashupUIChatInput = function DashupUIChatInput() {
         className: "fa fa-fw fa-".concat(item.icon, " me-2")
       }), item.display);
     }))));
+  }; // return jsx
+
+
+  return props.noChat ? renderBody(props) : /*#__PURE__*/React.createElement(DashupUIContext$e.Consumer, null, function (data) {
+    // return jsx
+    return renderBody(data);
   });
 }; // export default page menu
 
@@ -7747,75 +7793,6 @@ var rules = {
   })
 }; // default rules
 
-// Unique ID creation requires a high quality random # generator. In the browser we therefore
-// require the crypto API and do not support built-in fallback to lower quality random number
-// generators (like Math.random()).
-// getRandomValues needs to be invoked in a context where "this" is a Crypto implementation. Also,
-// find the complete implementation of crypto (msCrypto) on IE11.
-var getRandomValues = typeof crypto !== 'undefined' && crypto.getRandomValues && crypto.getRandomValues.bind(crypto) || typeof msCrypto !== 'undefined' && typeof msCrypto.getRandomValues === 'function' && msCrypto.getRandomValues.bind(msCrypto);
-var rnds8 = new Uint8Array(16);
-function rng() {
-  if (!getRandomValues) {
-    throw new Error('crypto.getRandomValues() not supported. See https://github.com/uuidjs/uuid#getrandomvalues-not-supported');
-  }
-
-  return getRandomValues(rnds8);
-}
-
-var REGEX = /^(?:[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}|00000000-0000-0000-0000-000000000000)$/i;
-
-function validate(uuid) {
-  return typeof uuid === 'string' && REGEX.test(uuid);
-}
-
-/**
- * Convert array of 16 byte values to UUID string format of the form:
- * XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX
- */
-
-var byteToHex = [];
-
-for (var i = 0; i < 256; ++i) {
-  byteToHex.push((i + 0x100).toString(16).substr(1));
-}
-
-function stringify(arr) {
-  var offset = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
-  // Note: Be careful editing this code!  It's been tuned for performance
-  // and works in ways you may not expect. See https://github.com/uuidjs/uuid/pull/434
-  var uuid = (byteToHex[arr[offset + 0]] + byteToHex[arr[offset + 1]] + byteToHex[arr[offset + 2]] + byteToHex[arr[offset + 3]] + '-' + byteToHex[arr[offset + 4]] + byteToHex[arr[offset + 5]] + '-' + byteToHex[arr[offset + 6]] + byteToHex[arr[offset + 7]] + '-' + byteToHex[arr[offset + 8]] + byteToHex[arr[offset + 9]] + '-' + byteToHex[arr[offset + 10]] + byteToHex[arr[offset + 11]] + byteToHex[arr[offset + 12]] + byteToHex[arr[offset + 13]] + byteToHex[arr[offset + 14]] + byteToHex[arr[offset + 15]]).toLowerCase(); // Consistency check for valid UUID.  If this throws, it's likely due to one
-  // of the following:
-  // - One or more input array values don't map to a hex octet (leading to
-  // "undefined" in the uuid)
-  // - Invalid input values for the RFC `version` or `variant` fields
-
-  if (!validate(uuid)) {
-    throw TypeError('Stringified UUID is invalid');
-  }
-
-  return uuid;
-}
-
-function v4(options, buf, offset) {
-  options = options || {};
-  var rnds = options.random || (options.rng || rng)(); // Per 4.4, set bits for version and `clock_seq_hi_and_reserved`
-
-  rnds[6] = rnds[6] & 0x0f | 0x40;
-  rnds[8] = rnds[8] & 0x3f | 0x80; // Copy bytes to buffer, if provided
-
-  if (buf) {
-    offset = offset || 0;
-
-    for (var i = 0; i < 16; ++i) {
-      buf[offset + i] = rnds[i];
-    }
-
-    return buf;
-  }
-
-  return stringify(rnds);
-}
-
 var Embed = null;
 var DashupUIContext$d = null; // create dashup grid body
 
@@ -7828,7 +7805,7 @@ var DashupUIChatMessage = function DashupUIChatMessage() {
 
     // return embeds
     return (((_props$message = props.message) === null || _props$message === void 0 ? void 0 : _props$message.embeds) || []).filter(function (e) {
-      return e && e.data && e.data.type;
+      return e && e.data && e.type;
     });
   }; // in thread
 
@@ -7889,7 +7866,7 @@ var DashupUIChatMessage = function DashupUIChatMessage() {
             background: color === null || color === void 0 ? void 0 : color.hex
           }
         }, node.trigger === '@' ? /*#__PURE__*/React.createElement("i", {
-          className: "fa fa-at me-1"
+          className: "fad fa-at me-1"
         }) : page && page.get('icon') ? /*#__PURE__*/React.createElement("i", {
           className: "fa fa-".concat(page.get('icon'), " me-1")
         }) : node.trigger, node.display);
@@ -7909,10 +7886,10 @@ var DashupUIChatMessage = function DashupUIChatMessage() {
     var name = "".concat(user.name || '').trim() || 'N A'; // return name
 
     return "".concat((name.split(' ')[0] || '')[0] || '').concat((name.split(' ')[1] || '')[0] || '');
-  }; // return jsx
+  }; // render body
 
 
-  return /*#__PURE__*/React.createElement(DashupUIContext$d.Consumer, null, function (data) {
+  var renderBody = function renderBody(data) {
     var _props$message5, _props$message5$by, _props$message6, _props$message6$by, _props$message7, _props$message7$by, _props$message8, _props$message8$by, _props$message9, _props$message9$by, _data$dashup;
 
     // check removed
@@ -7946,12 +7923,15 @@ var DashupUIChatMessage = function DashupUIChatMessage() {
       // return jsx
       return /*#__PURE__*/React.createElement("div", {
         key: "embed-".concat(props.message.id, "-").concat(i),
-        className: "mt-2 card"
-      }, /*#__PURE__*/React.createElement("div", {
+        className: "mt-2 card".concat(embed.color ? " card-".concat(embed.color) : '')
+      }, !!embed.color && /*#__PURE__*/React.createElement("div", {
+        className: "color-strip bg-".concat(embed.color)
+      }), /*#__PURE__*/React.createElement("div", {
         className: "card-body"
       }, /*#__PURE__*/React.createElement(Embed, {
         embed: embed,
-        message: props.message
+        message: props.message,
+        noChat: props.noChat
       })));
     }))), (!!data.canAdmin || ((_props$message9 = props.message) === null || _props$message9 === void 0 ? void 0 : (_props$message9$by = _props$message9.by) === null || _props$message9$by === void 0 ? void 0 : _props$message9$by.id) === ((_data$dashup = data.dashup) === null || _data$dashup === void 0 ? void 0 : _data$dashup.get('_meta.user'))) && /*#__PURE__*/React.createElement("div", {
       className: "message-hover"
@@ -7972,6 +7952,12 @@ var DashupUIChatMessage = function DashupUIChatMessage() {
     }, /*#__PURE__*/React.createElement("i", {
       className: "fa fa-trash"
     }))))))));
+  }; // return jsx
+
+
+  return props.noChat ? renderBody(props) : /*#__PURE__*/React.createElement(DashupUIContext$d.Consumer, null, function (data) {
+    // render body
+    return renderBody(data);
   });
 }; // export default page menu
 
@@ -8672,8 +8658,10 @@ var DashupUIFormMenu = function DashupUIFormMenu() {
   var _useState = useState(''),
       _useState2 = _slicedToArray(_useState, 2),
       search = _useState2[0],
-      setSearch = _useState2[1]; // use ref
+      setSearch = _useState2[1]; // colors
 
+
+  var colors = ['primary', 'info', 'success', 'warning', 'danger']; // use ref
 
   var searchRef = useRef(null); // use effect
 
@@ -8684,7 +8672,22 @@ var DashupUIFormMenu = function DashupUIFormMenu() {
     (_searchRef$current = searchRef.current) === null || _searchRef$current === void 0 ? void 0 : _searchRef$current.focus();
   }, []);
   return /*#__PURE__*/React.createElement(DashupUIContext$a.Consumer, null, function (data) {
-    // return jsx
+    // available
+    data.available.sort(function (a, b) {
+      // return sort
+      return a.title.toLowerCase().localeCompare(b.title.toLowerCase());
+    }).forEach(function (item, i) {
+      // i
+      var t = i; // while
+
+      while (t > colors.length - 1) {
+        t = t - colors.length;
+      } // color
+
+
+      item.color = item.color || colors[t];
+    }); // return jsx
+
     return /*#__PURE__*/React.createElement(Offcanvas, {
       backdrop: false,
       show: props.show,
@@ -8744,17 +8747,25 @@ var DashupUIFormMenu = function DashupUIFormMenu() {
 
       return /*#__PURE__*/React.createElement("div", {
         key: "field-".concat(field.type),
-        className: "card border border-secondary mb-2",
+        className: "card border border-secondary mb-2 cursor-move",
         "data-type": field.type
       }, /*#__PURE__*/React.createElement("div", {
-        className: "card-body"
+        className: "card-body d-flex"
       }, /*#__PURE__*/React.createElement("div", {
-        className: "d-flex w-100 justify-content-between"
+        className: "row"
+      }, /*#__PURE__*/React.createElement("div", {
+        className: "flex-0"
+      }, /*#__PURE__*/React.createElement("i", {
+        className: "".concat(field.icon, " h4 fa-fw mx-3 my-3").concat(field.color ? " text-".concat(field.color) : '')
+      })), /*#__PURE__*/React.createElement("div", {
+        className: "col d-flex flex-1 align-items-center"
+      }, /*#__PURE__*/React.createElement("div", {
+        className: "w-100"
       }, /*#__PURE__*/React.createElement("h5", {
         className: "mb-1"
-      }, field.title)), /*#__PURE__*/React.createElement("p", {
+      }, field.title), /*#__PURE__*/React.createElement("p", {
         className: "m-0"
-      }, field.description)));
+      }, field.description))))));
     }))))));
   });
 }; // export default page menu
@@ -13474,6 +13485,75 @@ var Bulk = (function (ctx) {
   return DashupUIGridBulk$1;
 });
 
+// Unique ID creation requires a high quality random # generator. In the browser we therefore
+// require the crypto API and do not support built-in fallback to lower quality random number
+// generators (like Math.random()).
+// getRandomValues needs to be invoked in a context where "this" is a Crypto implementation. Also,
+// find the complete implementation of crypto (msCrypto) on IE11.
+var getRandomValues = typeof crypto !== 'undefined' && crypto.getRandomValues && crypto.getRandomValues.bind(crypto) || typeof msCrypto !== 'undefined' && typeof msCrypto.getRandomValues === 'function' && msCrypto.getRandomValues.bind(msCrypto);
+var rnds8 = new Uint8Array(16);
+function rng() {
+  if (!getRandomValues) {
+    throw new Error('crypto.getRandomValues() not supported. See https://github.com/uuidjs/uuid#getrandomvalues-not-supported');
+  }
+
+  return getRandomValues(rnds8);
+}
+
+var REGEX = /^(?:[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}|00000000-0000-0000-0000-000000000000)$/i;
+
+function validate(uuid) {
+  return typeof uuid === 'string' && REGEX.test(uuid);
+}
+
+/**
+ * Convert array of 16 byte values to UUID string format of the form:
+ * XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX
+ */
+
+var byteToHex = [];
+
+for (var i = 0; i < 256; ++i) {
+  byteToHex.push((i + 0x100).toString(16).substr(1));
+}
+
+function stringify(arr) {
+  var offset = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
+  // Note: Be careful editing this code!  It's been tuned for performance
+  // and works in ways you may not expect. See https://github.com/uuidjs/uuid/pull/434
+  var uuid = (byteToHex[arr[offset + 0]] + byteToHex[arr[offset + 1]] + byteToHex[arr[offset + 2]] + byteToHex[arr[offset + 3]] + '-' + byteToHex[arr[offset + 4]] + byteToHex[arr[offset + 5]] + '-' + byteToHex[arr[offset + 6]] + byteToHex[arr[offset + 7]] + '-' + byteToHex[arr[offset + 8]] + byteToHex[arr[offset + 9]] + '-' + byteToHex[arr[offset + 10]] + byteToHex[arr[offset + 11]] + byteToHex[arr[offset + 12]] + byteToHex[arr[offset + 13]] + byteToHex[arr[offset + 14]] + byteToHex[arr[offset + 15]]).toLowerCase(); // Consistency check for valid UUID.  If this throws, it's likely due to one
+  // of the following:
+  // - One or more input array values don't map to a hex octet (leading to
+  // "undefined" in the uuid)
+  // - Invalid input values for the RFC `version` or `variant` fields
+
+  if (!validate(uuid)) {
+    throw TypeError('Stringified UUID is invalid');
+  }
+
+  return uuid;
+}
+
+function v4(options, buf, offset) {
+  options = options || {};
+  var rnds = options.random || (options.rng || rng)(); // Per 4.4, set bits for version and `clock_seq_hi_and_reserved`
+
+  rnds[6] = rnds[6] & 0x0f | 0x40;
+  rnds[8] = rnds[8] & 0x3f | 0x80; // Copy bytes to buffer, if provided
+
+  if (buf) {
+    offset = offset || 0;
+
+    for (var i = 0; i < 16; ++i) {
+      buf[offset + i] = rnds[i];
+    }
+
+    return buf;
+  }
+
+  return stringify(rnds);
+}
+
 var DashupUIContext$4 = null; // create dashup grid body
 
 var DashupUIGridHeader$1 = function DashupUIGridHeader() {
@@ -14867,8 +14947,25 @@ var DashupUIBlockMenu = function DashupUIBlockMenu() {
   var _useState = useState(null),
       _useState2 = _slicedToArray(_useState, 2),
       selected = _useState2[0],
-      setSelected = _useState2[1];
+      setSelected = _useState2[1]; // colors
 
+
+  var colors = ['primary', 'info', 'success', 'warning', 'danger']; // available
+
+  props.available.sort(function (a, b) {
+    // return sort
+    return a.title.toLowerCase().localeCompare(b.title.toLowerCase());
+  }).forEach(function (item, i) {
+    // i
+    var t = i; // while
+
+    while (t > colors.length - 1) {
+      t = t - colors.length;
+    } // color
+
+
+    item.color = item.color || colors[t];
+  });
   return /*#__PURE__*/React.createElement(Offcanvas, {
     show: props.show,
     onHide: props.onHide
@@ -14894,12 +14991,20 @@ var DashupUIBlockMenu = function DashupUIBlockMenu() {
     }, /*#__PURE__*/React.createElement("div", {
       className: "card-body"
     }, /*#__PURE__*/React.createElement("div", {
-      className: "d-flex w-100 justify-content-between"
+      className: "row"
+    }, /*#__PURE__*/React.createElement("div", {
+      className: "flex-0"
+    }, /*#__PURE__*/React.createElement("i", {
+      className: "".concat(action.icon, " h4 fa-fw mx-3 my-3").concat(action.color ? " text-".concat(action.color) : '')
+    })), /*#__PURE__*/React.createElement("div", {
+      className: "col d-flex flex-1 align-items-center"
+    }, /*#__PURE__*/React.createElement("div", {
+      className: "w-100"
     }, /*#__PURE__*/React.createElement("h5", {
       className: "mb-1"
-    }, action.title)), /*#__PURE__*/React.createElement("p", {
+    }, action.title), /*#__PURE__*/React.createElement("p", {
       className: "m-0"
-    }, action.description)));
+    }, action.description))))));
   }))), !!selected && /*#__PURE__*/React.createElement("div", {
     className: "p-3 flex-0 btn-offcanvas"
   }, /*#__PURE__*/React.createElement("button", {

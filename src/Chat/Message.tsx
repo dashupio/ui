@@ -3,7 +3,6 @@ import React from 'react';
 import moment from 'moment';
 import markdown from 'simple-markdown';
 import defaultRules from './rules';
-import { v4 as uuid } from 'uuid';
 import { OverlayTrigger, Tooltip } from 'react-bootstrap';
 
 // import message
@@ -19,7 +18,7 @@ const DashupUIChatMessage = (props = {}) => {
   // get embeds
   const getEmbeds = () => {
     // return embeds
-    return (props.message?.embeds || []).filter((e) => e && e.data && e.data.type);
+    return (props.message?.embeds || []).filter((e) => e && e.data && e.type);
   };
 
   // in thread
@@ -82,7 +81,7 @@ const DashupUIChatMessage = (props = {}) => {
             } }
           >
             { node.trigger === '@' ? (
-              <i className="fa fa-at me-1" />
+              <i className="fad fa-at me-1" />
             ) : (
               page && page.get('icon') ? (
                 <i className={ `fa fa-${page.get('icon')} me-1` } />
@@ -121,101 +120,110 @@ const DashupUIChatMessage = (props = {}) => {
     return `${(name.split(' ')[0] || '')[0] || ''}${(name.split(' ')[1] || '')[0] || ''}`;
   };
 
-  // return jsx
-  return (
-    <DashupUIContext.Consumer>
-      { (data) => {
-        // check removed
-        if (props.message.removed) return <div />
+  // render body
+  const renderBody = (data) => {
+    // check removed
+    if (props.message.removed) return <div />
 
-        // return jsx
-        return (
-          <div className={ `message${inThread() ? ' in-thread' : ''}` }>
-            <div className="message-avatar">
-              <div  className={ `avatar rounded-circle${props.message?.by?.avatar ? '' : ' bg-secondary'}` } style={ {
-                backgroundImage : props.message?.by?.avatar ? `url(${props.message.by.avatar})` : null,
-              } }>
-                { props.message?.by?.avatar ? '' : getName(props.message.by) }
-              </div>
-            </div>
-            <div className="message-body">
-              <div className="message-by">
-                { !!props.message?.by?.name && (
-                  <b className="me-2">
-                    { props.message.by.name }
-                  </b>
-                ) }
-                
-                <OverlayTrigger
-                  overlay={
-                    <Tooltip>
-                      { moment(props.message.created_at).format('LL') }
-                    </Tooltip>
-                  }
-                  placement="top"
-                >
-                  <span className="text-muted">
-                    { moment(props.message.created_at).fromNow() }
-                  </span>
-                </OverlayTrigger>
-              </div>
-              <div className="message-content">
-                { parseContent(data.dashup, props.message.parsed || props.message.message) }
-              </div>
-              { !!getEmbeds().length && (
-                <div className="mb-2 message-embeds">
-                  { getEmbeds().map((embed, i) => {
-                    // return jsx
-                    return (
-                      <div key={ `embed-${props.message.id}-${i}` } className="mt-2 card">
-                        <div className="card-body">
-                          <Embed embed={ embed } message={ props.message } />
-                        </div>
-                      </div>
-                    );
-                  }) }
-                </div>
-              ) }
-            </div>
-
-            { (!!data.canAdmin || props.message?.by?.id === data.dashup?.get('_meta.user')) && (
-              <div className="message-hover">
-                <div className="d-flex align-items-center">
-                  <div className="ms-auto">
-                    <div className="btn-group">
-                      { /*
-                      <OverlayTrigger
-                        overlay={
-                          <Tooltip>
-                            Update Message
-                          </Tooltip>
-                        }
-                        placement="top"
-                      >
-                        <button className="btn btn-sm btn-primary" onClick={ (e) => data.onUpdate(props.message) }>
-                          <i className="fa fa-pencil" />
-                        </button>
-                      </OverlayTrigger>
-                      */ }
-                      <OverlayTrigger
-                        overlay={
-                          <Tooltip>
-                            Remove Message
-                          </Tooltip>
-                        }
-                        placement="top"
-                      >
-                        <button className="btn btn-sm btn-danger" onClick={ (e) => data.onRemove(props.message) }>
-                          <i className="fa fa-trash" />
-                        </button>
-                      </OverlayTrigger>
+    // return jsx
+    return (
+      <div className={ `message${inThread() ? ' in-thread' : ''}` }>
+        <div className="message-avatar">
+          <div  className={ `avatar rounded-circle${props.message?.by?.avatar ? '' : ' bg-secondary'}` } style={ {
+            backgroundImage : props.message?.by?.avatar ? `url(${props.message.by.avatar})` : null,
+          } }>
+            { props.message?.by?.avatar ? '' : getName(props.message.by) }
+          </div>
+        </div>
+        <div className="message-body">
+          <div className="message-by">
+            { !!props.message?.by?.name && (
+              <b className="me-2">
+                { props.message.by.name }
+              </b>
+            ) }
+            
+            <OverlayTrigger
+              overlay={
+                <Tooltip>
+                  { moment(props.message.created_at).format('LL') }
+                </Tooltip>
+              }
+              placement="top"
+            >
+              <span className="text-muted">
+                { moment(props.message.created_at).fromNow() }
+              </span>
+            </OverlayTrigger>
+          </div>
+          <div className="message-content">
+            { parseContent(data.dashup, props.message.parsed || props.message.message) }
+          </div>
+          { !!getEmbeds().length && (
+            <div className="mb-2 message-embeds">
+              { getEmbeds().map((embed, i) => {
+                // return jsx
+                return (
+                  <div key={ `embed-${props.message.id}-${i}` } className={ `mt-2 card${embed.color ? ` card-${embed.color}` : ''}` }>
+                    { !!embed.color && (
+                      <div className={ `color-strip bg-${embed.color}` } />
+                    ) }
+                    <div className="card-body">
+                      <Embed embed={ embed } message={ props.message } noChat={ props.noChat } />
                     </div>
                   </div>
+                );
+              }) }
+            </div>
+          ) }
+        </div>
+
+        { (!!data.canAdmin || props.message?.by?.id === data.dashup?.get('_meta.user')) && (
+          <div className="message-hover">
+            <div className="d-flex align-items-center">
+              <div className="ms-auto">
+                <div className="btn-group">
+                  { /*
+                  <OverlayTrigger
+                    overlay={
+                      <Tooltip>
+                        Update Message
+                      </Tooltip>
+                    }
+                    placement="top"
+                  >
+                    <button className="btn btn-sm btn-primary" onClick={ (e) => data.onUpdate(props.message) }>
+                      <i className="fa fa-pencil" />
+                    </button>
+                  </OverlayTrigger>
+                  */ }
+                  <OverlayTrigger
+                    overlay={
+                      <Tooltip>
+                        Remove Message
+                      </Tooltip>
+                    }
+                    placement="top"
+                  >
+                    <button className="btn btn-sm btn-danger" onClick={ (e) => data.onRemove(props.message) }>
+                      <i className="fa fa-trash" />
+                    </button>
+                  </OverlayTrigger>
                 </div>
               </div>
-            ) }
+            </div>
           </div>
-        );
+        ) }
+      </div>
+    );
+  }
+
+  // return jsx
+  return props.noChat ? renderBody(props) : (
+    <DashupUIContext.Consumer>
+      { (data) => {
+        // render body
+        return renderBody(data);
       } }
     </DashupUIContext.Consumer>
   );

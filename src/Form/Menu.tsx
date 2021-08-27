@@ -15,6 +15,9 @@ let DashupUIContext = null;
 const DashupUIFormMenu = (props = {}) => {
   // state
   const [search, setSearch] = useState('');
+
+  // colors
+  const colors = ['primary', 'info', 'success', 'warning', 'danger'];
   
   // use ref
   const searchRef = useRef(null);
@@ -28,6 +31,23 @@ const DashupUIFormMenu = (props = {}) => {
   return (
     <DashupUIContext.Consumer>
       { (data) => {
+        // available
+        data.available.sort((a, b) => {
+          // return sort
+          return a.title.toLowerCase().localeCompare(b.title.toLowerCase());
+        }).forEach((item, i) => {
+          // i
+          let t = i;
+
+          // while
+          while (t > (colors.length - 1)) {
+            t = t - colors.length;
+          }
+
+          // color
+          item.color = item.color || colors[t];
+        });
+
         // return jsx
         return (
           <Offcanvas backdrop={ false } show={ props.show } onHide={ props.onHide }>
@@ -75,14 +95,21 @@ const DashupUIFormMenu = (props = {}) => {
 
                       // return fields
                       return (
-                        <div key={ `field-${field.type}` } className="card border border-secondary mb-2" data-type={ field.type }>
-                          <div className="card-body">
-                            <div className="d-flex w-100 justify-content-between">
-                              <h5 className="mb-1">
-                                { field.title }
-                              </h5>
+                        <div key={ `field-${field.type}` } className="card border border-secondary mb-2 cursor-move" data-type={ field.type }>
+                          <div className="card-body d-flex">
+                            <div className="row">
+                              <div className="flex-0">
+                                <i className={ `${field.icon} h4 fa-fw mx-3 my-3${field.color ? ` text-${field.color}` : ''}` } />
+                              </div>
+                              <div className="col d-flex flex-1 align-items-center">
+                                <div className="w-100">
+                                  <h5 className="mb-1">
+                                    { field.title }
+                                  </h5>
+                                  <p className="m-0">{ field.description }</p>
+                                </div>
+                              </div>
                             </div>
-                            <p className="m-0">{ field.description }</p>
                           </div>
                         </div>
                       );

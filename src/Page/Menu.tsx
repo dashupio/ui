@@ -112,7 +112,7 @@ const DashupUIPageMenu = (props = {}) => {
                     placement="bottom"
                   >
                     <button className="btn btn-light" onClick={ (e) => props.onShare(e) }>
-                      <i className="fat fa-share" />
+                      <i className="fa fa-fw fa-share" />
                     </button>
                   </OverlayTrigger>
                 ) }
@@ -126,7 +126,7 @@ const DashupUIPageMenu = (props = {}) => {
                     placement="bottom"
                   >
                     <button className="btn btn-light" onClick={ (e) => props.onConfig(e) }>
-                      <i className="fat fa-minus" />
+                      <i className="fa fa-fw fa-minus" />
                     </button>
                   </OverlayTrigger>
                 ) }
@@ -140,7 +140,7 @@ const DashupUIPageMenu = (props = {}) => {
                     placement="bottom"
                   >
                     <button className="btn btn-light" onClick={ (e) => props.onConfig(e) }>
-                      <i className="fat fa-ellipsis-h" />
+                      <i className="fa fa-fw fa-ellipsis-h" />
                     </button>
                   </OverlayTrigger>
                 ) }

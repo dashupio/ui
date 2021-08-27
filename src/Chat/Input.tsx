@@ -5,7 +5,7 @@ import urlRegex from 'url-regex';
 import { Overlay, Popover, Dropdown } from 'react-bootstrap';
 import { Slate, Editable, withReact, ReactEditor } from 'slate-react';
 import { Text, Editor, Transforms, Range, createEditor } from 'slate';
-import React, { useRef, useMemo, useState, useCallback, useEffect } from 'react';
+import React, { useMemo, useState, useCallback, useEffect } from 'react';
 
 // prism
 ;Prism.languages.markdown=Prism.languages.extend("markup",{}),Prism.languages.insertBefore("markdown","prolog",{blockquote:{pattern:/^>(?:[\t ]*>)*/m,alias:"punctuation"},code:[{pattern:/^(?: {4}|\t).+/m,alias:"keyword"},{pattern:/``.+?``|`[^`\n]+`/,alias:"keyword"}],title:[{pattern:/\w+.*(?:\r?\n|\r)(?:==+|--+)/,alias:"important",inside:{punctuation:/==+$|--+$/}},{pattern:/(^\s*)#+.+/m,lookbehind:!0,alias:"important",inside:{punctuation:/^#+|#+$/}}],hr:{pattern:/(^\s*)([*-])([\t ]*\2){2,}(?=\s*$)/m,lookbehind:!0,alias:"punctuation"},list:{pattern:/(^\s*)(?:[*+-]|\d+\.)(?=[\t ].)/m,lookbehind:!0,alias:"punctuation"},"url-reference":{pattern:/!?\[[^\]]+\]:[\t ]+(?:\S+|<(?:\\.|[^>\\])+>)(?:[\t ]+(?:"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|\((?:\\.|[^)\\])*\)))?/,inside:{variable:{pattern:/^(!?\[)[^\]]+/,lookbehind:!0},string:/(?:"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|\((?:\\.|[^)\\])*\))$/,punctuation:/^[\[\]!:]|[<>]/},alias:"url"},bold:{pattern:/(^|[^\\])(\*\*|__)(?:(?:\r?\n|\r)(?!\r?\n|\r)|.)+?\2/,lookbehind:!0,inside:{punctuation:/^\*\*|^__|\*\*$|__$/}},italic:{pattern:/(^|[^\\])([*_])(?:(?:\r?\n|\r)(?!\r?\n|\r)|.)+?\2/,lookbehind:!0,inside:{punctuation:/^[*_]|[*_]$/}},url:{pattern:/!?\[[^\]]+\](?:\([^\s)]+(?:[\t ]+"(?:\\.|[^"\\])*")?\)| ?\[[^\]\n]*\])/,inside:{variable:{pattern:/(!?\[)[^\]]+(?=\]$)/,lookbehind:!0},string:{pattern:/"(?:\\.|[^"\\])*"(?=\)$)/}}}}),Prism.languages.markdown.bold.inside.url=Prism.util.clone(Prism.languages.markdown.url),Prism.languages.markdown.italic.inside.url=Prism.util.clone(Prism.languages.markdown.url),Prism.languages.markdown.bold.inside.italic=Prism.util.clone(Prism.languages.markdown.italic),Prism.languages.markdown.italic.inside.bold=Prism.util.clone(Prism.languages.markdown.bold); // prettier-ignore
@@ -209,25 +209,31 @@ const DashupUIChatInput = (props = {}) => {
     allEmbeds[embedId] = [];
     setEmbeds([...allEmbeds[embedId]]);
 
-    // emit message
-    data.onMessage(newMessage);
-
     // set embeds
     Transforms.select(editor, Editor.start(editor, []));
 
     // set value
     setValue(emptyState);
     
-    // call join
-    const message = await data.dashup.action({
-      type   : 'page',
-      struct : 'channel',
-    }, 'send', newMessage);
+    // on send
+    if (props.onSend) {
+      // on send
+      await props.onSend(e, newMessage);
+    } else {
+      // emit message
+      data.onMessage(newMessage);
+      
+      // call join
+      const message = await data.dashup.action({
+        type   : 'page',
+        struct : 'channel',
+      }, 'send', newMessage);
 
-    // check if success
-    if (!message && typeof eden !== 'undefined') {
-      // alert error message
-      eden.alert.error('Failed to send');
+      // check if success
+      if (!message && typeof eden !== 'undefined') {
+        // alert error message
+        eden.alert.error('Failed to send');
+      }
     }
 
     // update
@@ -431,69 +437,75 @@ const DashupUIChatInput = (props = {}) => {
     };
   }, [embedId]);
 
+  // create body
+  const renderBody = (data) => {
+    // return jsx
+    return (
+      <>
+        { !!embeds.length && (
+          <div className="chat-embeds mb-3">
+            { embeds.map((embed, i) => {
+              // return jsx
+              return (
+                <div key={ `embed-${i}` } className="card card-embed">
+                  <div className="card-body">
+                    <Embed embed={ embed } />
+                  </div>
+                </div>
+              );
+            }) }
+          </div>
+        ) }
+        <div className={ `chat-group${posting ? ' chat-group-posting' : ''}${long ? ' border border-danger' : ''}` }>
+          <div className="chat-input-wrap">
+            <div className="flex-1 flex-column">
+              <Slate
+                value={ value }
+                editor={ editor }
+                onChange={ (v) => onChange(data, v) }
+              >
+                <Editable
+                  className="chat-control"
+                  decorate={ decorate }
+                  onKeyDown={ (e) => onKeyDown(e, data) }
+                  renderLeaf={ renderLeaf }
+                  renderElement={ renderElement }
+                  />
+              </Slate>
+            </div>
+            <div className="chat-upload">
+              <button className={ `btn btn-${data.size || 'lg'}` } onClick={ (e) => onSend(e, data) }>
+                <i className="fa fa-plus" />
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <Overlay show={ !!mentionRef } target={ mentionRef } onHide={ () => setMentionRef(null) } rootClose placement="top">
+          <Popover className="dropdown-menu show">
+            { items.map((item, i) => {
+              // return jsx
+              return (
+                <Dropdown.Item key={ `item-${item.id}` } onClick={ (e) => onMention(item) } active={ index === i }>
+                  { item.icon && (
+                    <i className={ `fa fa-fw fa-${item.icon} me-2` } />
+                  ) }
+                  { item.display }
+                </Dropdown.Item>
+              );
+            }) }
+          </Popover>
+        </Overlay>
+      </>
+    );
+  };
+
   // return jsx
-  return (
+  return props.noChat ? renderBody(props) : (
     <DashupUIContext.Consumer>
       { (data) => {
         // return jsx
-        return (
-          <>
-            { !!embeds.length && (
-              <div className="chat-embeds mb-3">
-                { embeds.map((embed, i) => {
-                  // return jsx
-                  return (
-                    <div key={ `embed-${i}` } className="card card-embed">
-                      <div className="card-body">
-                        <Embed embed={ embed } />
-                      </div>
-                    </div>
-                  );
-                }) }
-              </div>
-            ) }
-            <div className={ `chat-group${posting ? ' chat-group-posting' : ''}${long ? ' border border-danger' : ''}` }>
-              <div className="chat-input-wrap">
-                <div className="flex-1 flex-column">
-                  <Slate
-                    value={ value }
-                    editor={ editor }
-                    onChange={ (v) => onChange(data, v) }
-                  >
-                    <Editable
-                      className="chat-control"
-                      decorate={ decorate }
-                      onKeyDown={ (e) => onKeyDown(e, data) }
-                      renderLeaf={ renderLeaf }
-                      renderElement={ renderElement }
-                      />
-                  </Slate>
-                </div>
-                <div className="chat-upload">
-                  <button className={ `btn btn-${data.size || 'lg'}` } onClick={ (e) => onSend(e, data) }>
-                    <i className="fa fa-plus" />
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            <Overlay show={ !!mentionRef } target={ mentionRef } onHide={ () => setMentionRef(null) } rootClose placement="top">
-              <Popover className="dropdown-menu show">
-                { items.map((item, i) => {
-                  // return jsx
-                  return (
-                    <Dropdown.Item key={ `item-${item.id}` } onClick={ (e) => onMention(item) } active={ index === i }>
-                      { item.icon && (
-                        <i className={ `fa fa-fw fa-${item.icon} me-2` } />
-                      ) }
-                      { item.display }
-                    </Dropdown.Item>
-                  );
-                }) }
-              </Popover>
-            </Overlay>
-          </>
-        );
+        return renderBody(data);
       } }
     </DashupUIContext.Consumer>
   );
