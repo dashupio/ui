@@ -1,7 +1,7 @@
 {
   "name": "@dashup/ui",
   "description": "nothing yet",
-  "version": "0.1.53",
+  "version": "0.1.54",
   "main": "dist/index.cjs.js",
   "module": "dist/index.esm.js",
   "source": "src/index.ts",
@@ -13,7 +13,7 @@
     "pagix": "^1.1.0",
     "prismjs": "^1.24.1",
     "query": "github:protobi/query",
-    "react-contenteditable": "^3.3.5",
+    "react-contenteditable": "^3.3.6",
     "react-mentions": "^4.3.0",
     "sanitize-html": "^2.4.0",
     "shortid": "^2.2.16",

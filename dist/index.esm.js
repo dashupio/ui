@@ -647,13 +647,16 @@ var DashupContext$7 = null; // create menu component
 var DashupUIPageBody = function DashupUIPageBody() {
   var props = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
   // return JSX
-  return /*#__PURE__*/React.createElement(DashupContext$7.Consumer, null, function (_ref) {
-    var type = _ref.type,
-        centered = _ref.centered;
+  return /*#__PURE__*/React.createElement(DashupContext$7.Consumer, null, function (data) {
+    // no fit
+    var type = data.type || props.type;
+    var noFit = data.noFit || props.noFit;
+    var centered = data.centered || props.centered; // return jsx
+
     return /*#__PURE__*/React.createElement("div", {
-      className: "page-body body-".concat(type, " d-flex flex-1 fit-content")
+      className: "page-body body-".concat(type || 'normal', " d-flex flex-1").concat(noFit ? '' : '  fit-content')
     }, /*#__PURE__*/React.createElement("div", {
-      className: "d-flex w-100 h-100".concat(centered ? ' d-flex align-items-center' : '')
+      className: "d-flex ".concat(noFit ? 'flex-1' : 'w-100 h-100').concat(centered ? ' d-flex align-items-center' : '')
     }, centered ? /*#__PURE__*/React.createElement("div", {
       className: "w-100"
     }, props.children) : props.children));
@@ -13047,6 +13050,7 @@ var DashupUIPage = function DashupUIPage() {
       color: props.color || getColor(),
       title: props.title || props.page && props.page.get('name'),
       guest: props.guest,
+      noFit: props.noFit,
       dashup: props.dashup,
       loading: props.loading,
       centered: props.centered,

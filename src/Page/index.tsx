@@ -52,6 +52,7 @@ const DashupUIPage = (props = {}) => {
       color     : props.color || getColor(),
       title     : props.title || (props.page && props.page.get('name')),
       guest     : props.guest,
+      noFit     : props.noFit,
       dashup    : props.dashup,
       loading   : props.loading,
       centered  : props.centered,
