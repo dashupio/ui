@@ -45,7 +45,7 @@ const DashupUIPageConfig = (props = {}) => {
                     
                     <div className="card-header py-3 border-bottom flex-0">
                       <h5 className="modal-title">
-                        <i className={ `me-2 fa-${page.get('icon') || 'pencil fa'}` } />
+                        <i className={ `me-2 fa-fw fa-${page.get('icon') || 'pencil fa'}` } />
                         { page.get('name') || page.get('_id') }
                       </h5>
                       <button type="button" className="btn btn-link ms-auto d-inline d-lg-none" onClick={ props.onHide }>
@@ -55,7 +55,7 @@ const DashupUIPageConfig = (props = {}) => {
 
                     { struct && (
                       <div className="card-body flex-0 border-bottom">
-                        <i className={ `me-2 ${struct.icon}` } />
+                        <i className={ `me-2 ${struct.icon} fa-fw` } />
                         { struct.title }
                       </div>
                     ) }

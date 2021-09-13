@@ -1,13 +1,25 @@
 
 import React from 'react';
 import SimpleBar from 'simplebar-react';
-import { Dropdown } from 'react-bootstrap';
+import { Button, Overlay, Popover, Dropdown } from 'react-bootstrap';
+import { useState } from 'react';
 
 // let context
 let DashupUIContext = null;
 
 // create dashup grid body
 const DashupUIGridBody = (props = {}) => {
+  // use ref
+  const [show, setShow] = useState(null);
+  const [optItem, setItem] = useState(null);
+
+  // on show
+  const onShow = (e, item) => {
+    console.log('test', e, item);
+    // set item
+    setItem(show ? null : item);
+    setShow(show ? null : e.target);
+  };
 
   // return JSX
   return (
@@ -24,7 +36,7 @@ const DashupUIGridBody = (props = {}) => {
                 </div>
               </div>
             ) }
-            <SimpleBar className="grid-body p-relative">
+            <SimpleBar className="grid-body p-relative ox-hidden">
               { (items || []).map((item, i) => {
                 // return jsx
                 return (
@@ -62,39 +74,47 @@ const DashupUIGridBody = (props = {}) => {
                     <div className="grid-column grid-column-edit">
                       <div className="column-inner">
                         { canSubmit ? (
-                          
-                          <Dropdown className="column-body">
-                            <Dropdown.Toggle variant="outline-dark" size="sm">
-                              <i className="fa fa-ellipsis-h" />
-                            </Dropdown.Toggle>
+                          <div className="column-body">
+                            <Button size="sm" variant="outline-dark" onClick={ (e) => !e.preventDefault() && onShow(e, item) }>
+                              <i className="fa fa-fw fa-ellipsis-h" />
+                            </Button>
+                            { !!show && (optItem?.get('_id') === item.get('_id')) && (
+                              <Overlay
+                                show
+                                target={ show }
+                                onHide={ () => !setShow(null) && setItem(null) }
+                                container={ document?.body }
+                                placement="bottom-end"
+                                rootClose
+                              >
+                                <Popover className="dropdown-menu">
+                                  <Dropdown.Header>
+                                    Update Item
+                                  </Dropdown.Header>
+                                  
+                                  { actions.map((action, i) => {
+                                    // check action
+                                    if (action === 'divider') return <Dropdown.Divider key={ `action-${item.get('_id')}-${i}` } />;
 
-                            <Dropdown.Menu>
-                              <Dropdown.Header>
-                                Update Item
-                              </Dropdown.Header>
-                              
-                              { actions.map((action, i) => {
-                                // check action
-                                if (action === 'divider') return <Dropdown.Divider key={ `action-${item.get('_id')}-${i}` } />;
-
-                                // return item
-                                return (
-                                  <Dropdown.Item
-                                    key={ `action-${item.get('_id')}-${action.id}` }
-                                    href={ action.href ? action.href(item) : null }
-                                    onClick={ action.onClick ? () => action.onClick(item) : null }
-                                    className={ action.variant ? `text-${action.variant}` : '' }
-                                  >
-                                    { action.icon && (
-                                      <i className={ `fa-${action.icon} me-2` } />
-                                    ) }
-                                    { action.content }
-                                  </Dropdown.Item>
-                                );
-                              }) }
-
-                            </Dropdown.Menu>
-                          </Dropdown>
+                                    // return item
+                                    return (
+                                      <Dropdown.Item
+                                        key={ `action-${item.get('_id')}-${action.id}` }
+                                        href={ action.href ? action.href(item) : null }
+                                        onClick={ action.onClick ? () => action.onClick(item) : null }
+                                        className={ action.variant ? `text-${action.variant}` : '' }
+                                      >
+                                        { action.icon && (
+                                          <i className={ `fa-${action.icon} me-2` } />
+                                        ) }
+                                        { action.content }
+                                      </Dropdown.Item>
+                                    );
+                                  }) }
+                                </Popover>
+                              </Overlay>
+                            ) }
+                          </div>
                         ) : (
                           <div className="column-body">
                             <button className="btn btn-sm btn-outline-secondary" type="button">

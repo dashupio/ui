@@ -757,7 +757,7 @@ var DashupUIPageMenu = function DashupUIPageMenu() {
     }, /*#__PURE__*/React.createElement("div", {
       className: "flex-column flex-0 pr-2"
     }, /*#__PURE__*/React.createElement("button", {
-      className: "btn btn-lg btn-page me-2",
+      className: "btn btn-lg btn-page me-3",
       type: "button",
       style: {
         color: color !== null && color !== void 0 && color.drk ? '#fff' : color !== null && color !== void 0 && color.hex ? '#000' : null,
@@ -10592,7 +10592,7 @@ var DashupUIFormConfig = function DashupUIFormConfig() {
   }, /*#__PURE__*/React.createElement("h5", {
     className: "modal-title"
   }, /*#__PURE__*/React.createElement("i", {
-    className: "me-2 ".concat(struct.icon || 'fa fa-align-justify')
+    className: "me-2 ".concat(struct.icon || 'fa fa-align-justify', " fa-fw")
   }), field.label || field.name || "".concat(struct.title, " Field")), /*#__PURE__*/React.createElement("button", {
     type: "button",
     className: "btn btn-link ms-auto d-inline d-lg-none",
@@ -10602,7 +10602,7 @@ var DashupUIFormConfig = function DashupUIFormConfig() {
   }))), struct && /*#__PURE__*/React.createElement("div", {
     className: "card-body flex-0 border-bottom"
   }, /*#__PURE__*/React.createElement("i", {
-    className: "me-2 ".concat(struct.icon || 'fa fa-align-justify')
+    className: "me-2 ".concat(struct.icon || 'fa fa-align-justify', " fa-fw")
   }), struct.title, " Field"), /*#__PURE__*/React.createElement("div", {
     className: "card-body flex-0"
   }, /*#__PURE__*/React.createElement("div", {
@@ -12652,7 +12652,7 @@ var DashupUIPageConfig = function DashupUIPageConfig() {
     }, /*#__PURE__*/React.createElement("h5", {
       className: "modal-title"
     }, /*#__PURE__*/React.createElement("i", {
-      className: "me-2 fa-".concat(page.get('icon') || 'pencil fa')
+      className: "me-2 fa-fw fa-".concat(page.get('icon') || 'pencil fa')
     }), page.get('name') || page.get('_id')), /*#__PURE__*/React.createElement("button", {
       type: "button",
       className: "btn btn-link ms-auto d-inline d-lg-none",
@@ -12662,7 +12662,7 @@ var DashupUIPageConfig = function DashupUIPageConfig() {
     }))), struct && /*#__PURE__*/React.createElement("div", {
       className: "card-body flex-0 border-bottom"
     }, /*#__PURE__*/React.createElement("i", {
-      className: "me-2 ".concat(struct.icon)
+      className: "me-2 ".concat(struct.icon, " fa-fw")
     }), struct.title), props.children || /*#__PURE__*/React.createElement("div", {
       className: "card-body flex-0 border-bottom"
     }, /*#__PURE__*/React.createElement(Tabs, {
@@ -13262,7 +13262,27 @@ var DashupUIContext$6 = null; // create dashup grid body
 
 var DashupUIGridBody$1 = function DashupUIGridBody() {
   var props = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-  // return JSX
+
+  // use ref
+  var _useState = useState(null),
+      _useState2 = _slicedToArray(_useState, 2),
+      show = _useState2[0],
+      setShow = _useState2[1];
+
+  var _useState3 = useState(null),
+      _useState4 = _slicedToArray(_useState3, 2),
+      optItem = _useState4[0],
+      setItem = _useState4[1]; // on show
+
+
+  var onShow = function onShow(e, item) {
+    console.log('test', e, item); // set item
+
+    setItem(show ? null : item);
+    setShow(show ? null : e.target);
+  }; // return JSX
+
+
   return /*#__PURE__*/React.createElement(DashupUIContext$6.Consumer, null, function (_ref) {
     var _ref$actions = _ref.actions,
         actions = _ref$actions === void 0 ? [] : _ref$actions,
@@ -13288,8 +13308,10 @@ var DashupUIGridBody$1 = function DashupUIGridBody() {
     }, /*#__PURE__*/React.createElement("i", {
       className: "fa h1 fa-spinner fa-spin"
     }))), /*#__PURE__*/React.createElement(SimpleBar, {
-      className: "grid-body p-relative"
+      className: "grid-body p-relative ox-hidden"
     }, (items || []).map(function (item, i) {
+      var _document;
+
       // return jsx
       return /*#__PURE__*/React.createElement("div", {
         key: "grid-row-".concat(item.get('_id')),
@@ -13335,14 +13357,28 @@ var DashupUIGridBody$1 = function DashupUIGridBody() {
         className: "grid-column grid-column-edit"
       }, /*#__PURE__*/React.createElement("div", {
         className: "column-inner"
-      }, canSubmit ? /*#__PURE__*/React.createElement(Dropdown, {
+      }, canSubmit ? /*#__PURE__*/React.createElement("div", {
         className: "column-body"
-      }, /*#__PURE__*/React.createElement(Dropdown.Toggle, {
+      }, /*#__PURE__*/React.createElement(Button, {
+        size: "sm",
         variant: "outline-dark",
-        size: "sm"
+        onClick: function onClick(e) {
+          return !e.preventDefault() && onShow(e, item);
+        }
       }, /*#__PURE__*/React.createElement("i", {
-        className: "fa fa-ellipsis-h"
-      })), /*#__PURE__*/React.createElement(Dropdown.Menu, null, /*#__PURE__*/React.createElement(Dropdown.Header, null, "Update Item"), actions.map(function (action, i) {
+        className: "fa fa-fw fa-ellipsis-h"
+      })), !!show && (optItem === null || optItem === void 0 ? void 0 : optItem.get('_id')) === item.get('_id') && /*#__PURE__*/React.createElement(Overlay, {
+        show: true,
+        target: show,
+        onHide: function onHide() {
+          return !setShow(null) && setItem(null);
+        },
+        container: (_document = document) === null || _document === void 0 ? void 0 : _document.body,
+        placement: "bottom-end",
+        rootClose: true
+      }, /*#__PURE__*/React.createElement(Popover, {
+        className: "dropdown-menu"
+      }, /*#__PURE__*/React.createElement(Dropdown.Header, null, "Update Item"), actions.map(function (action, i) {
         // check action
         if (action === 'divider') return /*#__PURE__*/React.createElement(Dropdown.Divider, {
           key: "action-".concat(item.get('_id'), "-").concat(i)
@@ -13358,7 +13394,7 @@ var DashupUIGridBody$1 = function DashupUIGridBody() {
         }, action.icon && /*#__PURE__*/React.createElement("i", {
           className: "fa-".concat(action.icon, " me-2")
         }), action.content);
-      }))) : /*#__PURE__*/React.createElement("div", {
+      })))) : /*#__PURE__*/React.createElement("div", {
         className: "column-body"
       }, /*#__PURE__*/React.createElement("button", {
         className: "btn btn-sm btn-outline-secondary",

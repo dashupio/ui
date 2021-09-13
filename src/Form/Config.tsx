@@ -166,7 +166,7 @@ const DashupUIFormConfig = (props = {}) => {
             
             <div className="card-header py-3 border-bottom flex-0">
               <h5 className="modal-title">
-                <i className={ `me-2 ${struct.icon || 'fa fa-align-justify'}` } />
+                <i className={ `me-2 ${struct.icon || 'fa fa-align-justify'} fa-fw` } />
                 { field.label || field.name || `${struct.title} Field` }
               </h5>
               <button type="button" className="btn btn-link ms-auto d-inline d-lg-none" onClick={ props.onHide }>
@@ -176,7 +176,7 @@ const DashupUIFormConfig = (props = {}) => {
 
             { struct && (
               <div className="card-body flex-0 border-bottom">
-                <i className={ `me-2 ${struct.icon || 'fa fa-align-justify'}` } />
+                <i className={ `me-2 ${struct.icon || 'fa fa-align-justify'} fa-fw` } />
                 { struct.title } Field
               </div>
             ) }

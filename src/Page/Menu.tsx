@@ -57,7 +57,7 @@ const DashupUIPageMenu = (props = {}) => {
             <nav className="navbar navbar-section py-0 py-lg-3">
               <div className="w-100 w-lg-auto d-none d-lg-flex align-items-center">
                 <div className="flex-column flex-0 pr-2">
-                  <button className="btn btn-lg btn-page me-2" type="button" style={ {
+                  <button className="btn btn-lg btn-page me-3" type="button" style={ {
                     color      : color?.drk ? '#fff' : (color?.hex ? '#000' : null),
                     background : color?.hex || colors[color] || color,
                   } }>
