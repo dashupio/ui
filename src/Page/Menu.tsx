@@ -1,8 +1,7 @@
 
 // import dependencies
 import React from 'react';
-import colors from '../colors';
-import { OverlayTrigger, Tooltip } from 'react-bootstrap';
+import { colors, OverlayTrigger, Tooltip } from '../';
 
 // let context
 let DashupContext = null;

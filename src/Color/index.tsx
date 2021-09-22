@@ -2,7 +2,7 @@
 // import block
 import React from 'react';
 import { BlockPicker } from 'react-color';
-import { Overlay, Popover } from 'react-bootstrap';
+import { Overlay, Popover } from '../';
 
 // dashup ui color
 const DashupUIColor = (props = {}) => {

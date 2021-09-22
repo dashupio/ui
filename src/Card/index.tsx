@@ -1,10 +1,7 @@
 
 // import dependencies
-import Hbs from '../Hbs';
-import View from '@dashup/view';
-import colors from '../colors';
 import React, { useState, useEffect, useRef } from 'react';
-import { Overlay, Popover, OverlayTrigger, Tooltip, Dropdown } from 'react-bootstrap';
+import { Hbs, View, colors, Overlay, Popover, OverlayTrigger, Tooltip, Dropdown } from '../';
 
 // create menu component
 const DashupUICard = (props = {}) => {

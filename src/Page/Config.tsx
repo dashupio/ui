@@ -1,12 +1,9 @@
 
 
 // import dependencies
-import View from '@dashup/view';
-import Chat from '../Chat';
-import Page from '../Page';
 import moment from 'moment';
-import { Modal, Tabs, Tab } from 'react-bootstrap';
 import React, { useState, useEffect } from 'react';
+import { View, Chat, Page, Modal, Tabs, Tab } from '../';
 
 // let context
 let DashupContext = null;

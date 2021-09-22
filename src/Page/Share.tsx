@@ -1,10 +1,8 @@
 
 // import dependencies
 import copy from 'copy-to-clipboard';
-import View from '@dashup/view';
-import Select from '../Select';
-import { Modal, Button } from 'react-bootstrap';
 import React, { useState } from 'react';
+import { View, Modal, Button, Select } from '../';
 
 // let context
 let loading = false;

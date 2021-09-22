@@ -1,8 +1,8 @@
 
 import React from 'react';
 import SimpleBar from 'simplebar-react';
-import { Button, Overlay, Popover, Dropdown } from 'react-bootstrap';
 import { useState } from 'react';
+import { Button, Overlay, Popover, Dropdown } from '../index';
 
 // let context
 let DashupUIContext = null;
@@ -15,7 +15,6 @@ const DashupUIGridBody = (props = {}) => {
 
   // on show
   const onShow = (e, item) => {
-    console.log('test', e, item);
     // set item
     setItem(show ? null : item);
     setShow(show ? null : e.target);

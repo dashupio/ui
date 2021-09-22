@@ -1,6 +1,6 @@
 
 import moment from 'moment';
-import { Form } from 'react-bootstrap';
+import { Form } from '../';
 import React, { useState } from 'react';
 
 // ui date

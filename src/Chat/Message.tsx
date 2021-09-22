@@ -3,7 +3,7 @@ import React from 'react';
 import moment from 'moment';
 import markdown from 'simple-markdown';
 import defaultRules from './rules';
-import { OverlayTrigger, Tooltip } from 'react-bootstrap';
+import { OverlayTrigger, Tooltip } from '../';
 
 // import message
 import DashupUIChatEmbed from './Embed';

@@ -1,8 +1,7 @@
 
 import React from 'react';
-import Select from '../Select';
 import { BasicConfig } from 'react-awesome-query-builder';
-import { ButtonGroup, Button, Form } from 'react-bootstrap';
+import { ButtonGroup, Select, Button, Form } from '../';
 
 // type to color
 const typeToColor = {

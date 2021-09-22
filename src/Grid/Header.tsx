@@ -1,10 +1,9 @@
 
 // import react
-import View from '@dashup/view';
 import { v4 as uuid } from 'uuid';
 import { ReactSortable } from 'react-sortablejs';
 import React, { useRef, useState } from 'react';
-import { Popover, Overlay, Dropdown, Modal, Button, OverlayTrigger, Tooltip } from 'react-bootstrap';
+import { View, Popover, Overlay, Dropdown, Modal, Button, OverlayTrigger, Tooltip } from '../';
 
 // let context
 let DashupUIContext = null;

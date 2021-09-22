@@ -1,7 +1,7 @@
 
 // import dependencies
 import SimpleBar from 'simplebar-react';
-import { Offcanvas } from 'react-bootstrap';
+import { Offcanvas } from '../';
 import { ReactSortable } from 'react-sortablejs';
 import React, { useRef, useState, useEffect } from 'react';
 

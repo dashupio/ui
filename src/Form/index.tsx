@@ -1,8 +1,9 @@
 
 // import dependencies
 import clone from 'clone-deep';
+import { Form } from 'react-bootstrap';
 import { ReactSortable } from 'react-sortablejs';
-import { Modal, Button, Tooltip, OverlayTrigger } from 'react-bootstrap';
+import { Modal, Button, Tooltip, OverlayTrigger } from '../';
 import React, { useState, useEffect, createContext } from 'react';
 
 // import local modules
@@ -304,6 +305,11 @@ const DashupUIForm = (props = {}) => {
     </DashupUIContext.Provider>
   );
 };
+
+// export bootstrap form
+Object.keys(Form).forEach((key) => {
+  DashupUIForm[key] = Form[key];
+});
 
 // create field
 DashupUIForm.Menu = Menu(DashupUIContext);

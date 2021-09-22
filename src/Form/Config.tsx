@@ -1,13 +1,9 @@
 
 
 // import dependencies
-import View from '@dashup/view';
-import Chat from '../Chat';
-import Query from '../Query';
-import Color from '../Color';
 import moment from 'moment';
-import { Modal, Tabs, Tab } from 'react-bootstrap';
 import React, { useRef, useState, useEffect } from 'react';
+import { Chat, Query, Color, View, Modal, Tabs, Tab } from '../';
 
 // colors
 import colors from '../colors';

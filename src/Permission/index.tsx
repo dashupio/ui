@@ -1,8 +1,7 @@
 
 // react
 import React from 'react';
-import colors from '../colors';
-import { Button, OverlayTrigger, Tooltip } from 'react-bootstrap';
+import { colors, Button, OverlayTrigger, Tooltip } from '../';
 
 // dashup ui permission
 const DashupUIPermission = (props = {}) => {

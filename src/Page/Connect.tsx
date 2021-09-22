@@ -1,11 +1,9 @@
 
 
 // import dependencies
-import View from '@dashup/view';
-import Select from '../Select';
 import shortid from 'shortid';
 import React, { useEffect, useState } from 'react';
-import { Button, OverlayTrigger, Tooltip } from 'react-bootstrap';
+import { View, Select, Button, OverlayTrigger, Tooltip } from '../';
 
 // let context
 let DashupContext = null;

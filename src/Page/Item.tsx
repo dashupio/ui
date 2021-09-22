@@ -2,13 +2,10 @@
 
 // import dependencies
 import copy from 'copy-to-clipboard';
-import Chat from '../Chat';
-import Form from '../Form';
-import View from '@dashup/view';
 import moment from 'moment';
 import SimpleBar from 'simplebar-react';
 import React, { useState, useRef, useEffect } from 'react';
-import { Modal, Tooltip, Overlay, Popover, OverlayTrigger, Dropdown, Button } from 'react-bootstrap';
+import { Chat, Form, View, Modal, Tooltip, Overlay, Popover, OverlayTrigger, Dropdown, Button } from '../';
 import DashupUIPageAudit from './Audit';
 
 // let context

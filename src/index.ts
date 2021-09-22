@@ -14,7 +14,6 @@ import ReactSortable from 'react-sortablejs';
 import SimplebarReact from 'simplebar-react';
 import ReactSelectAsync from 'react-select/async';
 import HandlebarsHelpers from 'handlebars-helpers';
-import * as ReactBootstrap from 'react-bootstrap';
 
 // view
 import View from '@dashup/view';
@@ -28,7 +27,6 @@ View.setDefaults({
   '@dashup/ui'         : dashupUI,
   '@dashup/core'       : dashupCore,
   'react-select'       : ReactSelect,
-  'react-bootstrap'    : ReactBootstrap,
   'simplebar-react'    : SimplebarReact,
   'react-sortablejs'   : ReactSortable,
   'react-select/async' : ReactSelectAsync,
@@ -51,7 +49,10 @@ import colors from './colors';
 import Select from './Select';
 import Permission from './Permission';
 
-// export page
+// import bootstrap logic
+export * from 'react-bootstrap';
+
+// exporting
 export {
   Hbs,
   Page,

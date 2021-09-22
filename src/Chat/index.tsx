@@ -1,6 +1,6 @@
 
 // import dependencies
-import { Modal, Button } from 'react-bootstrap';
+import { Modal, Button } from '../';
 import React, { useState, useEffect, createContext } from 'react';
 
 // import local modules

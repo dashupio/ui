@@ -1,9 +1,7 @@
 
 // import dependencies
-import Query from '../Query';
-import colors from '../colors';
 import React, { useState } from 'react';
-import { Tooltip, OverlayTrigger, Dropdown, Button, DropdownButton } from 'react-bootstrap';
+import { Query, colors, Tooltip, OverlayTrigger, Dropdown, Button, DropdownButton } from '../';
 
 // let context
 let DashupContext = null;

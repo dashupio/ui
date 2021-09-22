@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { OverlayTrigger, Tooltip, Modal, Button } from 'react-bootstrap';
+import { OverlayTrigger, Tooltip, Modal, Button } from '../';
 
 // let context
 let DashupUIContext = null;

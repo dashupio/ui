@@ -1,6 +1,6 @@
 
 // import react
-import { Button } from 'react-bootstrap';
+import { Button } from '../';
 import React, { createContext, useState, useEffect } from 'react';
 
 // import local modules

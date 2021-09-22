@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { pagix } from 'pagix';
-import { Pagination } from 'react-bootstrap';
+import { Pagination } from '../';
 
 // let context
 let DashupUIContext = null;

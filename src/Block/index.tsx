@@ -1,8 +1,7 @@
 
 // import dependencies
-import View from '@dashup/view';
 import React from 'react';
-import { Tooltip, OverlayTrigger } from 'react-bootstrap';
+import { View, Tooltip, OverlayTrigger } from '../';
 
 // import local
 import Menu from './Menu';

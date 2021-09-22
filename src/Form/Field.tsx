@@ -1,10 +1,8 @@
 
-import Hbs from '../Hbs';
-import View from '@dashup/view';
 import Query from 'query';
 import dotProp from 'dot-prop';
-import { OverlayTrigger, Tooltip } from 'react-bootstrap';
 import React, { useState, useEffect } from 'react';
+import { Hbs, View, OverlayTrigger, Tooltip } from '../';
 
 // let context
 let DashupUIContext = null;

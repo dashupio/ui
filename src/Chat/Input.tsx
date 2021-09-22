@@ -2,7 +2,7 @@
 import uuid from 'shortid';
 import Prism from 'prismjs';
 import urlRegex from 'url-regex';
-import { Overlay, Popover, Dropdown } from 'react-bootstrap';
+import { Overlay, Popover, Dropdown } from '../';
 import { Slate, Editable, withReact, ReactEditor } from 'slate-react';
 import { Text, Editor, Transforms, Range, createEditor } from 'slate';
 import React, { useMemo, useState, useCallback, useEffect } from 'react';

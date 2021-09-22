@@ -3,8 +3,7 @@
 import React from 'react';
 import Select from 'react-select';
 import AsyncSelect from 'react-select/async';
-import { Dropdown } from 'react-bootstrap';
-import { OverlayTrigger, Tooltip } from 'react-bootstrap';
+import { OverlayTrigger, Dropdown, Tooltip } from '../';
 
 // create react component
 const DashupUISelect = (props = {}) => {

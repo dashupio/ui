@@ -67,7 +67,6 @@ export default async (e, fields, setFields, setSaving, setConfig, setMenu) => {
 
   // show config
   if (create) {
-    console.log('test', setMenu);
     if (setMenu) setMenu(false);
     setConfig(fields.find((f) => f.uuid === id));
   }
