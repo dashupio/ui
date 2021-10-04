@@ -2,7 +2,7 @@
 import Query from 'query';
 import dotProp from 'dot-prop';
 import React, { useState, useEffect } from 'react';
-import { Hbs, View, OverlayTrigger, Tooltip } from '../';
+import { Hbs, View, Box, ToolTip, Icon, IconButton, Button, Stack } from '../';
 
 // let context
 let DashupUIContext = null;
@@ -166,83 +166,65 @@ const DashupUIFormField = (props = {}) => {
         
   // return jsx
   return !struct ? null : (
-    <div className={ `dashup-field${isViewOnly(props.clean || {}) ? ' field-hidden' : ''}${props.updating ? ' field-updating' : ''}${props.field.col ? ' col' : ''}` } data-field={ props.field.uuid } data-type={ props.field.type } id={ `field-${props.field.uuid}${props.iKey ? `-${props.iKey}` : '' }` }>
+    <Box
+      sx={ {
+        width    : props.col ? 'auto' : '100%',
+        display  : isViewOnly(props.clean || {}) && !props.updating ? 'none' : 'block',
+        opacity  : isViewOnly(props.clean || {}) ? .5 : 1,
+        position : 'relative',
+
+        '&:hover .updating' : {
+          display : 'flex',
+        }
+      } }
+      data-field={ props.field.uuid }
+      data-type={ props.field.type }
+      id={ `field-${props.field.uuid}${props.iKey ? `-${props.iKey}` : '' }` }
+    >
       { props.updating && (
-        <div className="field-hover">
-          <div className="d-flex align-items-center">
-            <div className="me-2">
-              <div className="btn-group"> 
-                <button className="btn btn-sm btn-info" onClick={ (e) => props.onConfig(props.field) }>
-                  { struct.title } Field
-                </button>
-              </div>
-            </div>
-            <div className="ms-auto">
-              <div className="btn-group">
-                <OverlayTrigger
-                  overlay={
-                    <Tooltip>
-                      { props.field.col ? 'Expand Field' : 'Compress Field' }
-                    </Tooltip>
-                  }
-                  placement="top"
-                >
-                  <button className="btn btn-sm btn-primary" onClick={ (e) => onCompress(e) }>
-                    <i className={ `fa ${props.field.col ? 'fa-expand-wide' : 'fa-compress-wide'}` } />
-                  </button>
-                </OverlayTrigger>
-                <OverlayTrigger
-                  overlay={
-                    <Tooltip>
-                      { props.field.break ? 'Remove Break after' : 'Add Break after' }
-                    </Tooltip>
-                  }
-                  placement="top"
-                >
-                  <button className="btn btn-sm btn-primary" onClick={ (e) => onBreak(e) }>
-                    <i className={ `fa ${props.field.break ? 'fa-file' : 'fa-page-break'}` } />
-                  </button>
-                </OverlayTrigger>
-                <OverlayTrigger
-                  overlay={
-                    <Tooltip>
-                      Move Field
-                    </Tooltip>
-                  }
-                  placement="top"
-                >
-                  <span className="btn btn-sm btn-primary moves">
-                    <i className="fa fa-arrows-alt" />
-                  </span>
-                </OverlayTrigger>
-                <OverlayTrigger
-                  overlay={
-                    <Tooltip>
-                      Field Config
-                    </Tooltip>
-                  }
-                  placement="top"
-                >
-                  <button className="btn btn-sm btn-primary" onClick={ (e) => props.onConfig(props.field) }>
-                    <i className="fa fa-ellipsis-h" />
-                  </button>
-                </OverlayTrigger>
-                <OverlayTrigger
-                  overlay={
-                    <Tooltip>
-                      Remove Field
-                    </Tooltip>
-                  }
-                  placement="top"
-                >
-                  <button className="btn btn-sm btn-danger" onClick={ (e) => props.onRemove(props.field) }>
-                    <i className="fa fa-trash" />
-                  </button>
-                </OverlayTrigger>
-              </div>
-            </div>
-          </div>
-        </div>
+        <Box
+          sx={ {
+            width         : '100%',
+            bottom        : '100%',
+            display       : 'none',
+            position      : 'absolute',
+            alignItems    : 'center',
+            flexDirection : 'row'
+          } }
+          className="updating"
+        >
+          <Button size="small" variant="contained" color="primary">
+            { struct.title } Field
+          </Button>
+
+          <Stack direction="row" spacing={ 1 } sx={ { ml : 'auto', mr : 2 } }>
+            <ToolTip title={ props.field.col ? 'Expand Field' : 'Compress Field' }>
+              <IconButton size="small" onClick={ (e) => onCompress(e) } color="primary">
+                <i className={ `fa ${props.field.col ? 'fa-expand-wide' : 'fa-compress-wide'}` } />
+              </IconButton>
+            </ToolTip>
+            <ToolTip title={ props.field.break ? 'Remove Break after' : 'Add Break after' }>
+              <IconButton size="small" onClick={ (e) => onBreak(e) } color="primary">
+                <i className={ `fa ${props.field.break ? 'fa-file' : 'fa-page-break'}` } />
+              </IconButton>
+            </ToolTip>
+            <ToolTip title="Move Field">
+              <IconButton size="small" onClick={ (e) => onBreak(e) } color="primary" className="moves">
+                <i className="fa fa-arrows-alt" />
+              </IconButton>
+            </ToolTip>
+            <ToolTip title="Field Config">
+              <IconButton size="small" onClick={ (e) => props.onConfig(props.field) } color="primary">
+                <i className="fa fa-ellipsis-h" />
+              </IconButton>
+            </ToolTip>
+            <ToolTip title="Remove Field">
+              <IconButton size="small" onClick={ (e) => props.onRemove(props.field) } color="error">
+                <i className="fa fa-trash" />
+              </IconButton>
+            </ToolTip>
+          </Stack>
+        </Box>
       ) }
 
       { loading ? (
@@ -267,7 +249,7 @@ const DashupUIFormField = (props = {}) => {
           setPrevent={ props.setPrevent || props.setPrevent }
         />
       ) }
-    </div>
+    </Box>
   );
 };
 

@@ -3,8 +3,8 @@
 import clone from 'clone-deep';
 import { Form } from 'react-bootstrap';
 import { ReactSortable } from 'react-sortablejs';
-import { Modal, Button, Tooltip, OverlayTrigger } from '../';
 import React, { useState, useEffect, createContext } from 'react';
+import { Box, Fab, Button, ToolTip, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions } from '../';
 
 // import local modules
 import Menu from './Menu';
@@ -183,27 +183,21 @@ const DashupUIForm = (props = {}) => {
   };
 
   // remove jsx
-  const removeJsx = remove && (
-    <Modal show onHide={ (e) => setRemove(null) }>
-      <Modal.Header closeButton>
-        <Modal.Title>
-          Removing <b>{ remove.label }</b>
-        </Modal.Title>
-      </Modal.Header>
-      <Modal.Body>
-        <p className="lead m-0">
-          Are you sure you want to remove <b>{ remove.label || remove.name }</b>?
-        </p>
-      </Modal.Body>
-      <Modal.Footer>
-        <Button variant="secondary" onClick={ (e) => !setRemove(null) && e.preventDefault() }>
-          Close
-        </Button>
-        <Button variant="danger" className="ms-auto" onClick={ (e) => onRemove(remove) }>
-          Confirm
-        </Button>
-      </Modal.Footer>
-    </Modal>
+  const removeJsx = (
+    <Dialog open={ !!remove } onClose={ () => setRemove(false) }>
+      <DialogTitle>
+        Removing <b>{ remove?.label }</b>
+      </DialogTitle>
+      <DialogContent>
+        <DialogContentText>
+          Are you sure you want to remove <b>{ remove?.label || remove?.name }</b>?
+        </DialogContentText>
+      </DialogContent>
+      <DialogActions>
+        <Button onClick={ () => setRemove(false) }>Cancel</Button>
+        <Button variant="contained" color="error" onClick={ (e) => onRemove(remove) }>Confirm</Button>
+      </DialogActions>
+    </Dialog>
   );
 
   // check wrapper
@@ -224,7 +218,7 @@ const DashupUIForm = (props = {}) => {
           getField={ props.getField }
           getFields={ props.getFields }
           />
-        { field.break && <div className="w-100" /> }
+        { field.break && <Box sx={ { width : '100%' } } /> }
       </React.Fragment>
     );
   });
@@ -253,18 +247,17 @@ const DashupUIForm = (props = {}) => {
   return (
     <DashupUIContext.Provider value={ ctx }>
       { props.adds !== false && props.updating && (
-        <OverlayTrigger
-          overlay={
-            <Tooltip>
-              Add Field
-            </Tooltip>
-          }
-          placement="top"
-        >
-          <span className="eden-add eden-add-top" onClick={ (e) => setMenu(true) }>
+        <ToolTip title="Add Field">
+          <Fab onClick={ (e) => setMenu(true) } color="primary" sx={ {
+            top : 0,
+            left : '50%',
+            zIndex : 10,
+            position : 'absolute',
+            transform : 'translateX(-50%) translateY(-50%)',
+          } }>
             <i className="fa fa-plus" />
-          </span>
-        </OverlayTrigger>
+          </Fab>
+        </ToolTip>
       ) }
       
       { !props.action ? formJsx : (
@@ -289,18 +282,17 @@ const DashupUIForm = (props = {}) => {
       { removeJsx }
 
       { props.adds !== false && props.updating && (
-        <OverlayTrigger
-          overlay={
-            <Tooltip>
-              Add Field
-            </Tooltip>
-          }
-          placement="top"
-        >
-          <span className="eden-add eden-add-bottom" onClick={ (e) => setMenu(true) }>
+        <ToolTip title="Add Field">
+          <Fab onClick={ (e) => setMenu(true) } color="primary" sx={ {
+            left : '50%',
+            bottom : 0,
+            zIndex : 10,
+            position : 'absolute',
+            transform : 'translateX(-50%) translateY(50%)',
+          } }>
             <i className="fa fa-plus" />
-          </span>
-        </OverlayTrigger>
+          </Fab>
+        </ToolTip>
       ) }
     </DashupUIContext.Provider>
   );

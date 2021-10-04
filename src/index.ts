@@ -45,12 +45,41 @@ import Color from './Color';
 import Chart from './Chart';
 import Block from './Block';
 import Query from './Query';
+import Avatar from './Avatar';
 import colors from './colors';
 import Select from './Select';
 import Permission from './Permission';
+import AdapterMoment from '@mui/lab/AdapterMoment';
 
 // import bootstrap logic
 export * from 'react-bootstrap';
+export {
+  Box,
+  Fab,
+  Icon,
+  Stack,
+  Paper,
+  Button,
+  Tooltip as ToolTip,
+  MenuItem,
+  Container,
+  Typography,
+  IconButton,
+
+  createTheme,
+  ThemeProvider,
+  
+  TextField,
+  InputAdornment,
+
+  Dialog,
+  DialogTitle,
+  DialogActions,
+  DialogContent,
+  DialogContentText
+} from '@mui/material';
+export { styled } from '@mui/material/styles';
+export { LocalizationProvider, TimePicker, DatePicker, DateTimePicker, LoadingButton } from '@mui/lab';
 
 // exporting
 export {
@@ -66,8 +95,11 @@ export {
   Chart,
   Block,
   Query,
+  Avatar,
   Select,
   Permission,
+
+  AdapterMoment,
 
   colors,
 };
