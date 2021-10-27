@@ -87,7 +87,7 @@ const DashupUIGridBulk = (props = {}) => {
                   <Button variant="primary" onClick={ (e) => !setRemove(null) && e.preventDefault() }>
                     Close
                   </Button>
-                  <Button variant="danger" className="ms-2" disabled={ saving } onClick={ (e) => onRemoveBulk() }>
+                  <Button variant="danger" className="ms-2" disabled={ saving } onClick={ (e) => !setRemove(null) && onRemoveBulk() }>
                     { saving ? 'Removing...' : 'Confirm' }
                   </Button>
                 </Modal.Footer>
