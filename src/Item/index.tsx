@@ -162,8 +162,8 @@ const DashupUIItem = (props = {}) => {
   return (!props.item || props.item.get('archived')) ? null : (
     <Card className="DuiItemCard" variant={ props.variant } sx={ {
       color           : props.color && theme.palette.getContrastText(dotProp.get(theme.palette, props.color)),
-      borderColor     : !props.variant && getColor()?.backgroundColor,
-      borderLeftWidth : getColor()?.backgroundColor && !props.variant ? 3 : undefined,
+      borderColor     : !props.variant && (getColor() || {}).backgroundColor,
+      borderLeftWidth : (getColor() || {}).backgroundColor && !props.variant ? 3 : undefined,
       borderLeftStyle : 'solid',
       backgroundColor : props.color,
     } }>
