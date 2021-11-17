@@ -161,10 +161,16 @@ const DashupUIQueryRule = (props = {}) => {
       backgroundColor : 'rgba(0, 0, 0, 0)',
     } }>
       <CardContent>
-        <Stack direction="row" spacing={ 1 }>
-          <IconButton>
-            <Icon type="fas" icon="bars" />
-          </IconButton>
+        <Stack direction="row" spacing={ 1 } sx={ {
+          width      : '100%',
+          flexWrap   : 'wrap',
+          alignItems : 'center',
+        } }>
+          <Box>
+            <IconButton>
+              <Icon type="fas" icon="bars" />
+            </IconButton>
+          </Box>
           { parts.map((p, i) => {
             // get part field
             const prev  = i > 0 && props.fields[parts[i - 1]];
@@ -177,8 +183,10 @@ const DashupUIQueryRule = (props = {}) => {
             return (
               <TextField
                 sx={ sx }
+                key={ `field-${field?.uuid || i}` }
                 label="Select Field"
                 value={ field?.name || field?.uuid || '' }
+                margin="none"
                 select
                 onChange={ (e) => onPart(i, e.target.value) }
               >
@@ -203,6 +211,7 @@ const DashupUIQueryRule = (props = {}) => {
             <TextField
               sx={ sx }
               label="Select Field"
+              margin="none"
               value={ field?.name || field?.uuid || '' }
               select
               onChange={ (e) => {
@@ -240,15 +249,16 @@ const DashupUIQueryRule = (props = {}) => {
             <TextField
               sx={ sx }
               label="Select Sub Field"
-              value={ getSub()?.name || getSub()?.uuid }
+              value={ getSub()?.key }
+              margin="none"
               select
               onChange={ (e) => onPart(parts.length - (getSub() && (getSub().key === parts[parts.length - 1]) ? 1 : 0), e.target.value) }
             >
               { getBottom().subs.map((field) => {
                 // return jsx
                 return (
-                  <MenuItem key={ field.uuid } value={ field.name || field.uuid }>
-                    { field.label || field.uuid }
+                  <MenuItem key={ field.key } value={ field.key }>
+                    { field.label || field.key }
                   </MenuItem>
                 );
               }) }
@@ -259,6 +269,7 @@ const DashupUIQueryRule = (props = {}) => {
               sx={ sx }
               label="Select Operator"
               value={ op }
+              margin="none"
               select
               onChange={ (e) => onOp(e.target.value) }
             >
@@ -278,9 +289,10 @@ const DashupUIQueryRule = (props = {}) => {
           { !!(op && getBottom()) && (
             <Box sx={ sx }>
               <View
+                page={ props.page }
                 view="input"
                 type="field"
-                page={ props.page }
+                margin="none"
                 dashup={ props.dashup }
                 struct={ op === '$exists' ? 'boolean' : (getSub()?.type || getBottom()?.type) }
                 noLabel
@@ -298,9 +310,11 @@ const DashupUIQueryRule = (props = {}) => {
               />
             </Box>
           ) }
-          <IconButton color="error" onClick={ (e) => props.onRemove() }>
-            <Icon type="fas" icon="trash" />
-          </IconButton>
+          <Box ml="auto">
+            <IconButton color="error" onClick={ (e) => props.onRemove() }>
+              <Icon type="fas" icon="trash" />
+            </IconButton>
+          </Box>
         </Stack>
       </CardContent>
       <Box />

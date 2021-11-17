@@ -69,6 +69,7 @@ const DashupUIQueryGroup = (props = {}) => {
           size="small"
           value={ props.operator || '' }
           label="Operator"
+          margin="none"
           select
           onChange={ (e) => setOperator(e.target.value) }
         >

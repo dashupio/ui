@@ -142,7 +142,7 @@ const DashupUIFormMenu = (props = {}) => {
                             <Box />
                           </Card>
                         );
-                      }) }
+                      }).filter((i) => i) }
                     </ReactSortable>
                   </SimpleBar>
                 </Box>

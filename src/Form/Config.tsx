@@ -222,36 +222,32 @@ const DashupUIFormConfig = (props = {}) => {
                 } }>
                   { `${t}`.toLowerCase() === 'display' && (
                     <>
-                      <div className="mb-3">
-                        <label className="form-label">
-                          Input only When
-                        </label>
+                      <Box mb={ 2 }>
                         <Query
                           isString
 
                           page={ props.page }
+                          label="Read Only When"
                           query={ field.readOnly }
                           dashup={ props.dashup }
                           fields={ props.fields }
                           onChange={ (val) => setField(field, 'readOnly', val) }
                           getFieldStruct={ props.getFieldStruct }
-                          />
-                      </div>
-                      <div className="mb-3">
-                        <label className="form-label">
-                          Display only When
-                        </label>
+                        />
+                      </Box>
+                      <Box mb={ 2 }>
                         <Query
                           isString
 
                           page={ props.page }
+                          label="Display only When"
                           query={ field.viewOnly }
                           dashup={ props.dashup }
                           fields={ props.fields }
                           onChange={ (val) => setField(field, 'viewOnly', val) }
                           getFieldStruct={ props.getFieldStruct }
-                          />
-                      </div>
+                        />
+                      </Box>
                     </> 
                   ) }
                   <View
@@ -267,7 +263,7 @@ const DashupUIFormConfig = (props = {}) => {
                     <>
                       { !!struct?.data?.multiple && (
                         <FormGroup>
-                          <FormControlLabel control={ <Switch defaultChecked={ !!field.multiple } onChange={ (e) => setField(field, 'multiple', e.target.checked, true) } /> } label="Allow Multiple" />
+                          <FormControlLabel control={ <Switch checked={ !!field.multiple } onChange={ (e) => setField(field, 'multiple', e.target.checked, true) } /> } label="Allow Multiple" />
                         </FormGroup>
                       ) }
                       { !!struct?.data?.default && !loading && (

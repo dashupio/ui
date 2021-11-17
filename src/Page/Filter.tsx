@@ -243,16 +243,17 @@ const DashupUIPageFilter = (props = {}) => {
             </Box>
 
             { !!filter && !!props.onFilter && (
-              <Box>
+              <Box mb={ 2 }>
                 <Query
                   page={ page }
+                  label="Filter"
                   query={ props.query || page.get('user.query') }
                   dashup={ dashup }
                   fields={ fields }
                   onChange={ props.onFilter }
                   isString={ props.isString }
                   getFieldStruct={ getFieldStruct }
-                  />
+                />
               </Box>
             ) }
           </>

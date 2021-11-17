@@ -113,7 +113,7 @@ const DashupUIBlockMenu = (props = {}) => {
                     <Box />
                   </Card>
                 );
-              }) }
+              }).filter((i) => i) }
             </SimpleBar>
           </Box>
         </Box>

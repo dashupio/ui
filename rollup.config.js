@@ -51,5 +51,5 @@ export default {
     }),
   ],
   
-  external : ['react-select/async', ...Object.keys(pkg.peerDependencies || {})],
+  external : [...Object.keys(pkg.peerDependencies || {})],
 };
