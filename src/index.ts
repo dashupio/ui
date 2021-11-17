@@ -11,7 +11,6 @@ import dashupCore from '@dashup/core';
 import * as dashupUI from '@dashup/ui';
 import ReactSortable from 'react-sortablejs';
 import SimplebarReact from 'simplebar-react';
-import ReactSelectAsync from 'react-select/async';
 import HandlebarsHelpers from 'handlebars-helpers';
 
 // view
@@ -27,7 +26,6 @@ View.setDefaults({
   '@dashup/core'       : dashupCore,
   'simplebar-react'    : SimplebarReact,
   'react-sortablejs'   : ReactSortable,
-  'react-select/async' : ReactSelectAsync,
   'handlebars-helpers' : HandlebarsHelpers,
 });
 

@@ -50,6 +50,6 @@ export default {
       targets : ['dist/*'],
     }),
   ],
-  
+
   external : [...Object.keys(pkg.peerDependencies || {})],
 };
