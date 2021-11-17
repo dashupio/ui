@@ -1,7 +1,8 @@
 
 // import dependencies
+import { Menu } from '@mui/material';
 import React, { useState } from 'react';
-import { Query, colors, Tooltip, OverlayTrigger, Dropdown, Button, DropdownButton } from '../';
+import { Box, Chip, Stack, Icon, MenuItem, Divider, TextField, InputAdornment, IconButton, Query, Tooltip, ListItemIcon, ListItemText } from '../';
 
 // let context
 let DashupContext = null;
@@ -26,6 +27,8 @@ const debounce = (func, timeout = 1000) => {
 const DashupUIPageFilter = (props = {}) => {
   // state
   const [filter, setFilter] = useState(false);
+  const [tagMenu, setTagMenu] = useState(null);
+  const [sortMenu, setSortMenu] = useState(null);
 
   // has user
   const hasTags = (page) => {
@@ -55,6 +58,7 @@ const DashupUIPageFilter = (props = {}) => {
   return (
     <DashupContext.Consumer>
       { ({ page, dashup, setUser, getFields, getFieldStruct }) => {
+
         // get fields
         const fields = (props.getFields || getFields)();
 
@@ -67,209 +71,179 @@ const DashupUIPageFilter = (props = {}) => {
         // return jsx
         return (
           <>
-            <div className="page-filter d-flex flex-wrap flex-0 mx--1 expand-lg mb-lg-3 justify-content-end">
+            <Box sx={ {
+              width      : '100%',
+              display    : 'flex',
+              alignItems : 'center',
+            } } mb={ 2 }>
 
               { !!props.onSearch && (
-                <div className="col-12 col-lg-3 mx-lg-1 mb-3 mb-lg-0">
-                  <div className="input-group input-group-search flex-1">
-                    <input
-                      onChange={ (e) => debounce(props.onSearch, 500)(e.target.value) }
-                      className="form-control border-white"
-                      defaultValue={ page.get('data.search') || '' }
-                      />
-                    <span className="input-group-text text-body bg-white border-white">
-                      <i className="fa fa-search" />
-                    </span>
-                  </div>
-                </div>
-              ) }
-              
-              <div className="d-none d-lg-flex col flex-1" />
-
-              { !!hasUser(page) && eden?.user?.exists() && (
-                <div className="flex-column mx-1 mb-2 mb-lg-0">
-                  <OverlayTrigger
-                    overlay={
-                      <Tooltip>
-                        { page.get('user.filter.me') ? 'Show All' : 'Show Mine' }
-                      </Tooltip>
-                    }
-                    placement="top"
-                  >
-                    <div className="btn-group"  data-toggle="tooltip" title="Filter by Mine">
-                      <button className={ `btn ms-lg-1 btn-${page.get('user.filter.me') ? 'primary' : 'light'}` } onClick={ (e) => setUser('filter.me', !page.get('user.filter.me')) }>
-                        <i className={ `fa fa-fw fa-${page.get('user.filter.me') ? 'user' : 'users'} me-2`} />
-                        { page.get('user.filter.me') ? 'My Items' : 'All Items' }
-                      </button>
-                    </div>
-                  </OverlayTrigger>
-                </div>
+                <TextField
+                  label="Search"
+                  onChange={ (e) => debounce(props.onSearch, 500)(e.target.value) }
+                  defaultValue={ page.get('data.search') || '' }
+                  InputProps={ {
+                    startAdornment : (
+                      <InputAdornment position="start">
+                        <Icon type="fas" icon="search" fixedWidth />
+                      </InputAdornment>
+                    ),
+                  } }
+                />
               ) }
 
-              { !!props.onSort && (
-                <div className="flex-row mx-1 mb-2 mb-lg-0">
-                  <OverlayTrigger
-                    overlay={
-                      <Tooltip>
-                        { page.get('data.sort') ? `Sorted ${page.get('data.sort.way') === 1 ? 'ascending' : 'descending'}` : 'Sort By' }
-                      </Tooltip>
-                    }
-                    placement="top"
-                  >
-                    <DropdownButton className="d-inline-block" variant={ page.get('data.sort') ? 'primary' : 'light' } title={ (
-                      <i className={ `fa fa-fw fa-${page.get('data.sort') ? (
-                        page.get('data.sort.way') === 1 ? 'sort-up' : 'sort-down'
-                      ) : 'sort'}` } />
-                    ) }>
-                      <Dropdown.Header>
-                        Sort By
-                      </Dropdown.Header>
+              <Stack direction="row" spacing={ 1 } ml="auto" alignItems="center">
+
+                { !!hasUser(page) && eden?.user?.exists() && (
+                  <Tooltip title={ page.get('user.filter.me') ? 'Show All' : 'Show Mine' }>
+                    <IconButton color={ page.get('user.filter.me') ? 'primary' : undefined } onClick={ (e) => setUser('filter.me', !page.get('user.filter.me')) }>
+                      <Icon type="fas" icon="user" fixedWidth />
+                    </IconButton>
+                  </Tooltip>
+                ) }
+                    
+                { !!sortField && (
+                  <Tooltip title={ `${sortField.label || sortField.name}: ${page.get('data.sort.way') === 1 ? 'Asc' : 'Desc'}` }>
+                    <Chip
+                      icon={ page.get('data.sort.way') === -1 ? (
+                        <Icon type="fas" icon="sort-up" fixedWidth />
+                      ) : page.get('data.sort.way') === 1 ? (
+                        <Icon type="fas" icon="sort-down" fixedWidth />
+                      ) : null }
+                      label={ sortField.label || sortField.name }
+                      onClick={ (e) => props.onSort({ field : sortField.uuid }) }
+                      onDelete={ (e) => props.onSort({}) }
+                    />
+                  </Tooltip>
+                ) }
+
+                { !!props.onSort && (
+                  <>
+                    <Tooltip title="Sort View">
+                      <IconButton color={ page.get('user.filter.me') ? 'primary' : undefined } onClick={ (e) => setSortMenu(e.target) }>
+                        { page.get('data.sort.way') === -1 ? (
+                          <Icon type="fas" icon="sort-up" fixedWidth />
+                        ) : page.get('data.sort.way') === 1 ? (
+                          <Icon type="fas" icon="sort-down" fixedWidth />
+                        ) : (
+                          <Icon type="fas" icon="sort" fixedWidth />
+                        ) }
+                      </IconButton>
+                    </Tooltip>
+                    <Menu
+                      open={ !!sortMenu }
+                      onClose={ () => setSortMenu(null) }
+                      anchorEl={ sortMenu }
+                    >
                       { fields.map((field, i) => {
                         // return jsx
                         return (
-                          <Dropdown.Item
+                          <MenuItem
                             key={ `sort-${field.uuid}` }
-                            onClick={ () => props.onSort({ field : field.uuid }) }
+                            onClick={ () => !setSortMenu(null) && props.onSort({ field : field.uuid }) }
                           >
-                            { field.label }
-                          </Dropdown.Item>
+                            <ListItemIcon>
+                              <Icon type="fas" icon={ getFieldStruct(field.type)?.icon } fixedWidth />
+                            </ListItemIcon>
+                            <ListItemText>{ field.label }</ListItemText>
+                          </MenuItem>
                         );
                       }) }
-                      <Dropdown.Divider />
-                      <Dropdown.Item
+                      <Divider />
+                      <MenuItem
                         key={ `sort-created` }
-                        onClick={ () => props.onSort({ field : 'custom', sort : 'created_at' }) }
+                        onClick={ () => !setSortMenu(null) && props.onSort({ field : 'created_at' }) }
                       >
                         Created At
-                      </Dropdown.Item>
-                      <Dropdown.Item
+                      </MenuItem>
+                      <MenuItem
                         key={ `sort-updated` }
-                        onClick={ () => props.onSort({ field : 'custom', sort : 'updated_at' }) }
+                        onClick={ () => !setSortMenu(null) && props.onSort({ field : 'updated_at' }) }
                       >
                         Updated at
-                      </Dropdown.Item>
-                    </DropdownButton>
-                  </OverlayTrigger>
+                      </MenuItem>
+                    </Menu>
+                  </>
+                ) }
+                    
+                { (page.get('user.filter.tags') || []).map((tag, i) => {
+                  // get field
+                  const field = tags.find((f) => f.uuid === tag?.field);
 
-                  { !!page.get('data.sort.sort') && (
-                    <Button variant="secondary ms-1" onClick={ (e) => props.onSort(page.get('data.sort')) }>
-                      { page.get('data.sort.sort') === 'created_at' ? 'Created At' : '' }
-                      { page.get('data.sort.sort') === 'updated_at' ? 'Updated At' : '' }
-                      { page.get('data.sort.sort') !== 'created_at' && page.get('data.sort.sort') !== 'updated_at' ? page.get('data.sort.sort') : '' }
-                    </Button>
-                  ) }
+                  // check field
+                  if (!field) return null;
 
-                  { !!sortField && !!page.get('data.sort') && !page.get('data.sort.sort') && (
-                    <Button variant="secondary ms-1" onClick={ (e) => props.onSort(page.get('data.sort')) }>
-                      { sortField.label }
-                    </Button>
-                  ) }
-                </div>
-              ) }
+                  // get option
+                  const option = (field.options || []).find((opt) => opt.value === tag?.value) || {};
 
-              { !!props.onTag && hasTags(page) && (
-                <div className="flex-row mx-1 mb-2 mb-lg-0">
-                  <OverlayTrigger
-                    overlay={
-                      <Tooltip>
-                        Filter by Tag
-                      </Tooltip>
-                    }
-                    placement="top"
-                  >
-                    <DropdownButton className="d-inline-block" variant={ (page.get('user.filter.tags') || []).length ? 'primary' : 'light' } title={ (
-                      <i className={ `fa fa-fw fa-tag` } />
-                    ) }>
-                      <Dropdown.Header>
-                        Filter by Tag
-                      </Dropdown.Header>
-                      { tags.map((tag, i) => {
-                        // return jsx
-                        return (
-                          <React.Fragment key={ `tag-${tag.uuid}` }>
-                            { i !== 0 && <Dropdown.Divider /> }
-                            { (tag.options || []).map((option, i) => {
-                              // return jsx
-                              return (
-                                <Dropdown.Item
-                                  key={ `tag-${tag.uuid}-${option.value}` }
-                                  onClick={ () => props.onTag(tag, option) }
-                                >
-                                  { option.color && (
-                                    <span className="badge me-2" style={ {
-                                      background : colors[option.color] || option.color?.hex || option.color,
-                                    } }>
-                                      &nbsp;
-                                    </span>
-                                  ) }
-                                  { option.label }
-                                </Dropdown.Item>
-                              );
-                            }) }
-                          </React.Fragment>
-                        );
-                      }) }
-                    </DropdownButton>
-                  </OverlayTrigger>
-                  
-                  { (page.get('user.filter.tags') || []).map((tag, i) => {
-                    // get field
-                    const field = tags.find((f) => f.uuid === tag?.field);
+                  // jsx
+                  return (
+                    <Tooltip key={ `filter-${tag?.field}-${tag?.value}`} title={ `${field.label || field.name}: ${option.label || tag?.value}` }>
+                      <Chip
+                        sx={ {
+                          color       : option.color?.hex && theme.palette.getContrastText(option.color?.hex),
+                          borderColor : option.color?.hex,
+                        } }
+                        icon={ <Icon type="fas" icon="tag" fixedWidth /> }
+                        label={ option.label || tag?.value }
+                        onDelete={ (e) => props.onTag(field, option || tag) }
+                      />
+                    </Tooltip>
+                  );
+                }) }
 
-                    // check field
-                    if (!field) return null;
+                { !!props.onTag && hasTags(page) && (
+                  <>
+                    <Tooltip title="Filter by Tag">
+                      <IconButton color={ page.get('user.filter.me') ? 'primary' : undefined } onClick={ (e) => setTagMenu(e.target) }>
+                        <Icon type="fas" icon="tag" fixedWidth />
+                      </IconButton>
+                    </Tooltip>
+                    <Menu
+                      open={ !!tagMenu }
+                      onClose={ () => setTagMenu(null) }
+                      anchorEl={ tagMenu }
+                    >
+                      { tags.reduce((accum, tag, i) => {
+                        // arr
+                        const arr = [];
 
-                    // get option
-                    const option = (field.options || []).find((opt) => opt.value === tag?.value) || {};
+                        // push
+                        if (i !== 0) arr.push(<Divider key={ `div-${tag.uuid}` } />);
 
-                    // jsx
-                    return (
-                      <OverlayTrigger
-                        key={ `filter-${tag?.field}-${tag?.value}`}
-                        overlay={
-                          <Tooltip>
-                            { field.label || field.name }: { option.label || tag?.value }
-                          </Tooltip>
-                        }
-                        placement="top"
-                      >
-                        <Button
-                          style={ {
-                            color       : option.color?.hex && option.color?.drk ? '#fff' : '#000',
-                            background  : colors[option.color] || option.color?.hex || option.color,
-                            borderColor : colors[option.color] || option.color?.hex || option.color,
-                          } }
-                          variant=""
-                          onClick={ (e) => props.onTag(field, option || tag) }
-                          className="ms-1"
-                        >
-                          { option.label || tag?.value }
-                        </Button>
-                      </OverlayTrigger>
-                    );
-                  }) }
-                </div>
-              ) }
+                        // push
+                        arr.push(...(tag.options || []).map((option, i) => {
+                          // return jsx
+                          return (
+                            <MenuItem
+                              key={ `tag-${tag.uuid}-${option.value}` }
+                              onClick={ () => !setTagMenu(null) && props.onTag(tag, option) }
+                            >
+                              { option.label }
+                            </MenuItem>
+                          );
+                        }));
 
-              { !!props.onFilter && (
-                <div className="flex-row mx-1 mb-2 mb-lg-0" onClick={ (e) => setFilter(!filter) }>
-                  <OverlayTrigger
-                    overlay={
-                      <Tooltip>
-                        { filter ? 'Close Filter' : 'Filter View' }
-                      </Tooltip>
-                    }
-                    placement="top"
-                  >
-                    <Button variant={ (page.get('user.query') ? page.get('user.query') : '[]').length > 2 || filter ? 'primary' : 'light' }>
-                      <i className={ `fa fa-fw fa-${filter ? 'times' : 'filter'}` } />
-                    </Button>
-                  </OverlayTrigger>
-                </div>
-              ) }
-            </div>
+                        // push
+                        accum.push(...arr);
+                        return accum;
+                      }, []) }
+                    </Menu>
+                  </>
+                ) }
+
+                { !!props.onFilter && (
+                  <Tooltip title="Filter View">
+                    <IconButton color={ (page.get('user.query') ? page.get('user.query') : '[]').length > 2 || filter ? 'primary' : undefined } onClick={ (e) => setFilter(!filter) }>
+                      <Icon type="fas" icon="filter" fixedWidth />
+                    </IconButton>
+                  </Tooltip>
+                ) }
+              </Stack>
+            </Box>
+
             { !!filter && !!props.onFilter && (
-              <div className="flex-0">
+              <Box>
                 <Query
                   page={ page }
                   query={ props.query || page.get('user.query') }
@@ -279,7 +253,7 @@ const DashupUIPageFilter = (props = {}) => {
                   isString={ props.isString }
                   getFieldStruct={ getFieldStruct }
                   />
-              </div>
+              </Box>
             ) }
           </>
         );

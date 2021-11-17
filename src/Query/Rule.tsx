@@ -1,8 +1,8 @@
 
 // import dependencies
 import View from '@dashup/view';
-import Select from '../Select';
 import React, { useState } from 'react';
+import { Box, Card, Stack, CardContent, ListItemIcon, ListItemText, MenuItem, TextField, Icon, IconButton } from '..';
 
 // create menu component
 const DashupUIQueryRule = (props = {}) => {
@@ -149,66 +149,68 @@ const DashupUIQueryRule = (props = {}) => {
     return field.operators || [];
   };
 
+  // width
+  const sx = {
+    maxWidth : '25%',
+    minWidth : '25%',
+  };
+
   // return jsx
   return (
-    <div className="card card-sm border-secondary mt-2">
-      <div className="card-body p-2 d-flex align-items-center">
-        <button className="btn btn-white me-2">
-          <i className="fa fa-fw fa-bars" />
-        </button>
+    <Card variant="outlined" sx={ {
+      backgroundColor : 'rgba(0, 0, 0, 0)',
+    } }>
+      <CardContent>
+        <Stack direction="row" spacing={ 1 }>
+          <IconButton>
+            <Icon type="fas" icon="bars" />
+          </IconButton>
+          { parts.map((p, i) => {
+            // get part field
+            const prev  = i > 0 && props.fields[parts[i - 1]];
+            const field = props.fields[p];
 
-        { parts.map((p, i) => {
-          // get part field
-          const prev  = i > 0 && props.fields[parts[i - 1]];
-          const field = props.fields[p];
+            // check field
+            if (!field && i > 0) return null;
 
-          // check field
-          if (!field && i > 0) return null;
-
-          // return jsx
-          return (
-            <div key={ `part-${i}` } className="d-inline-block me-2 select-inline">
-              <Select
-                value={ field ? {
-                  value : field.name || field.uuid,
-                  label : field.label,
-                } : null }
-                options={ Object.values(props.fields || {}).filter((f) => {
+            // return jsx
+            return (
+              <TextField
+                sx={ sx }
+                label="Select Field"
+                value={ field?.name || field?.uuid || '' }
+                select
+                onChange={ (e) => onPart(i, e.target.value) }
+              >
+                { Object.values(props.fields || {}).filter((f) => {
                   // check prev
                   if (prev) return f.parent === prev.uuid;
       
                   // root only
                   return (f.parent || 'root') === 'root';
                 }).map((field) => {
-                  // return value
-                  return {
-                    icon  : field.icon,
-                    label : field.label,
-                    value : field.name || field.uuid,
-                  };
+                  // return jsx
+                  return (
+                    <MenuItem key={ field.uuid } value={ field.name || field.uuid }>
+                      { field.label || field.uuid }
+                    </MenuItem>
+                  );
                 }) }
-                onChange={ (val) => onPart(i, val?.value) }
-                placeholder="Select Field"
-              />
-            </div>
-          );
-        }) }
+              </TextField>
+            );
+          }) }
+          { hasChildren() && (
+            <TextField
+              sx={ sx }
+              label="Select Field"
+              value={ field?.name || field?.uuid || '' }
+              select
+              onChange={ (e) => {
+                // get value
+                const val = e.target.value;
 
-        { hasChildren() && (
-          <div className="d-inline-block me-2 select-inline">
-            <Select
-              value={ null }
-              options={ getChildren(getBottom()).map((field) => {
-                // return value
-                return {
-                  icon  : field.icon,
-                  label : field.label,
-                  value : field.name || field.uuid,
-                };
-              }) }
-              onChange={ (val) => {
                 // check value
-                const field = props.fields[val?.value];
+                const field = props.fields[val];
 
                 // field
                 if (!field) return;
@@ -218,86 +220,91 @@ const DashupUIQueryRule = (props = {}) => {
 
                 // on part
                 if (defaultSub) {
-                  onPart(parts.length + 1, val?.value, defaultSub.key);
+                  onPart(parts.length + 1, val, defaultSub.key);
                 } else {
-                  onPart(parts.length, val?.value);
+                  onPart(parts.length, val);
                 }
               } }
-              placeholder="Select Field"
-            />
-          </div>
-        ) }
-
-        { hasSubs() && (
-          <div className="d-inline-block me-2 select-inline">
-            <Select
-              value={ getSub() }
-              options={ getBottom().subs.map((sub) => {
-                // return value
-                return {
-                  icon  : sub.icon,
-                  label : sub.label,
-                  value : sub.key,
-                };
+            >
+              { getChildren(getBottom()).map((field) => {
+                // return jsx
+                return (
+                  <MenuItem key={ field.uuid } value={ field.name || field.uuid }>
+                    { field.label || field.uuid }
+                  </MenuItem>
+                );
               }) }
-              onChange={ (val) => onPart(parts.length - (getSub() && (getSub().key === parts[parts.length - 1]) ? 1 : 0), val?.value) }
-              placeholder="Select Sub Field"
-            />
-          </div>
-        ) }
-
-        { !!getOps().length && (
-          <div className="d-inline-block me-2 select-inline">
-            <Select
-              value={ op ? {
-                value : op,
-                label : props.operators[op]?.title,
-              } : null }
-              options={ Object.keys(props.operators || {}).map((key, i) => {
+            </TextField>
+          ) }
+          { hasSubs() && (
+            <TextField
+              sx={ sx }
+              label="Select Sub Field"
+              value={ getSub()?.name || getSub()?.uuid }
+              select
+              onChange={ (e) => onPart(parts.length - (getSub() && (getSub().key === parts[parts.length - 1]) ? 1 : 0), e.target.value) }
+            >
+              { getBottom().subs.map((field) => {
+                // return jsx
+                return (
+                  <MenuItem key={ field.uuid } value={ field.name || field.uuid }>
+                    { field.label || field.uuid }
+                  </MenuItem>
+                );
+              }) }
+            </TextField>
+          ) }
+          { !!getOps().length && (
+            <TextField
+              sx={ sx }
+              label="Select Operator"
+              value={ op }
+              select
+              onChange={ (e) => onOp(e.target.value) }
+            >
+              { Object.keys(props.operators || {}).map((key, i) => {
                 // check null
-                if (!getOps().includes(key)) return;
+                if (!getOps().includes(key)) return null;
 
                 // return value
-                return {
-                  label : props.operators[key].title,
-                  value : key,
-                };
-              }).filter((o) => o) }
-              onChange={ (val) => onOp(val?.value) }
-              placeholder="Select Operator"
-            />
-          </div>
-        ) }
+                return (
+                  <MenuItem key={ key } value={ key }>
+                    { props.operators[key].title }
+                  </MenuItem>
+                );
+              }) }
+            </TextField>
+          ) }
+          { !!(op && getBottom()) && (
+            <Box sx={ sx }>
+              <View
+                view="input"
+                type="field"
+                page={ props.page }
+                dashup={ props.dashup }
+                struct={ op === '$exists' ? 'boolean' : (getSub()?.type || getBottom()?.type) }
+                noLabel
 
-        { !!(op && getBottom()) && (
-          <div className="d-inline-block me-2 select-inline mw-25">
-            <View
-              view="input"
-              type="field"
-              page={ props.page }
-              dashup={ props.dashup }
-              struct={ op === '$exists' ? 'boolean' : (getSub()?.type || getBottom()?.type) }
-              noLabel
+                field={ {
+                  ...(getBottom()),
+                  ...(getSub() || {}),
 
-              field={ {
-                ...(getBottom()),
-                ...(getSub() || {}),
+                  label    : getSub()?.label || getBottom()?.label,
+                  multiple : ['$in', '$nin'].includes(op),
+                } }
+                value={ ((props.value || {})[key] || {})[op] }
 
-                label    : getSub()?.label || getBottom()?.label,
-                multiple : ['$in', '$nin'].includes(op),
-              } }
-              value={ ((props.value || {})[key] || {})[op] }
-
-              onChange={ (f, val) => onValue(val) }
-            />
-          </div>
-        ) }
-        
-        <button className="btn btn-danger ms-auto" onClick={ (e) => !props.onRemove() && e.preventDefault() }>
-          <i className="fa fa-fw fa-trash" />
-        </button>
-      </div>
-    </div>
+                onChange={ (f, val) => onValue(val) }
+              />
+            </Box>
+          ) }
+          <IconButton color="error" onClick={ (e) => props.onRemove() }>
+            <Icon type="fas" icon="trash" />
+          </IconButton>
+        </Stack>
+      </CardContent>
+      <Box />
+    </Card>
   );
 };
 

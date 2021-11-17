@@ -1,9 +1,9 @@
 
 
 // import dependencies
-import moment from 'moment';
+import { TabContext, TabList, TabPanel } from '@mui/lab';
 import React, { useRef, useState, useEffect } from 'react';
-import { Chat, Query, Color, View, Modal, Tabs, Tab } from '../';
+import { Modal, Icon, Query, Color, View, Box, Tab, FormGroup, FormControlLabel, Switch, Stack, Button, TextField } from '../';
 
 // colors
 import colors from '../colors';
@@ -153,204 +153,152 @@ const DashupUIFormConfig = (props = {}) => {
   // tabs
   const tabs = struct?.data?.tabs || ['config'];
 
-  // return JSX
-  return !!field && !!struct && (
-    <Modal size="xl" show={ props.show } onHide={ props.onHide } enforceFocus={ false } autoFocus={ false }>
-      <Modal.Body className="card bg-light p-0">
-        <div className="row g-0">
-          <div className="col-lg-8 bg-white d-flex flex-column has-shadow">
-            
-            <div className="card-header py-3 border-bottom flex-0">
-              <h5 className="modal-title">
-                <i className={ `me-2 ${struct.icon || 'fa fa-align-justify'} fa-fw` } />
-                { field.label || field.name || `${struct.title} Field` }
-              </h5>
-              <button type="button" className="btn btn-link ms-auto d-inline d-lg-none" onClick={ props.onHide }>
-                <i className="fa fa-times" />
-              </button>
-            </div>
+  // return modal
+  return !!(field && struct) && (
+    <>
+      <Modal
+        show={ props.show }
+        icon={ struct.icon || 'fa fa-align-justify' }
+        title={ `${struct.title} Block` }
+        dashup={ props.dashup }
+        thread={ field.uuid }
+        onClose={ props.onClose || props.onHide }
+      >
+        <Box pt={ 4 } pb={ 2 }>
+          <Stack spacing={ 2 }>
+            <Stack direction="row" spacing={ 2 }>
+              <Button ref={ colorRef } variant="contained" onClick={ () => setColor(true) } sx={ {
+                color           : field.color?.hex && theme.palette.getContrastText(field.color?.hex),
+                backgroundColor : field.color?.hex,
+              } }>
+                <Icon type="fas" icon="tint" />
+              </Button>
+              <TextField
+                ref={ labelRef }
+                value={ field.label || '' }
+                label="Label"
+                onChange={ (e) => onLabel(e) }
+                fullWidth
+              />
+              <TextField
+                value={ field.name || '' }
+                label="Name"
+                onChange={ (e) => setField(field, 'name', toName(e.target.value), true) }
+                fullWidth
+              />
+            </Stack>
 
-            { struct && (
-              <div className="card-body flex-0 border-bottom">
-                <i className={ `me-2 ${struct.icon || 'fa fa-align-justify'} fa-fw` } />
-                { struct.title } Field
-              </div>
-            ) }
+            <TextField
+              value={ field.placeholder || '' }
+              label="Placeholder"
+              fullWidth
+              onChange={ (e) => setField(field, 'placeholder', e.target.value, true) }
+            />
 
-            <div className="card-body flex-0">
-              <div className="d-flex mb-3">
-                { !!struct.data?.color && (
-                  <div className="flex-0 me-2">
-                    <label className="form-label">
-                      Color
-                    </label>
-                    <button ref={ colorRef } type="button" className="btn px-3" onClick={ () => setColor(true) } style={ {
-                      background : colors[field.color] || field.color?.hex,
-                    } }>
-                      &nbsp;
-                    </button>
-                  </div>
-                ) }
-                <div className="flex-1 me-2">
-                  <label className="form-label">
-                    Label
-                  </label>
-                  <input className="form-control" ref={ labelRef } value={ field.label || '' } onChange={ (e) => onLabel(e) } />
-                </div>
-                <div className="flex-1 ms-2">
-                  <label className="form-label">
-                    Name
-                  </label>
-                  <input className="form-control" value={ field.name || '' } onChange={ (e) => setField(field, 'name', toName(e.target.value), true) } />
-                </div>
-              </div>
-
-              <div className="mb-3">
-                <label className="form-label">
-                  Placeholder
-                </label>
-                <input className="form-control" value={ field.placeholder || '' } onChange={ (e) => setField(field, 'placeholder', e.target.value, true) } />
-              </div>
-
-              <div>
-                <label className="form-label">
-                  Help Text
-                </label>
-                <input className="form-control" value={ field.help || '' } onChange={ (e) => setField(field, 'help', e.target.value, true) } />
-              </div>
-
-            </div>
-            
-            <div className="card-body flex-0 border-bottom">
-              <Tabs
-                id="page-config"
-                onSelect={ (k) => setTab(k) }
-                activeKey={ `${tab}`.toLowerCase() }
-              >
-                { tabs.map((tab, i) => {
+            <TextField
+              value={ field.help || '' }
+              label="Help Text"
+              fullWidth
+              onChange={ (e) => setField(field, 'help', e.target.value, true) }
+            />
+          </Stack>
+        </Box>
+        <Box flex={ 1 }>
+          <TabContext value={ tab }>
+            <Box sx={ { borderBottom : 1, borderColor : 'divider' } }>
+              <TabList onChange={ (e, v) => setTab(v.toLowerCase()) }>
+                { tabs.map((t, i) => {
                   // return jsx
-                  return (
-                    <Tab key={ `page-config-${tab}`.toLowerCase() } eventKey={ `${tab}`.toLowerCase() } title={ `${tab.charAt(0).toUpperCase()}${tab.slice(1)}` } className="pt-4">
-                      { `${tab}`.toLowerCase() === 'config' && (
-                        <>
-                          { !!struct?.data?.multiple && (
-                            <div className={ struct?.data?.default ? 'mb-3' : '' }>
-                              <label className="form-label">
-                                Allow Multiple
-                              </label>
-                              <select className="form-control" value={ field.multiple ? 'true' : 'false' } onChange={ (e) => setField(field, 'multiple', e.target.value === 'true', true) }>
-                                <option value="true">Yes</option>
-                                <option value="false">No</option>
-                              </select>
-                            </div>
-                          ) }
-            
-                          { !!struct?.data?.default && !loading && (
-                            <View
-                              { ...{
-                                ...props,
-            
-                                type  : 'field',
-                                view  : 'input',
-                                field : {
-                                  ...field,
-            
-                                  label : 'Default Value',
-                                },
-                                value  : defaultValue,
-                                struct : field?.type,
-            
-                                onChange : (field, val) => onDefault(val),
-                              } }
-                            />
-                          ) }
-                        </>
-                      ) }
-                      { `${tab}`.toLowerCase() === 'display' && (
-                        <>
-                          <div className="mb-3">
-                            <label className="form-label">
-                              Input only When
-                            </label>
-                            <Query
-                              isString
-
-                              page={ props.page }
-                              query={ field.readOnly }
-                              dashup={ props.dashup }
-                              fields={ props.fields }
-                              onChange={ (val) => setField(field, 'readOnly', val) }
-                              getFieldStruct={ props.getFieldStruct }
-                              />
-                          </div>
-                          <div className="mb-3">
-                            <label className="form-label">
-                              Display only When
-                            </label>
-                            <Query
-                              isString
-
-                              page={ props.page }
-                              query={ field.viewOnly }
-                              dashup={ props.dashup }
-                              fields={ props.fields }
-                              onChange={ (val) => setField(field, 'viewOnly', val) }
-                              getFieldStruct={ props.getFieldStruct }
-                              />
-                          </div>
-                        </> 
-                      ) }
-                      <View
-                        { ...{
-                          ...props,
-
-                          type   : 'field',
-                          view   : `${tab}`.toLowerCase(),
-                          struct : field?.type,
-                        } }
-                      />
-                    </Tab>
-                  );
+                  return <Tab key={ `tab-${t}` } value={ t.toLowerCase() } label={ t } />;
                 }) }
-              </Tabs>
-            </div>
+              </TabList>
+            </Box>
+            { tabs.map((t, i) => {
+              // return jsx
+              return (
+                <TabPanel key={ `tab-${t}` } value={ t.toLowerCase() } sx={ {
+                  paddingLeft  : 0,
+                  paddingRight : 0,
+                } }>
+                  { `${t}`.toLowerCase() === 'display' && (
+                    <>
+                      <div className="mb-3">
+                        <label className="form-label">
+                          Input only When
+                        </label>
+                        <Query
+                          isString
 
-          </div>
-          <div className="col-lg-4 d-flex flex-column">
-            <div className="card-header bg-transparent d-flex">
-              <div className="d-inline-block me-auto">
-                <small className="d-block">
-                  Created At
-                </small>
-                <div>
-                  { moment(field._meta?.created || new Date()).format('Do MMM, h:mma') }
-                </div>
-              </div>
-              <button type="button" className="btn btn-link ms-auto" onClick={ props.onHide }>
-                <i className="fa fa-times" />
-              </button>
-            </div>
-            
-            <div className="card-body flex-1" />
-            
-            <div className="card-footer chat-sm bg-transparent d-flex flex-column border-top border-secondary h-75 py-3">
-              <Chat size="sm" dashup={ props.dashup } page={ props.page } thread={ `${props.page.get('_id')}.${field.uuid}` }>
-                <div className="d-flex flex-column flex-1">
-                  <div className="flex-1 fit-content">
-                    <Chat.Thread />
-                  </div>
-                  <div className="flex-0">
-                    <Chat.Input />
-                  </div>
-                </div>
-              </Chat>
-            </div>
-          </div>
-        </div>
-      </Modal.Body>
+                          page={ props.page }
+                          query={ field.readOnly }
+                          dashup={ props.dashup }
+                          fields={ props.fields }
+                          onChange={ (val) => setField(field, 'readOnly', val) }
+                          getFieldStruct={ props.getFieldStruct }
+                          />
+                      </div>
+                      <div className="mb-3">
+                        <label className="form-label">
+                          Display only When
+                        </label>
+                        <Query
+                          isString
 
-      { !!color && <Color target={ colorRef } show color={ colors[field.color] || field.color?.hex || 'transparent' } colors={ Object.values(colors) } onHide={ () => setColor(false) } onChange={ (hex) => setField(field, 'color', hex.hex === 'transparent' ? null : hex) } /> }
-    </Modal>
+                          page={ props.page }
+                          query={ field.viewOnly }
+                          dashup={ props.dashup }
+                          fields={ props.fields }
+                          onChange={ (val) => setField(field, 'viewOnly', val) }
+                          getFieldStruct={ props.getFieldStruct }
+                          />
+                      </div>
+                    </> 
+                  ) }
+                  <View
+                    { ...{
+                      ...props,
+
+                      type   : 'field',
+                      view   : `${t}`.toLowerCase(),
+                      struct : field?.type,
+                    } }
+                  />
+                  { `${t}`.toLowerCase() === 'config' && (
+                    <>
+                      { !!struct?.data?.multiple && (
+                        <FormGroup>
+                          <FormControlLabel control={ <Switch defaultChecked={ !!field.multiple } onChange={ (e) => setField(field, 'multiple', e.target.checked, true) } /> } label="Allow Multiple" />
+                        </FormGroup>
+                      ) }
+                      { !!struct?.data?.default && !loading && (
+                        <View
+                          { ...{
+                            ...props,
+        
+                            type  : 'field',
+                            view  : 'input',
+                            field : {
+                              ...field,
+        
+                              label : 'Default Value',
+                            },
+                            value  : defaultValue,
+                            struct : field?.type,
+        
+                            onChange : (field, val) => onDefault(val),
+                          } }
+                        />
+                      ) }
+                    </>
+                  ) }
+                </TabPanel>
+              );
+            }) }
+          </TabContext>
+        </Box>
+      </Modal>
+      { !!color && <Color target={ colorRef } show color={ field.color?.hex } colors={ Object.values(colors) } onClose={ () => setColor(false) } onChange={ (hex) => setField(field, 'color', hex.hex === 'transparent' ? null : hex) } /> }
+    </>
   );
 };
 

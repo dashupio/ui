@@ -8,7 +8,6 @@ import prettyMs from 'pretty-ms';
 import reactDOM from 'react-dom';
 import handlebars from 'handlebars';
 import dashupCore from '@dashup/core';
-import ReactSelect from 'react-select';
 import * as dashupUI from '@dashup/ui';
 import ReactSortable from 'react-sortablejs';
 import SimplebarReact from 'simplebar-react';
@@ -26,7 +25,6 @@ View.setDefaults({
   'react-dom'          : reactDOM,
   '@dashup/ui'         : dashupUI,
   '@dashup/core'       : dashupCore,
-  'react-select'       : ReactSelect,
   'simplebar-react'    : SimplebarReact,
   'react-sortablejs'   : ReactSortable,
   'react-select/async' : ReactSelectAsync,
@@ -35,68 +33,55 @@ View.setDefaults({
 
 // create library
 import Hbs from './Hbs';
-import Date from './Date';
 import Page from './Page';
-import Grid from './Grid';
-import Card from './Card';
+import Icon from './Icon';
 import Chat from './Chat';
 import Form from './Form';
+import Item from './Item';
+import Modal from './Modal';
 import Color from './Color';
 import Chart from './Chart';
 import Block from './Block';
 import Query from './Query';
 import Avatar from './Avatar';
 import colors from './colors';
-import Select from './Select';
+import IconPicker from './IconPicker';
 import Permission from './Permission';
 import AdapterMoment from '@mui/lab/AdapterMoment';
 
-// import bootstrap logic
-export * from 'react-bootstrap';
-export {
-  Box,
-  Fab,
-  Icon,
-  Stack,
-  Paper,
-  Button,
-  Tooltip as ToolTip,
-  MenuItem,
-  Container,
-  Typography,
-  IconButton,
+// export all mui logic
+export * from '@mui/material';
 
-  createTheme,
-  ThemeProvider,
-  
-  TextField,
-  InputAdornment,
+// license
+import { LicenseInfo } from '@mui/x-data-grid-pro';
 
-  Dialog,
-  DialogTitle,
-  DialogActions,
-  DialogContent,
-  DialogContentText
-} from '@mui/material';
-export { styled } from '@mui/material/styles';
-export { LocalizationProvider, TimePicker, DatePicker, DateTimePicker, LoadingButton } from '@mui/lab';
+// do license
+LicenseInfo.setLicenseKey(
+  '85d894fd9df3d68884c23e17ff9072d0T1JERVI6MzEwMjAsRVhQSVJZPTE2NjU5ODY1OTYwMDAsS0VZVkVSU0lPTj0x',
+);
+
+// export mui extra
+export { withStyles } from '@mui/styles';
+export { alpha, styled, useTheme } from '@mui/material/styles';
+export { DataGridPro as DataGrid, GridActionsCellItem } from '@mui/x-data-grid-pro';
+export { TabList, TabPanel, TabContext, LocalizationProvider, TimePicker, DatePicker, DateTimePicker, LoadingButton } from '@mui/lab';
 
 // exporting
 export {
   Hbs,
   Page,
+  Icon,
+  Item,
   View,
   Chat,
-  Grid,
-  Card,
   Form,
-  Date,
+  Modal,
   Color,
   Chart,
   Block,
   Query,
   Avatar,
-  Select,
+  IconPicker,
   Permission,
 
   AdapterMoment,

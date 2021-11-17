@@ -1,26 +1,10 @@
 
 // import dependencies
 import React from 'react';
-import { Fab, styled, Stack, ToolTip, Box, colors, Typography, Avatar, IconButton } from '../';
+import { Fab, Icon, styled, Stack, Tooltip, Box, Typography, Avatar, IconButton, AvatarGroup } from '../';
 
 // let context
 let DashupContext = null;
-
-// global timer
-let timer;
-
-// global debounce
-const debounce = (func, timeout = 1000) => {
-
-  // return debounced
-  return (...args) => {
-    // clear timeout previously
-    clearTimeout(timer);
-
-    // create new timeout
-    timer = setTimeout(() => func(...args), timeout);
-  };
-}
 
 // create menu component
 const DashupUIPageMenu = (props = {}) => {
@@ -28,22 +12,27 @@ const DashupUIPageMenu = (props = {}) => {
   // get active
   const getActive = (page, dashup) => {
     // return actives
-    return [...(dashup.get('active') || [])].filter((a) => a.page === page.get('_id'));
+    return [...(dashup.get('active') || [])].filter((a) => a.page === page?.get('_id'));
   };
 
   // return JSX
   return (
     <DashupContext.Consumer>
-      { ({ page, dashup, color, icon, title, setPage }) => {
+      { ({ page, dashup, color, icon, title }) => {
 
         // page fab
-        const PageFab = styled(Fab)(({ theme }) => ({
-          color           : theme.palette.getContrastText(color?.hex || colors[color] || color || theme.pallette.text),
-          backgroundColor : color?.hex || colors[color] || color || 'transparent',
-          '&:hover': {
-            backgroundColor : color?.hex || colors[color] || color || theme.pallette.primary,
-          },
-        }));
+        const PageFab = styled(Fab)(({ theme }) => {
+          // return theme
+          return {   
+            color           : theme.palette.getContrastText(color?.hex || theme.palette.background.default),
+            boxShadow       : 'none',
+            backgroundColor : color?.hex || theme.palette.background.default,
+
+            '&:hover' : {
+              backgroundColor : color?.hex || theme.palette.background.default,
+            }
+          };
+        });
 
         // return styled
         return (
@@ -56,39 +45,46 @@ const DashupUIPageMenu = (props = {}) => {
             flexDirection : 'row',
           } }>
             <PageFab size="medium">
-              <i className={ `fa-${icon}` } />
+              <Icon icon={ page?.get('icon') || icon } fixedWidth />
             </PageFab>
             <Typography variant="h4" component="h1" sx={ { ml : 2 } }>
               { title }
             </Typography>
             <Box sx={ { ml : 'auto' } }>
               <Stack direction="row" spacing={ 1 } sx={ { alignItems : 'center' } }>
-                { props.presence && !!getActive(page, dashup).length && (
-                  getActive(page, dashup).map((active, i) => {
-                    // return jsx
-                    return (
-                      <ToolTip key={ `active-${active.id}` } title={ active.name }>
-                        <Box>
-                          <Avatar name={ active.name } image={ active.avatar } sx={ { width : 24, height : 24 } } />
-                        </Box>
-                      </ToolTip>
-                    )
-                  })
-                ) }
+
+                <AvatarGroup max={ 4 } mr={ 1 }>
+                  { props.presence && !!getActive(page, dashup).length && (
+                    getActive(page, dashup).map((active, i) => {
+                      // return jsx
+                      return (
+                        <Tooltip title={ active.name } key={ `active-${active.id || active._id}` }>
+                          <Box>
+                            <Avatar name={ active.name } image={ active.avatar } sx={ {
+                              width  : 30,
+                              height : 30,
+                            } } />
+                          </Box>
+                        </Tooltip>
+                      )
+                    })
+                  ) }
+                </AvatarGroup>
+                
                 { props.children }
                 { props.onShare && page && dashup.can(page, 'manage') && (
-                  <ToolTip title="Share Page">
+                  <Tooltip title="Share Page">
                     <IconButton onClick={ (e) => props.onShare(e) }>
-                      <i className="fa fa-fw fa-share text-base" />
+                      <Icon type="fas" icon="share-alt" fixedWidth />
                     </IconButton>
-                  </ToolTip>
+                  </Tooltip>
                 ) }
                 { props.onConfig && page && dashup.can(page, 'manage') && (
-                  <ToolTip title="Page Settings">
+                  <Tooltip title="Page Settings">
                     <IconButton onClick={ (e) => props.onConfig(e) }>
-                      <i className="fa fa-fw fa-ellipsis-h text-base" />
+                      <Icon type="fas" icon="ellipsis-h" fixedWidth />
                     </IconButton>
-                  </ToolTip>
+                  </Tooltip>
                 ) }
               </Stack>
             </Box>

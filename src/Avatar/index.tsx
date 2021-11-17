@@ -7,8 +7,8 @@ import { Avatar } from '@mui/material';
 // avatar
 const DashupAvatar = (props = {}) => {
   // get image thumb
-  const name = props.name;
-  const thumb = dotProp.get(props, 'image.thumbs.2x-sq.url') || dotProp.get(props, 'image.0.thumbs.2x-sq.url');
+  const name = props.name || '';
+  const thumb = !props.image ? props.src : dotProp.get(props, 'image.thumbs.2x-sq.url') || dotProp.get(props, 'image.0.thumbs.2x-sq.url');
 
   // string to color
   const stringToColor = (string) => {
@@ -35,20 +35,38 @@ const DashupAvatar = (props = {}) => {
   const stringAvatar = () => {
     // return
     return {
-      sx : {
-        ...props.sx,
-
-        bgcolor : stringToColor(name),
-      },
-      children : `${name.split(' ')[0][0]}${name.split(' ')[1][0]}`,
+      children : ((name || '').length ? `${(name.split(' ')[0] || [])[0] || ''}${(name.split(' ')[1] || [])[0] || ''}`.toUpperCase() : null),
     };
   };
 
+  // color
+  const color = props.bgColor || !!(name || '').length && stringToColor(name);
+
+  // get sx
+  const sx = {
+    color           : color && theme.palette?.getContrastText(dotProp.get(theme.palette, color) || color),
+    backgroundColor : color,
+
+    ...props.sx,
+  };
+  const goodProps = {
+    ...props,
+  };
+
+  // delete bgColor
+  delete goodProps.bgColor;
+
+  // check children
+  if (props.children) {
+    // return original
+    return <Avatar { ...goodProps } sx={ sx } />;
+  }
+
   // return value
   return thumb ? (
-    <Avatar { ...props } alt={ name } src={ thumb } />
+    <Avatar { ...goodProps } sx={ sx } alt={ name } src={ thumb } />
   ) : (
-    <Avatar { ...props } { ...stringAvatar() } />
+    <Avatar { ...goodProps } sx={ sx } { ...stringAvatar() } />
   );
 };
 

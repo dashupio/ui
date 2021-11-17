@@ -1,32 +1,34 @@
 
 import React from 'react';
 import { BasicConfig } from 'react-awesome-query-builder';
-import { ButtonGroup, Select, Button, Form } from '../';
+import { ButtonGroup, TextField, Icon, MenuItem, Button, IconButton, Slider } from '../';
 
 // type to color
 const typeToColor = {
   addRule  : 'success',
-  delRule  : 'danger',
+  delRule  : 'error',
   addGroup : 'success',
-  delGroup : 'danger',
+  delGroup : 'error',
 };
 
 // create select field
 const SelectField = (props) => {
   // return jsx
   return (
-    <div className="d-inline-block select-inline">
-      <Select { ...props }
-        options={ (props.items || []).map((opt) => {
-          return {
-            field : opt,
-            value : opt.path,
-            label : opt.label,
-          }
-        }) }
-        onChange={ (val) => props.setField(val.value) }
-      />
-    </div>
+    <TextField
+      { ...props }
+      size="small"
+      onChange={ (e) => props.setField(e.target.value) }
+    >
+      { (props.items || []).map((opt) => {
+        // return jsx
+        return (
+          <MenuItem key={ opt.path } value={ opt.path }>
+            { opt.label }
+          </MenuItem>
+        );
+      }) }
+    </TextField>
   );
 };
 
@@ -42,11 +44,12 @@ const settings = {
   // buttons
   renderButton : (props) => {
     // return jsx
-    return (
-      <Button { ...props } size="sm" variant={ typeToColor[props.type] }>
-        { props.type.includes('del') && (
-          <i className="fa fa-times" />
-        ) }
+    return props.type.includes('del') ? (
+      <IconButton size="small">
+        <Icon type="fas" icon="times" />
+      </IconButton>
+    ) : (
+      <Button { ...props } size="small" color={ typeToColor[props.type] } variant="contained">
         { props.label }
       </Button>
     );
@@ -96,9 +99,12 @@ const widgets = {
 
       // return control
       return (
-        <div className="d-inline-block select-inline">
-          <Form.Control type="text" label={ label } value={ value || 0 } onChange={ (e) => setValue(e.target.value) } />
-        </div>
+        <TextField
+          size="small"
+          label={ label }
+          value={ value }
+          onChange={ (e) => setValue(e.target.value) }
+        />
       );
     },
   },
@@ -110,9 +116,13 @@ const widgets = {
 
       // return control
       return (
-        <div className="d-inline-block select-inline">
-          <Form.Control type="number" label={ label } value={ value || 0 } onChange={ (e) => setValue(parseFloat(e.target.value)) } />
-        </div>
+        <TextField
+          size="small"
+          type="number"
+          label={ label }
+          value={ value || 0 }
+          onChange={ (e) => setValue(parseFloat(e.target.value)) }
+        />
       );
     },
   },
@@ -124,28 +134,21 @@ const widgets = {
       
       // return value
       return (
-        <div className="d-inline-block select-inline">
-          <Select { ...props }
-            options={ (listValues || []).map((opt) => {
-              return {
-                field : opt,
-                value : opt.value,
-                label : opt.title,
-              };
-            }) }
-            value={ (listValues || []).filter((opt) => {
-              // found
-              return (value || []).includes(opt.value);
-            }).map((opt) => {
-              return {
-                field : opt,
-                value : opt.value,
-                label : opt.title,
-              };
-            })[0] }
-            onChange={ (val) => setValue(val.value) }
-          />
-        </div>
+        <TextField
+          { ...props }
+          size="small"
+          value={ value }
+          onChange={ (e) => setValue(e.target.value) }
+        >
+          { (listValues || []).map((opt) => {
+            // return jsx
+            return (
+              <MenuItem key={ opt.value } value={ opt.value }>
+                { opt.title }
+              </MenuItem>
+            );
+          }) }
+        </TextField>
       );
     },
   },
@@ -157,29 +160,24 @@ const widgets = {
       
       // return value
       return (
-        <div className="d-inline-block select-inline">
-          <Select { ...props }
-            options={ (listValues || []).map((opt) => {
-              return {
-                field : opt,
-                value : opt.value,
-                label : opt.title,
-              }
-            }) }
-            value={ (listValues || []).filter((opt) => {
-              // found
-              return (value || []).includes(opt.value);
-            }).map((opt) => {
-              return {
-                field : opt,
-                value : opt.value,
-                label : opt.title,
-              };
-            }) }
-            onChange={ (val) => setValue(val.value) }
-            isMulti
-          />
-        </div>
+        <TextField
+          { ...props }
+          size="small"
+          value={ Array.isArray(value) ? value : [value].filter((v) => v) }
+          onChange={ (e) => setValue(e.target.value) }
+          SelectProps={ {
+            multiple : true,
+          } }
+        >
+          { (listValues || []).map((opt) => {
+            // return jsx
+            return (
+              <MenuItem key={ opt.value } value={ opt.value }>
+                { opt.title }
+              </MenuItem>
+            );
+          }) }
+        </TextField>
       );
     },
   },
@@ -200,13 +198,21 @@ const widgets = {
       
       // return value
       return (
-        <div className="d-inline-block select-inline">
-          <Select { ...props }
-            value={ value ? values[0] : values[1] }
-            options={ values }
-            onChange={ (val) => setValue(val.value === 'true') }
-          />
-        </div>
+        <TextField
+          { ...props }
+          size="small"
+          value={ value ? 'true' : 'false' }
+          onChange={ (e) => setValue(e.target.value === 'true') }
+        >
+          { (values || []).map((opt) => {
+            // return jsx
+            return (
+              <MenuItem key={ opt.value } value={ opt.value }>
+                { opt.label }
+              </MenuItem>
+            );
+          }) }
+        </TextField>
       );
     },
   },
@@ -219,8 +225,18 @@ const widgets = {
       // return control
       return (
         <div className="d-inline-block select-inline d-flex flex-row align-items-center">
-          <Form.Control type="number" value={ value } label={ label } onChange={ (e) => setValue(parseFloat(e.target.value)) } />
-          <Form.Range className="ms-2" value={ value } min={ min } max={ max } onChange={ (e) => setValue(parseFloat(e.target.value)) } />
+          <TextField
+            size="small"
+            type="number"
+            label={ label }
+            value={ value || 0 }
+            onChange={ (e) => setValue(parseFloat(e.target.value)) }
+            InputProps={ {
+              min,
+              max,
+            } }
+          />
+          <Slider value={ value } min={ min } max={ max } onChange={ (e) => setValue(parseFloat(e.target.value)) } />
         </div>
       );
     }

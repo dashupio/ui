@@ -5,6 +5,7 @@ import React, { useState } from 'react';
 // local imports
 import Rule from './Rule';
 import Group from './Group';
+import { Box, Card, CardContent, CardHeader, IconButton, Tooltip, Icon } from '..';
 
 // operators
 const operators = {
@@ -166,47 +167,61 @@ const DashupUIQuery = (props = {}) => {
 
   // return jsx
   return (
-    <div className="dashup-query mb-3">
-      <div className="text-end">
-        <div className="btn-group">
-          <button className="btn btn-success" onClick={ (e) => !setTree([...tree, { $eq : {} }]) && e.preventDefault() }>
-            Add Rule
-          </button>
-          <button className="btn btn-success" onClick={ (e) => !setTree([...tree, { $and : [] }]) && e.preventDefault() }>
-            Add Group
-          </button>
-        </div>
-      </div>
-      { tree.map((group, i) => {
-        // get key
-        const key = Object.keys(group)[0];
+    <Card variant="outlined" sx={ {
+      backgroundColor : 'rgba(0, 0, 0, 0)',
+    } }>
+      <CardHeader
+        title={ props.label }
+        action={ (
+          <>
+            <Tooltip title="Add Rule">
+              <IconButton onClick={ (e) => !setTree([...tree, { $eq : {} }]) && e.preventDefault() }>
+                <Icon type="fas" icon="plus" />
+              </IconButton>
+            </Tooltip>
+            <Tooltip title="Add Rule Group">
+              <IconButton onClick={ (e) => !setTree([...tree, { $and : [] }]) && e.preventDefault() }>
+                <Icon type="fas" icon="object-group" />
+              </IconButton>
+            </Tooltip>
+          </>
+        ) }
+      />
+      { !!(tree || []).length && (
+        <CardContent>
+          { tree.map((group, i) => {
+            // get key
+            const key = Object.keys(group)[0];
 
-        // get el
-        let SubEl = Rule;
+            // get el
+            let SubEl = Rule;
 
-        // check includes
-        if (groups[key]) {
-          SubEl = Group;
-        }
+            // check includes
+            if (groups[key]) {
+              SubEl = Group;
+            }
 
-        // return jsx
-        return (
-          <React.Fragment key={ `query-${i}` }>
-            <SubEl
-              page={ props.page }
-              value={ group }
-              groups={ groups }
-              fields={ getFields() }
-              dashup={ props.dashup }
-              operator={ key }
-              onRemove={ () => onRemove(i) }
-              setValue={ (val) => setValue(i, val) }
-              operators={ operators }
-            />
-          </React.Fragment>
-        )
-      }) }
-    </div>
+            // return jsx
+            return (
+              <React.Fragment key={ `query-${i}` }>
+                <SubEl
+                  page={ props.page }
+                  value={ group }
+                  groups={ groups }
+                  fields={ getFields() }
+                  dashup={ props.dashup }
+                  operator={ key }
+                  onRemove={ () => onRemove(i) }
+                  setValue={ (val) => setValue(i, val) }
+                  operators={ operators }
+                />
+              </React.Fragment>
+            )
+          }) }
+        </CardContent>
+      ) }
+      <Box />
+    </Card>
   );
 };
 

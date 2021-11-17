@@ -1,8 +1,9 @@
 
 // import dependencies
 import copy from 'copy-to-clipboard';
+import { Alert } from '@mui/material';
 import React, { useState } from 'react';
-import { View, Modal, Button, Select } from '../';
+import { Icon, View, Modal, DialogActions, DialogContentText, Box, TextField, Dialog, DialogTitle, Stack, Button, DialogContent, MenuItem, Divider, Tooltip, IconButton, LoadingButton, InputAdornment } from '../';
 
 // let context
 let loading = false;
@@ -99,6 +100,7 @@ const DashupUIPageShare = (props = {}) => {
     // loading
     setShares([...newShares]);
     setSaving(false);
+    setSharing(null);
     setRemoving(null);
   };
 
@@ -166,201 +168,249 @@ const DashupUIPageShare = (props = {}) => {
 
         // get struct
         const struct = page.get('type') && getPageStruct(page.get('type'));
-        
+
         // return jsx
         return (
-          <Modal show={ props.show } onHide={ props.onHide }>
-            <Modal.Header closeButton>
-              <Modal.Title>
-                Share { page.get('name') }
-              </Modal.Title>
-            </Modal.Header>
-            <Modal.Body>
+          <>
+            <Modal
+              open={ !!props.show }
+              icon={ page.get('icon') || struct.icon }
+              page={ page }
+              title={ page.get('name') || page.get('_id') }
+              dashup={ dashup }
+              thread={ `${page.get('_id')}` }
+              onClose={ props.onClose || props.onHide }
+            >
               { share ? (
-                <>
-                  { !!struct?.data?.share?.pages && (
-                    <div className="mb-3">
-                      <p>
-                        The following pages will also be shared:
-                      </p>
-                      <div>
+                <Box py={ 2 } flex={ 1 }>
+                  <Stack spacing={ 1 }>
+                    { !!struct?.data?.share?.pages && (
+                      <>
+                        <Alert severity="info">
+                          The following pages will also be shared.
+                        </Alert>
                         { getShares(dashup, page, struct.data.share.pages).map((sPage) => {
                           // get color
                           const color = sPage.get('color');
 
                           // return jsx
                           return (
-                            <div key={ `page-${sPage.get('_id')}` } className="card card-permission mb-2">
-                              <div className="card-body d-flex align-items-center ">
-                                <span className={ `btn p-2 btn-sm me-2` }  style={ {
-                                    color      : color?.drk ? '#fff' : (color?.hex ? '#000' : null),
-                                    background : color?.hex || color,
-                                  } }>
-                                  <i className={ `fa fa-fw fa-${sPage.get('icon') || 'pencil'}` } />
-                                </span>
-                                <span className="flex-1">
-                                  { sPage.get('name') }
-                                </span>
-                              </div>
-                            </div>
+                            <TextField
+                              key={ `share-${sPage.get('_id')}` }
+                              label={ sPage.get('type') }
+                              color={ color?.hex }
+                              value={ sPage.get('name') }
+                              readOnly
+                              fullWidth
+                              InputProps={ {
+                                startAdornment : (
+                                  <InputAdornment position="start">
+                                    <IconButton sx={ {
+                                    color      : color?.hex && theme.palette.getContrastText(color.hex),
+                                    background : color?.hex,
+                                    } }>
+                                      <Icon type="fas" icon="plus" fixedWidth />
+                                    </IconButton>
+                                  </InputAdornment>
+                                ),
+                              } }
+                            />
                           );
                         }) }
-                      </div>
-                    </div>
-                  ) }
-                  <div className="mb-3">
-                    <label className="form-label">
-                      Share Type
-                    </label>
-                    <Select options={ getType(struct, page) } value={ getType(struct, page).filter((v) => v.selected) } onChange={ (value) => setShare('type', value?.value) } />
-                  </div>
-                  <div className="mb-3">
-                    <label className="form-label">
-                      Share Name
-                    </label>
-                    <input className="form-control" type="text" onChange={ (e) => setShare('name', e.target.value) } defaultValue={ share.name } />
-                  </div>
-                  { share.type === 'marketplace' && (
-                    <>
-                      <hr />
-                      <p>
-                        Adding this page to the marketplace will make it available for anyone to see once approved.
-                      </p>
-                      <View
-                        type="field"
-                        view="input"
-                        struct="image"
-                        field={ {
-                          uuid  : 'image',
-                          input : 'input',
-                          label : 'Image',
-                        } }
-                        item={ new dashup.Model() }
-                        value={ share.image }
-                        dashup={ dashup }
-                        onChange={ (f, val) => setShare('image', val) }
-                        setPrevent={ setPrevent }
-                        />
-                      { !!categories && (
+                        <Box py={ 2 }>
+                          <Divider />
+                        </Box>
+                      </>
+                    ) }
+
+                    <TextField
+                      label="Share Type"
+                      value={ share.type }
+                      select
+                      onChange={ (e) => setShare('type', e.target?.value) }
+                      fullWidth
+                    >
+                      { getType(struct, page).map((option) => (
+                        <MenuItem key={ option.value } value={ option.value }>
+                          { option.label }
+                        </MenuItem>
+                      ))}
+                    </TextField>
+
+                    <TextField
+                      label="Share Name"
+                      value={ share.name }
+                      onChange={ (e) => setShare('name', e.target?.value) }
+                      fullWidth
+                    />
+
+                    { share.type === 'marketplace' && (
+                      <>
+                        <Box py={ 2 }>
+                          <Divider />
+                        </Box>
+                        <Alert severity="info">Adding this page to the marketplace will make it available for anyone to see once approved.</Alert>
                         <View
                           type="field"
                           view="input"
-                          struct="select"
-                          field={ categories }
+                          struct="image"
+                          field={ {
+                            uuid  : 'image',
+                            input : 'input',
+                            label : 'Image',
+                          } }
                           item={ new dashup.Model() }
-                          value={ share.categories }
+                          value={ share.image }
                           dashup={ dashup }
-                          onChange={ (f, val) => setShare('categories', val) }
+                          onChange={ (f, val) => setShare('image', val) }
+                          setPrevent={ setPrevent }
                           />
-                      ) }
-                      <View
-                        type="field"
-                        view="input"
-                        struct="textarea"
-                        field={ {
-                          uuid  : 'description',
-                          label : 'Description',
-                        } }
-                        item={ new dashup.Model() }
-                        value={ share.description }
-                        dashup={ dashup }
-                        onChange={ (f, val) => setShare('description', val) }
-                        />
-                      { /*
-                      <View
-                        type="field"
-                        view="input"
-                        struct="product"
-                        field={ {
-                          uuid  : 'price',
-                          label : 'Product',
-                        } }
-                        item={ new dashup.Model() }
-                        value={ share.price || { type : 'simple', price : 0 } }
-                        dashup={ dashup }
-                        onChange={ (f, val) => setShare('price', val) }
-                        />
-                      */ }
-                    </>
-                  ) }
-                </>
+                        { !!categories && (
+                          <View
+                            type="field"
+                            view="input"
+                            struct="select"
+                            field={ categories }
+                            item={ new dashup.Model() }
+                            value={ share.categories }
+                            dashup={ dashup }
+                            onChange={ (f, val) => setShare('categories', val) }
+                            />
+                        ) }
+                        <View
+                          type="field"
+                          view="input"
+                          struct="textarea"
+                          field={ {
+                            uuid  : 'description',
+                            label : 'Description',
+                          } }
+                          item={ new dashup.Model() }
+                          value={ share.description }
+                          dashup={ dashup }
+                          onChange={ (f, val) => setShare('description', val) }
+                          />
+                        { /*
+                        <View
+                          type="field"
+                          view="input"
+                          struct="product"
+                          field={ {
+                            uuid  : 'price',
+                            label : 'Product',
+                          } }
+                          item={ new dashup.Model() }
+                          value={ share.price || { type : 'simple', price : 0 } }
+                          dashup={ dashup }
+                          onChange={ (f, val) => setShare('price', val) }
+                          />
+                        */ }
+                      </>
+                    ) }
+                  </Stack>
+                </Box>
               ) : (
-                removing ? (
-                  <div className="py-5 text-center">
-                    Are you sure you want to remove this share?
-                  </div>
-                ) : (
-                  (shares || []).length ? (shares || []).map((share, i) => {
+                <Box flex={ 1 } py={ 2 }>
+                  { (shares || []).length ? (shares || []).map((share, i) => {
                     // return jsx
                     return (
-                      <div key={ `share-${i}` } className="card card-permission mb-2">
-                        <div className="card-body d-flex align-items-center">
-                          <span className="btn btn-primary me-2">
-                            <i className={ `fa fa-fw fa-${share.type === 'link' ? 'link' : 'tags'}` } />
-                          </span>
-                          <div className="flex-1">
-                            { share.type === 'link' ? (
-                              <div className="input-group">
-                                <input className="form-control" readOnly value={ `/share/${share.slug}` } />
-                                <button className={ `btn btn-${copying === share.id ? 'success' : 'secondary'} input-group-append` } onClick={ (e) => onCopy(share) }>
-                                  { copying === share.id ? (
-                                    <i className="fa fa-check" />
+                      <TextField
+                        key={ `share-${i}` }
+                        label={ share.type }
+                        value={ share.name }
+                        readOnly
+                        fullWidth
+                        InputProps={ {
+                          startAdornment : (
+                            <InputAdornment position="start">
+                              <IconButton color={ copying === share.id ? 'primary' : undefined } onClick={ (e) => onCopy(share) }>
+                                { copying === share.id ? (
+                                  <Icon type="fas" icon="clipboard-check" fixedWidth />
+                                ) : (
+                                  share.type === 'link' ? (
+                                    <Icon type="fas" icon="link" fixedWidth />
                                   ) : (
-                                    <i className="fa fa-clipboard-check" />
-                                  ) }
-                                </button>
-                              </div>
-                            ) : (
-                              <div className="share-name">
-                                { share.name }
-                              </div>
-                            ) }
-                          </div>
-                          <Button variant="primary" className="ms-2" onClick={ () => setSharing(share) }>
-                            <i className="fa fa-fw fa-ellipsis-h" />
-                          </Button>
-                          <Button variant="danger" className="ms-2" onClick={ () => setRemoving(share) }>
-                            <i className="fa fa-fw fa-trash" />
-                          </Button>
-                        </div>
-                      </div>
+                                    <Icon type="fas" icon="shopping-cart" fixedWidth />
+                                  )
+                                ) }
+                              </IconButton>
+                            </InputAdornment>
+                          ),
+                          endAdornment : (
+                            <>
+                              <InputAdornment position="end">
+                                <IconButton color="error" onClick={ (e) => setRemoving(share) }>
+                                  <Icon type="fas" icon="trash" fixedWidth />
+                                </IconButton>
+                              </InputAdornment>
+                              <InputAdornment position="end">
+                                <IconButton onClick={ (e) => setSharing(share) }>
+                                  <Icon type="fas" icon="ellipsis-h" fixedWidth />
+                                </IconButton>
+                              </InputAdornment>
+                            </>
+                          )
+                        } }
+                      />
                     );
                   }) : (
-                    <div className="py-5 text-center">
+                    <Box display="flex" justifyContent="center" height="100%" alignItems="center">
                       This page has no shares, click below to create one.
-                    </div>
-                  )
-                )
+                    </Box>
+                  ) }
+                </Box>
               ) }
-            </Modal.Body>
-            { share ? (
-              <Modal.Footer>
-                <Button variant="info" className="me-auto" onClick={ () => setSharing(null) }>
-                  Back
-                </Button>
-                <Button variant="success" disabled={ prevent || saving } onClick={ () => onSubmit(page, dashup) }>
-                  { prevent ? 'Uploading...' : (saving ? 'Submitting...' : 'Submit') }
-                </Button>
-              </Modal.Footer>
-            ) : (
-              removing ? (
-                <Modal.Footer>
-                  <Button variant="info" className="me-auto" onClick={ () => setRemoving(null) }>
-                    Back
-                  </Button>
-                  <Button variant="danger" disabled={ saving } onClick={ () => onRemove(page, dashup) }>
-                    { saving ? 'Removing...' : 'Remove' }
-                  </Button>
-                </Modal.Footer>
-              ) : (
-                <Modal.Footer>
-                  <Button variant="success" onClick={ () => setSharing({ type : 'link' }) }>
-                    Create Share
-                  </Button>
-                </Modal.Footer>
-              )
-            ) }
-          </Modal>
+              <Box flex={ 0 }>
+                <Stack spacing={ 1 } direction="row" sx={ {
+                  width : '100%',
+                } } alignItems="center">
+                  { !!share && (
+                    <Tooltip title="Remove Share">
+                      <IconButton color="error" onClick={ (e) => setRemoving(true) }>
+                        <Icon type="fas" icon="trash" fixedWidth />
+                      </IconButton>
+                    </Tooltip>
+                  ) }
+                  <Stack direction="row" spacing={ 1 } flex={ 1 } justifyContent="end">
+                    { !!share && (
+                      <Button onClick={ () => setSharing(null) }>
+                        Cancel
+                      </Button>
+                    ) }
+                    { share ? (
+                      <LoadingButton color="success" variant="contained" disabled={ prevent || saving } loading={ saving } onClick={ () => onSubmit(page, dashup) }>
+                        { saving ? 'Submitting...' : 'Submit' }
+                      </LoadingButton>
+                    ) : (
+                      <LoadingButton color="success" variant="contained" onClick={ () => setSharing({ type : 'link' }) }>
+                        New Share
+                      </LoadingButton>
+                    ) }
+                  </Stack>
+                </Stack>
+              </Box>
+            </Modal>
+              
+            <Dialog
+              open={ !!removing }
+              onClose={ () => setRemoving(false) }
+            >
+              <DialogTitle>
+                Confirm Remove
+              </DialogTitle>
+              <DialogContent>
+                <DialogContentText>
+                  Are you sure you want to remove this share?
+                </DialogContentText>
+              </DialogContent>
+              <DialogActions>
+                <Button onClick={ () => setRemoving(false) }>Cancel</Button>
+                <LoadingButton color="error" onClick={ (e) => onRemove(page, dashup) } loading={ saving }>
+                  { saving ? 'Removing...' : 'Remove' }
+                </LoadingButton>
+              </DialogActions>
+            </Dialog>
+          </>
         );
       } }
     </DashupContext.Consumer>

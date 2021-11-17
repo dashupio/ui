@@ -3,6 +3,7 @@ import SimpleBar from 'simplebar-react';
 import React, { useState, useRef } from 'react';
 
 // import message
+import { Box } from '../';
 import DashupUIChatMessage from './Message';
 
 // let context
@@ -56,22 +57,26 @@ const DashupUIChatThread = (props = {}) => {
 
         // return jsx
         return (
-          <div className="w-100 h-100">
-            <SimpleBar ref={ scrollRef } className="h-100">
-              { messages.map((m, i) => {
-                // return jsx
-                return (
-                  <div key={ `message-${m.id}` }>
+          <Box flex={ 1 } position="relative">
+            <Box position="absolute" top={ 0 } left={ 0 } right={ 0 } bottom={ 0 }>
+              <SimpleBar ref={ scrollRef } style={ {
+                width  : '100%',
+                height : '100%',
+              } }>
+                { messages.map((m, i) => {
+                  // return jsx
+                  return (
                     <Message
+                      key={ `message-${m.temp || m.id}` }
                       prev={ messages[i - 1] }
                       next={ messages[i + 1] }
                       message={ m }
                     />
-                  </div>
-                );
-              }) }
-            </SimpleBar>
-          </div>
+                  );
+                }) }
+              </SimpleBar>
+            </Box>
+          </Box>
         );
       } }
     </DashupUIContext.Consumer>

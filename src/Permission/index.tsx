@@ -1,10 +1,12 @@
 
 // react
 import React from 'react';
-import { colors, Button, OverlayTrigger, Tooltip } from '../';
+import { Box, useTheme, Tooltip, TextField, InputAdornment, Icon, IconButton } from '../';
 
 // dashup ui permission
 const DashupUIPermission = (props = {}) => {
+  // theme
+  const theme = useTheme();
 
   // get pages
   const getPages = (page) => {
@@ -46,51 +48,58 @@ const DashupUIPermission = (props = {}) => {
   // color
   const color = props.page.get('color');
 
+  // no archived
+  if (props.page.get('_meta.archived')) return null;
+
   // return jsx
   return (
-    <div>
-      <div className="card card-permission bg-white mb-2">
-        <div className="card-body d-flex align-items-center ">
-          <button className={ `btn btn-sm btn-page${colors[color] ? ` btn-${color}` : ''} me-2` } type="button" style={ {
-            color      : color?.drk ? '#fff' : (color?.hex ? '#000' : null),
-            background : color?.hex || colors[color] || color,
-          } }>
-            <i className={ `fa-fw fa-${getIcon()}` } />
-          </button>
-          <span className="flex-1">
-            { props.page.get('name') }
-          </span>
+    <>
+      <TextField
+        label={ '' }
+        value={ props.page.get('name') }
+        fullWidth
+        InputProps={ {
+          readOnly       : true,
+          startAdornment : (
+            <InputAdornment position="start">
+              <IconButton sx={ {
+                color      : color?.hex && theme.palette.getContrastText(color.hex),
+                background : color?.hex,
+              } }>
+                <Icon icon={ getIcon() } fixedWidth />
+              </IconButton>
+            </InputAdornment>
+          ),
+          endAdornment : (
+            <>
+              { buttons.map(([title, icon]) => {
+                // set value
+                const type = title.toLowerCase();
 
-          <div className="ms-auto">
-            { buttons.map(([title, icon]) => {
-              // set value
-              const type = title.toLowerCase();
-
-              // color
-              const color = props.hasAcl(props.page, type) ? 'success' : 'secondary';
-              
-              // return jsx
-              return (
-                <OverlayTrigger
-                  key={ `btn-${title}` }
-                  overlay={
-                    <Tooltip>
-                      Can { title }
-                    </Tooltip>
-                  }
-                  placement="top"
-                >
-                  <Button variant={ color } className="ms-2" onClick={ () => onToggle(type) }>
-                    <i className={ `fa fa-${icon}` } />
-                  </Button>
-                </OverlayTrigger>
-              );
-            }) }
-          </div>
-        </div>
-      </div>
+                // color
+                const color = props.hasAcl(props.page, type) ? 'success' : undefined;
+                
+                // return jsx
+                return (
+                  <Tooltip key={ `btn-${title}` } title={ `Can ${title}` }>
+                    <InputAdornment position="end">
+                      <IconButton sx={ {
+                        color           : color && theme.palette.getContrastText(theme.palette[color].main),
+                        backgroundColor : color && `${color}.main`,
+                      } } onClick={ () => onToggle(type) }>
+                        <Icon type="fas" icon={ icon } fixedWidth />
+                      </IconButton>
+                    </InputAdornment>
+                  </Tooltip>
+                );
+              }) }
+            </>
+          )
+        } }
+      />
+      
       { !!getPages(props.page) && (
-        <div className="ps-3">
+        <Box pl={ 2 }>
           { getPages(props.page).map((child, i) => {
             // return jsx
             return (
@@ -104,9 +113,9 @@ const DashupUIPermission = (props = {}) => {
                 />
             )
           }) }
-        </div>
+        </Box>
       ) }
-    </div>
+    </>
   );
 };
 

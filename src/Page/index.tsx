@@ -1,6 +1,6 @@
 
 // import react
-import { Button } from '../';
+import { Box, Alert, Button, CircularProgress } from '../';
 import React, { createContext, useState, useEffect } from 'react';
 
 // import local modules
@@ -161,69 +161,69 @@ const DashupUIPage = (props = {}) => {
   // return page
   return (
     <DashupUIContext.Provider value={ ctx }>
-      <div className={ `page page-${props.type || (props.page && props.page.get('type')) || 'default'} flex-1` }>
-        { missingRequire() ? (
-          <>
-            <DashupUIPage.Menu onConfig={ (e) => setConfig(true) } />
-            { struct?.data?.default && !defaulted ? (
-              <DashupUIPage.Config show={ !!(config || missingRequire()) } onHide={ (e) => !setConfig(false) && setDefaulted(true) }>
-                <div className="card-body flex-0">
-                  { struct.data.default.title }
-                </div>
-                <div className="card-body flex-1">
-                  
-                  { (struct.data.default.pages || []).map((page, i) => {
-                    // return jsx
-                    return (
-                      <div key={ `page-${i}` } className="card card-permission mb-2">
-                        <div className="card-body d-flex align-items-center ">
-                          <span className={ `btn p-2 btn-sm btn-primary me-2` }>
-                            <i className={ `fa fa-fw fa-${page.icon || props.getPageStruct(page.type).icon}` } />
-                          </span>
-                          <span className="flex-1">
-                            { props.getPageStruct(page.type).title }
-                          </span>
-                        </div>
-                      </div>
-                    );
-                  }) }
-
-                </div>
-                <div className="card-footer d-flex border-top border-secondary py-3">
-                  <Button variant="danger" onClick={ (e) => !setConfig(false) && setDefaulted(true) }>
-                    Close
-                  </Button>
-                  <Button variant="success" className="ms-auto" disabled={ importing } onClick={ (e) => onImport(e) }>
-                    { importing ? 'Importing Default Pages...' : 'Import Default Pages' }
-                  </Button>
-                </div>
-              </DashupUIPage.Config>
-            ) : (
-              <DashupUIPage.Config show={ config } onHide={ (e) => setConfig(false) } />
-            ) }
-            { missingRequire().map(({ key, label, variant = 'info' }) => {
-              // return jsx
-              return (
-                <a
-                  key={ `missing-${key}` }
-                  href="#!"
-                  className={ `alert alert-${variant} mb-3` }
-                  onClick={ (e) => !setConfig(true) && e.preventDefault() }>
-                  Click here to configure the <b>{ label }</b> for this page.
-                </a>
-              );
-            }) }
-          </>
-        ) : (
-          props.loading ? (
-            <div className={ `page-body body-${props.type} d-flex flex-1 align-items-center` }>
-              <div className="w-100 text-center">
-                <i className="h1 fa fa-spinner fa-spin" />
+      { missingRequire() ? (
+        <Box flex={ 1 } display="flex" flexDirection="column" sx={ ctx.centered ? {
+          height : '100vh',
+        } : {} }>
+          <DashupUIPage.Menu onConfig={ (e) => setConfig(true) } />
+          { struct?.data?.default && !defaulted ? (
+            <DashupUIPage.Config show={ !!(config || missingRequire()) } onHide={ (e) => !setConfig(false) && setDefaulted(true) }>
+              <div className="card-body flex-0">
+                { struct.data.default.title }
               </div>
-            </div>
-          ) : props.children
-        ) }
-      </div>
+              <div className="card-body flex-1">
+                
+                { (struct.data.default.pages || []).map((page, i) => {
+                  // return jsx
+                  return (
+                    <div key={ `page-${i}` } className="card card-permission mb-2">
+                      <div className="card-body d-flex align-items-center ">
+                        <span className={ `btn p-2 btn-sm btn-primary me-2` }>
+                          <i className={ `fa fa-fw fa-${page.icon || props.getPageStruct(page.type).icon}` } />
+                        </span>
+                        <span className="flex-1">
+                          { props.getPageStruct(page.type).title }
+                        </span>
+                      </div>
+                    </div>
+                  );
+                }) }
+
+              </div>
+              <div className="card-footer d-flex border-top border-secondary py-3">
+                <Button variant="danger" onClick={ (e) => !setConfig(false) && setDefaulted(true) }>
+                  Close
+                </Button>
+                <Button variant="success" className="ms-auto" disabled={ importing } onClick={ (e) => onImport(e) }>
+                  { importing ? 'Importing Default Pages...' : 'Import Default Pages' }
+                </Button>
+              </div>
+            </DashupUIPage.Config>
+          ) : (
+            <DashupUIPage.Config show={ config } onHide={ (e) => setConfig(false) } />
+          ) }
+          { missingRequire().map(({ key, label, variant = 'info' }) => {
+            // return jsx
+            return (
+              <Alert severity="info" onClick={ () => setConfig(true) } key={ `missing-${key}` } sx={ {
+                cursor : 'pointer',
+              } }>
+                Click here to configure the <b>{ label }</b> for this page.
+              </Alert>
+            );
+          }) }
+        </Box>
+      ) : (
+        props.loading ? (
+          <Box flex={ 1 } alignItems="center" justifyContent="center" display="flex">
+            <CircularProgress />
+          </Box>
+        ) : (
+          <Box flex={ 1 } display="flex" flexDirection="column">
+            { props.children }
+          </Box>
+        )
+      ) }
     </DashupUIContext.Provider>
   );
 };

@@ -1,19 +1,22 @@
 
 import Query from 'query';
 import dotProp from 'dot-prop';
-import React, { useState, useEffect } from 'react';
-import { Hbs, View, Box, ToolTip, Icon, IconButton, Button, Stack } from '../';
+import React, { useState, useEffect, useCallback } from 'react';
+import { Icon, Hbs, View, Box, Tooltip, useTheme, ToggleButtonGroup, ToggleButton, Stack, CircularProgress } from '../';
 
 // let context
 let DashupUIContext = null;
 
 // create dashup grid body
 const DashupUIFormField = (props = {}) => {
+  // theme
+  const theme = useTheme();
+  
   // get field struct
   const struct = props.getFieldStruct(props.field.type);
 
   // clean data
-  const cleanQuery = (obj = {}) => {
+  const cleanQuery = useCallback((obj = {}) => {
     // keys
     Object.keys(obj).map((key) => {
       // val
@@ -61,7 +64,7 @@ const DashupUIFormField = (props = {}) => {
 
     // return obj
     return obj;
-  };
+  }, [JSON.stringify(props.clean)]);
 
   // use state
   const [defaultValue, setDefaultValue] = useState(struct?.data?.actions?.includes('sanitise') ? null : cleanQuery({ val : props.field?.default }).val);
@@ -81,7 +84,7 @@ const DashupUIFormField = (props = {}) => {
   };
 
   // is visible
-  const isViewOnly = (clean) => {
+  const isViewOnly = useCallback((clean) => {
     // check value
     if ((props.field.viewOnly || '[]').length <= 2) return false;
 
@@ -95,10 +98,10 @@ const DashupUIFormField = (props = {}) => {
 
     // return true
     return true;
-  };
+  }, [props.field.viewOnly, JSON.stringify(props.clean)]);
 
   // is visible
-  const isReadOnly = (clean) => {
+  const isReadOnly = useCallback((clean) => {
     // check value
     if ((props.field.readOnly || '[]').length <= 2) return false;
 
@@ -112,7 +115,7 @@ const DashupUIFormField = (props = {}) => {
     
     // return true
     return true;
-  };
+  }, [props.field.readOnly, JSON.stringify(props.clean)]);
 
   // check default value
   useEffect(() => {
@@ -163,6 +166,12 @@ const DashupUIFormField = (props = {}) => {
       setLoading(false);
     });
   }, [props.field?.uuid]);
+
+  // button sx
+  const buttonSx = {
+    paddingLeft : 1,
+    paddingRight : 1,
+  };
         
   // return jsx
   return !struct ? null : (
@@ -170,10 +179,9 @@ const DashupUIFormField = (props = {}) => {
       sx={ {
         width    : props.col ? 'auto' : '100%',
         display  : isViewOnly(props.clean || {}) && !props.updating ? 'none' : 'block',
-        opacity  : isViewOnly(props.clean || {}) ? .5 : 1,
         position : 'relative',
 
-        '&:hover .updating' : {
+        '&:hover > .updating' : {
           display : 'flex',
         }
       } }
@@ -182,72 +190,108 @@ const DashupUIFormField = (props = {}) => {
       id={ `field-${props.field.uuid}${props.iKey ? `-${props.iKey}` : '' }` }
     >
       { props.updating && (
-        <Box
-          sx={ {
-            width         : '100%',
-            bottom        : '100%',
-            display       : 'none',
-            position      : 'absolute',
-            alignItems    : 'center',
-            flexDirection : 'row'
-          } }
-          className="updating"
-        >
-          <Button size="small" variant="contained" color="primary">
-            { struct.title } Field
-          </Button>
+        <>
+          <Box sx={ {
+            top             : 2,
+            left            : 5,
+            right           : 5,
+            bottom          : -1,
+            zIndex          : 0,
+            display         : 'none',
+            opacity         : 0.25,
+            position        : 'absolute',
+            borderRadius    : 2,
+            backgroundColor : 'primary.main',
+          } } className="updating" />
+          <Box
+            sx={ {
+              right           : 2,
+              zIndex          : 1,
+              bottom          : '100%',
+              padding         : 1,
+              display         : 'none',
+              position        : 'absolute',
+              alignItems      : 'center',
+              borderRadius    : 2,
+              flexDirection   : 'row',
+              justifyContent  : 'end',
+              backgroundColor : theme.palette.mode === 'dark' ? 'darker.main' : 'lighter.main',
+            } }
+            className="updating"
+          >
+            <Stack direction="row" spacing={ 1 }>
+              <ToggleButton selected color="primary" size="small" value="title" sx={ {
+                paddingLeft  : 3,
+                paddingRight : 3,
+              } }>
+                { struct.title } Field
+              </ToggleButton>
 
-          <Stack direction="row" spacing={ 1 } sx={ { ml : 'auto', mr : 2 } }>
-            <ToolTip title={ props.field.col ? 'Expand Field' : 'Compress Field' }>
-              <IconButton size="small" onClick={ (e) => onCompress(e) } color="primary">
-                <i className={ `fa ${props.field.col ? 'fa-expand-wide' : 'fa-compress-wide'}` } />
-              </IconButton>
-            </ToolTip>
-            <ToolTip title={ props.field.break ? 'Remove Break after' : 'Add Break after' }>
-              <IconButton size="small" onClick={ (e) => onBreak(e) } color="primary">
-                <i className={ `fa ${props.field.break ? 'fa-file' : 'fa-page-break'}` } />
-              </IconButton>
-            </ToolTip>
-            <ToolTip title="Move Field">
-              <IconButton size="small" onClick={ (e) => onBreak(e) } color="primary" className="moves">
-                <i className="fa fa-arrows-alt" />
-              </IconButton>
-            </ToolTip>
-            <ToolTip title="Field Config">
-              <IconButton size="small" onClick={ (e) => props.onConfig(props.field) } color="primary">
-                <i className="fa fa-ellipsis-h" />
-              </IconButton>
-            </ToolTip>
-            <ToolTip title="Remove Field">
-              <IconButton size="small" onClick={ (e) => props.onRemove(props.field) } color="error">
-                <i className="fa fa-trash" />
-              </IconButton>
-            </ToolTip>
-          </Stack>
-        </Box>
+              <ToggleButtonGroup size="small" color="primary" value={ [
+                ...(props.field.col ? ['compress'] : []),
+                ...(props.field.break ? ['break'] : []),
+              ] }>
+                <Tooltip title={ props.field.col ? 'Expand Field' : 'Compress Field' }>
+                  <ToggleButton value="compress" onClick={ (e) => onCompress(e) } sx={ buttonSx }>
+                    { props.field.col ? (
+                      <Icon type="fas" icon="window-maximize" fontSize="small" />
+                    ) : (
+                      <Icon type="fas" icon="window-minimize" fontSize="small" />
+                    ) }
+                  </ToggleButton>
+                </Tooltip>
+                <Tooltip title={ props.field.break ? 'Remove Break after' : 'Add Break after' }>
+                  <ToggleButton value="break" onClick={ (e) => onBreak(e) } sx={ buttonSx }>
+                    <Icon type="fas" icon="line-height" fontSize="small" />
+                  </ToggleButton>
+                </Tooltip>
+                <Tooltip title="Move Field">
+                  <ToggleButton value="move" onClick={ (e) => onBreak(e) } className="moves" sx={ buttonSx }>
+                    <Icon type="fas" icon="grip-vertical" fontSize="small" />
+                  </ToggleButton>
+                </Tooltip>
+                <Tooltip title="Field Config">
+                  <ToggleButton value="config" onClick={ (e) => props.onConfig(props.field) } sx={ buttonSx }>
+                    <Icon type="fas" icon="ellipsis-h" fontSize="small" />
+                  </ToggleButton>
+                </Tooltip>
+              </ToggleButtonGroup>
+              
+              <Tooltip title="Remove Field">
+                <ToggleButton value="trash" size="small" onClick={ (e) => props.onRemove(props.field) } selected color="error" sx={ buttonSx }>
+                  <Icon type="fas" icon="trash" fontSize="small" />
+                </ToggleButton>
+              </Tooltip>
+            </Stack>
+          </Box>
+        </>
       ) }
 
       { loading ? (
-        <div className="text-center py-3">
-          <i className="fa fa-spinner fa-spin" />
-        </div>
+        <CircularProgress />
       ) : (
-        <View
-          { ...props }
+        <Box
+          sx={ {
+            opacity : isViewOnly(props.clean || {}) ? .5 : 1,
+          } }
+        >
+          <View
+            { ...props }
 
-          view="input"
-          type="field"
-          dashup={ props.dashup || props.dashup }
-          struct={ props.field.type }
+            view="input"
+            type="field"
+            dashup={ props.dashup || props.dashup }
+            struct={ props.field.type }
 
-          field={ props.field }
-          value={ props.value || defaultValue }
+            field={ props.field }
+            value={ props.value || defaultValue }
 
-          onChange={ props.onChange || props.onChange }
-          onConfig={ props.onConfig || props.onConfig }
-          readOnly={ isReadOnly(props.clean || {}) }
-          setPrevent={ props.setPrevent || props.setPrevent }
-        />
+            onChange={ props.onChange || props.onChange }
+            onConfig={ props.onConfig || props.onConfig }
+            readOnly={ isReadOnly(props.clean || {}) }
+            setPrevent={ props.setPrevent || props.setPrevent }
+          />
+        </Box>
       ) }
     </Box>
   );

@@ -1,4 +1,5 @@
 // import dependencies
+import { Box } from '../index';
 import React, { useState, useEffect } from 'react';
 
 // let chart
@@ -26,15 +27,28 @@ const DashupUIChart = (props = {}) => {
   
   // return logic
   return props.series && chart ? (
-    <div className="w-100 h-100">
+    <Box sx={ {
+      width  : '100%',
+      height : '100%',
+
+      '& .apexcharts-tooltip.apexcharts-theme-light' : {
+        boxShadow       : 1,
+        borderWidth     : 0,
+        backgroundColor : 'background.paper',
+      },
+      '& .apexcharts-tooltip.apexcharts-theme-light .apexcharts-tooltip-title' : {
+        borderWidth     : 0,
+        backgroundColor : 'background.paper',
+      }
+    } }>
       <Chart
         width="100%"
         height="100%"
         
         { ...props }
       />
-    </div>
-  ) : <div />;
+    </Box>
+  ) : <Box />;
 };
 
 // export default

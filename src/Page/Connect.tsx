@@ -3,7 +3,7 @@
 // import dependencies
 import shortid from 'shortid';
 import React, { useEffect, useState } from 'react';
-import { View, Select, Button, OverlayTrigger, Tooltip } from '../';
+import { Box, Icon, TextField, IconButton, InputAdornment, View, MenuItem, Button, Tooltip, LoadingButton, Stack, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions } from '../';
 
 // let context
 let DashupContext = null;
@@ -27,6 +27,7 @@ const debounce = (func, timeout = 1000) => {
 // create menu component
 const DashupUIPageConnect = (props = {}) => {
   // state
+  const [saving, setSaving] = useState(false);
   const [updated, setUpdated] = useState(new Date());
   const [updating, setUpdating] = useState(null);
   const [removing, setRemoving] = useState(null);
@@ -50,21 +51,43 @@ const DashupUIPageConnect = (props = {}) => {
   const setConnect = (key, value, { page, setPage }) => {
     // set to updating
     updating[key] = value;
+    setUpdated(new Date());
 
     // set page
     page.set('connects', [...page.get('connects')]);
-    debounce(setPage, 500)('connects', page.get('connects'));
-    setUpdated(new Date());
+
+    // check key
+    if (key === 'type') {
+      onSubmit(page, setPage);
+    }
+  };
+
+  // on submit
+  const onSubmit = async (page, setPage) => {
+    // set submitting
+    setSaving(true);
+
+    // set page
+    await setPage('connects', page.get('connects'));
+
+    // set saving
+    setSaving(false);
   };
 
   // set connect
-  const onRemove = (page, setPage) => {
+  const onRemove = async (page, setPage) => {
+    // set submitting
+    setSaving(true);
+
     // new connects
     const newConnects = (page.get('connects') || []).filter((c) => c.uuid !== removing.uuid);
 
     // set page
     page.set('connects', newConnects);
-    debounce(setPage, 500)('connects', newConnects);
+    await setPage('connects', newConnects);
+
+    // set saving
+    setSaving(false);
     
     // remove
     setUpdating(null);
@@ -129,129 +152,140 @@ const DashupUIPageConnect = (props = {}) => {
         // get connects
         const connects = page.get('connects') || [];
 
-        // get struct
-        const struct = updating ? getConnectStruct(updating) : null;
-
         // return jsx
         return (
           <>
-            <div className="flex-1">
-              { removing ? (
-                  <div className="py-5 text-center">
-                    Are you sure you want to remove this connector?
-                  </div>
-                ) : (
-                  updating ? (
-                    <>
-                      <div className="mb-3">
-                        <label className="form-label">
-                          Connect Type
-                        </label>
-                        <Select options={ getType(page, available?.connects) } value={ getType(page, available?.connects).filter((c) => c.selected) } onChange={ (value) => setConnect('type', value?.value, { page, setPage }) } />
-                      </div>
-                      { !!updating.type && (
-                        <>
-                          <div className="mb-3">
-                            <label className="form-label">
-                              Connect Name
-                            </label>
-                            <input className="form-control" type="text" onChange={ (e) => setConnect('name', e.target.value, { page, setPage }) } defaultValue={ updating.name } />
-                          </div>
-                          <View
-                            { ...data }
+            <Box flex={ 1 } height="100%" display="flex" flexDirection="column">
+              { updating ? (
+                <Box flex={ 1 }>
+                  <TextField
+                    label="Connect Type"
+                    value={ updating.type || '' }
+                    select
+                    onChange={ (e) => setConnect('type', e.target?.value, { page, setPage }) }
+                    fullWidth
+                  >
+                    { getType(page, available?.connects).map((option) => (
+                      <MenuItem key={ option.value } value={ option.value }>
+                        { option.label }
+                      </MenuItem>
+                    ))}
+                  </TextField>
 
-                            type="connect"
-                            view="config"
-                            struct={ updating.type }
-                            connect={ updating }
-                            setConnect={ (key, value) => setConnect(key, value, { page, setPage }) }
-                          />
-                        </>
-                      ) }
+                  { !!updating.type && (
+                    <>
+                      <TextField
+                        label="Connect Name"
+                        value={ updating.name || '' }
+                        onChange={ (e) => setConnect('name', e.target?.value, { page, setPage }) }
+                        fullWidth
+                      />
+                      <View
+                        { ...data }
+
+                        type="connect"
+                        view="config"
+                        struct={ updating.type }
+                        connect={ updating }
+                        setConnect={ (key, value) => setConnect(key, value, { page, setPage }) }
+                      />
                     </>
-                  ) : (
-                  (connects || []).length ? connects.map((connect, i) => {
+                  ) }
+                </Box>
+              ) : (
+                <Box flex={ 1 }>
+                  { (connects || []).length ? connects.map((connect, i) => {
+
                     // return jsx
                     return (
-                      <div key={ `connect-${i}` } className="card mb-2">
-                        <div className="card-body d-flex align-items-center">
-                          <OverlayTrigger
-                            overlay={
-                              <Tooltip>
-                                { getConnectStruct(connect.type)?.title }
-                              </Tooltip>
-                            }
-                            placement="top"
-                          >
-                            <span className="btn btn-primary me-2">
-                              <i className={ `fa fa-fw fa-${getConnectStruct(connect.type)?.icon}` } />
-                            </span>
-                          </OverlayTrigger>
-                          <div className="flex-1">
-                            { connect.name || connect.uuid }
-                          </div>
-                          <OverlayTrigger
-                            overlay={
-                              <Tooltip>
-                                Update Connect
-                              </Tooltip>
-                            }
-                            placement="top"
-                          >
-                            <Button variant="primary" className="ms-2" onClick={ () => setUpdating(connect) }>
-                              <i className="fa fa-fw fa-ellipsis-h" />
-                            </Button>
-                          </OverlayTrigger>
-                          <OverlayTrigger
-                            overlay={
-                              <Tooltip>
-                                Remove Connect
-                              </Tooltip>
-                            }
-                            placement="top"
-                          >
-                            <Button variant="danger" className="ms-2" onClick={ () => setRemoving(connect) }>
-                              <i className="fa fa-fw fa-trash" />
-                            </Button>
-                          </OverlayTrigger>
-                        </div>
-                      </div>
+                      <TextField
+                        key={ `connect-${connect.uuid}` }
+                        label={ getConnectStruct(connect.type)?.title || 'N/A' }
+                        value={ connect.name || connect.uuid }
+                        readOnly
+                        fullWidth
+                        InputProps={ {
+                          startAdornment : (
+                            <InputAdornment position="start">
+                              <IconButton>
+                                <Icon type="fas" icon="plus" fixedWidth />
+                              </IconButton>
+                            </InputAdornment>
+                          ),
+                          endAdornment : (
+                            <>
+                              <InputAdornment position="end">
+                                <IconButton color="error" onClick={ (e) => setRemoving(connect) }>
+                                  <Icon type="fas" icon="trash" fixedWidth />
+                                </IconButton>
+                              </InputAdornment>
+                              <InputAdornment position="end">
+                                <IconButton onClick={ (e) => setUpdating(connect) }>
+                                  <Icon type="fas" icon="pencil" fixedWidth />
+                                </IconButton>
+                              </InputAdornment>
+                            </>
+                          )
+                        } }
+                      />
                     );
                   }) : (
-                    <div className="py-5 text-center">
+                    <Box display="flex" justifyContent="center" height="100%" alignItems="center">
                       This page has no connects, click below to create one.
-                    </div>
-                  )
-                )
+                    </Box>
+                  ) }
+                </Box>
               ) }
-            </div>
-            <div className="mt-3 d-flex">
-              { removing ? (
-                <>
-                  <Button variant="info" className="me-auto" onClick={ (e) => setRemoving(null) }>
-                    Cancel
-                  </Button>
-                  <Button variant="danger" className="ms-auto" onClick={ (e) => onRemove(page, setPage) }>
-                    Confirm
-                  </Button>
-                </>
-              ) : (
-                updating ? (
-                  <>
-                    <Button variant="danger" className="me-auto" onClick={ (e) => setRemoving(updating) }>
-                      Remove
-                    </Button>
-                    <Button variant="info" className="ms-auto" onClick={ (e) => setUpdating(null) }>
-                      Back
-                    </Button>
-                  </>
-                ) : (
-                  <Button variant="success" className="ms-auto" onClick={ (e) => onCreate(page, setPage) }>
-                    Create Connect
-                  </Button>
-                )
-              ) }
-            </div>
+              <Box pt={ 2 } flex={ 0 }>
+                <Stack spacing={ 1 } direction="row" sx={ {
+                  width : '100%',
+                } } alignItems="center">
+                  { !!updating && (
+                    <Tooltip title="Remove Connect">
+                      <IconButton color="error" onClick={ (e) => setRemoving(updating) }>
+                        <Icon type="fas" icon="trash" fixedWidth />
+                      </IconButton>
+                    </Tooltip>
+                  ) }
+                  <Stack direction="row" spacing={ 1 } flex={ 1 } justifyContent="end">
+                    { !!updating && (
+                      <Button onClick={ () => setUpdating(null) }>
+                        Cancel
+                      </Button>
+                    ) }
+                    { updating ? (
+                      <LoadingButton color="success" variant="contained" disabled={ saving } loading={ saving } onClick={ () => onSubmit(page, setPage) }>
+                        { saving ? 'Submitting...' : 'Submit' }
+                      </LoadingButton>
+                    ) : (
+                      <LoadingButton color="success" variant="contained" onClick={ (e) => onCreate(page, setPage) }>
+                        New Connect
+                      </LoadingButton>
+                    ) }
+                  </Stack>
+                </Stack>
+              </Box>
+            </Box>
+                
+            <Dialog
+              open={ !!removing }
+              onClose={ () => setRemoving(null) }
+            >
+              <DialogTitle>
+                Confirm Remove
+              </DialogTitle>
+              <DialogContent>
+                <DialogContentText>
+                  Are you sure you want to remove this connect?
+                </DialogContentText>
+              </DialogContent>
+              <DialogActions>
+                <Button onClick={ () => setRemoving(null) }>Cancel</Button>
+                <LoadingButton color="error" onClick={ (e) => onRemove(page, setPage) } loading={ saving }>
+                  { saving ? 'Removing...' : 'Remove' }
+                </LoadingButton>
+              </DialogActions>
+            </Dialog>
           </>
         );
       } }

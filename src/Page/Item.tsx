@@ -3,10 +3,12 @@
 // import dependencies
 import copy from 'copy-to-clipboard';
 import moment from 'moment';
+import { Tab } from '@mui/material';
 import SimpleBar from 'simplebar-react';
-import React, { useState, useRef, useEffect } from 'react';
-import { Chat, Form, View, Modal, Tooltip, Overlay, Popover, OverlayTrigger, Dropdown, Button } from '../';
 import DashupUIPageAudit from './Audit';
+import React, { useState, useEffect } from 'react';
+import { TabContext, TabList, TabPanel } from '@mui/lab';
+import { Icon, Form, View, Modal, Chat, Box, Paper, Avatar, Tooltip, Chip, Dialog, DialogTitle, DialogActions, DialogContentText, Stack, Button, DialogContent, IconButton, Menu, LoadingButton } from '../';
 
 // let context
 let DashupContext = null;
@@ -17,19 +19,15 @@ const DashupUIPageItem = (props = {}) => {
   const [form, setForm] = useState(props.form);
   const [audits, setAudits] = useState([]);
   const [copying, setCopying] = useState(false);
-  const [tagOpen, setTagOpen] = useState(false);
+  const [tagOpen, setTagOpen] = useState(null);
   const [updated, setUpdated] = useState(null);
   const [prevent, setPrevent] = useState(false);
   const [creating, setCreating] = useState(true);
   const [removing, setRemoving] = useState(false);
-  const [userOpen, setUserOpen] = useState(false);
+  const [userOpen, setUserOpen] = useState(null);
   const [confirming, setConfirming] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [actualData, setActualData] = useState((props.item && props.item.get()) || {});
-
-  // refs
-  const tagRef = useRef(null);
-  const userRef = useRef(null);
 
   // use effect
   useEffect(() => {
@@ -142,21 +140,6 @@ const DashupUIPageItem = (props = {}) => {
     return val;
   };
 
-  // get short name
-  const getName = (user) => {
-    // get name
-    const name = `${user.name || ''}`.trim() || 'N A';
-
-    // return name
-    return `${(name.split(' ')[0] || '')[0] || ''}${(name.split(' ')[1] || '')[0] || ''}`;
-  };
-
-  // get avatar
-  const getAvatar = (user) => {
-    // return avatar
-    return ((((user.avatar || [])[0] || {}).thumbs || {})['1x-sq'] || {}).url;
-  };
-
   // has tags
   const hasTags = (data) => {
     // check page
@@ -255,6 +238,7 @@ const DashupUIPageItem = (props = {}) => {
     await props.item.remove();
 
     // loading remove
+    setRemoving(false);
     setSubmitting(false);
     onHide();
   };
@@ -366,10 +350,7 @@ const DashupUIPageItem = (props = {}) => {
     <DashupContext.Consumer>
       { (data) => {
         // destruct
-        const { item, page, dashup, getPageStruct, getFieldStruct, getForms, getFields } = data;
-
-        // get struct
-        const struct = getPageStruct();
+        const { page, dashup, getFieldStruct, getForms, getFields } = data;
 
         // get forms
         const forms = (props.getForms || getForms)();
@@ -377,324 +358,271 @@ const DashupUIPageItem = (props = {}) => {
 
         // return jsx
         return (
-          <Modal size="xl" show={ props.show } onHide={ onHide } enforceFocus={ false }>
-            { !!props.item && (
-              <Modal.Body className="card p-0">
-                <div className="row g-0">
-                  <div className="col-lg-8 d-flex flex-column has-shadow">
+          <>
+            <Modal
+              open={ !!props.show }
+              thread={ props.item?.get('_id') }
+              dashup={ dashup }
+              onClose={ onHide }
+              sidebar={ (
+                <Box flex={ 1 } sx={ {
+                  maxHeight : '40%'
+                } }>
+                  <SimpleBar className="p-relative" style={ {
+                    height : '100%',
+                  } }>
+                    { audits.map((audit, i) => {
+                      // changes
+                      if (!audit?.changes?.length) return null;
 
-                    <div className="card-header py-3 border-bottom border-secondary d-flex">
-                      { !!props.item.get('_id') && (
-                        <OverlayTrigger
-                          overlay={
-                            <Tooltip>
-                              Copy URL
-                            </Tooltip>
-                          }
-                          placement="top"
-                        >
-                          <button className="btn btn-link me-3" onClick={ (e) => onCopy(e, page, props.item) }>
-                            { copying ? (
-                              <i className="fa fa-check text-success" />
-                            ) : (
-                              <i className="fa fa-clipboard-check" />
-                            ) }
-                          </button>
-                        </OverlayTrigger>
-                      ) }
-
-                      { !!hasTags(data) && (
-                        <div className="d-flex ms-0 me-3 tags" ref={ tagRef }>
-                          { getTagFields(data).map((type, i) => {
-                            // return jsx
-                            return (
-                              <React.Fragment key={ `tag-${type.uuid}` }>
-                                { getTags(type).map((tag, a) => {
-                                  // return jsx
-                                  return (
-                                    <OverlayTrigger
-                                      key={ `tag-${type.uuid}-${tag.value}` }
-                                      overlay={
-                                        <Tooltip>
-                                          { `${type.label}: ${tag.value}`}
-                                        </Tooltip>
-                                      }
-                                      placement="top"
-                                    >
-                                      <button className={ `btn me-1 btn-${tag.color}` } onClick={ () => setTagOpen(type) }>
-                                        { tag.label }
-                                      </button>
-                                    </OverlayTrigger>
-                                  );
-                                }) }
-
-                                <OverlayTrigger
-                                  overlay={
-                                    <Tooltip>
-                                      Add { type.label }
-                                    </Tooltip>
-                                  }
-                                  placement="top"
-                                >
-                                  <button className="btn btn-outline-dark" onClick={ () => setTagOpen(type) }>
-                                    <i className="fa fa-tag" />
-                                  </button>
-                                </OverlayTrigger>
-                              </React.Fragment>
-                            );
-                          }) }
-                        </div>
-                      ) }
-
-                      { !!hasUser(data) && (
-                        <div className="d-flex ms-0 me-3 tags" ref={ userRef }>
-                          { getUserFields(data).map((type, i) => {
-                            // return jsx
-                            return (
-                              <React.Fragment key={ `user-${type.uuid}` }>
-                                { getUsers(type).map((user, a) => {
-                                  // return jsx
-                                  return (
-                                    <OverlayTrigger
-                                      key={ `user-${type.uuid}-${user._id || user.id}` }
-                                      overlay={
-                                        <Tooltip>
-                                          { `${type.label}: ${user.name}`}
-                                        </Tooltip>
-                                      }
-                                      placement="top"
-                                    >
-                                      <button className="btn me-1 btn-circle" style={ {
-                                        backgroundImage : getAvatar(user) ? `url(${getAvatar(user)})` : null,
-                                      } } onClick={ () => setUserOpen(type) }>
-                                        { getAvatar(user) ? '' : getName(user) }
-                                      </button>
-                                    </OverlayTrigger>
-                                  );
-                                }) }
-
-                                <OverlayTrigger
-                                  overlay={
-                                    <Tooltip>
-                                      Add { type.label }
-                                    </Tooltip>
-                                  }
-                                  placement="top"
-                                >
-                                  <button className="btn btn-outline-dark" onClick={ () => setUserOpen(type) }>
-                                    <i className="fa fa-plus" />
-                                  </button>
-                                </OverlayTrigger>
-                              </React.Fragment>
-                            );
-                          }) }
-                        </div>
-                      ) }
-
-                      { !!chosenForm && forms.length > 1 && (
-                        <Dropdown className="ms-auto" align="right">
-                          <Dropdown.Toggle variant="primary">
-                            <i className={ `fa-${chosenForm.get('icon') || 'plus fa'} me-2` } />
-                            { chosenForm.get('name') }
-                            <i className="fa fa-caret-down ms-2" />
-                          </Dropdown.Toggle>
-
-                          <Dropdown.Menu>
-                            { forms.map((form, i) => {
-                              // return jsx
-                              return (
-                                <Dropdown.Item key={ `form-${form.get('_id')}` } onClick={ (e) => setForm(form.get('_id')) }>
-                                  <i className={ `fa-${form.get('icon') || 'plus fa'} me-2` } />
-                                  { form.get('name') }
-                                </Dropdown.Item>
-                              );
-                            }) }
-                          </Dropdown.Menu>
-                        </Dropdown>
-                      ) }
-                    </div>
-                    
-                    { removing ? (
-                      <div className="card-body bg-white pb-0 flex-1">
-                        Are you sure you want to remove this item?
-                      </div>
-                    ) : (
-                      confirming ? (
-                        <div className="card-body bg-white pb-0 flex-1">
-                          You have unsaved data. Are you sure you want to disregard the changes?
-                        </div>
-                      ) : (
-                        !!chosenForm && (
-                          <div className="card-body bg-white pb-0 flex-1">
-                            { creating && (
-                              <Form
-                                { ...data }
-      
-                                id={ page.get('_id') }
-                                data={ actualData }
-                                fields={ chosenForm.get('data.fields') || [] }
-                                setData={ onData }
-                                onSubmit={ (e) => onSubmit(e, chosenForm, data) }
-                                setPrevent={ setPrevent }
-                                />
-                            ) }
-                          </div>
-                        )
-                      )
-                    ) }
-                    
-                    <div className="card-footer d-flex border-top border-secondary py-3">
-                      { removing ? (
-                        <>
-                          <Button variant="info" className="me-auto" onClick={ (e) => setRemoving(false) }>
-                            Cancel
-                          </Button>
-                          <Button variant="danger" className="ms-auto" onClick={ (e) => onRemove(e) }>
-                            Confirm
-                          </Button>
-                        </>
-                      ) : (
-                        confirming ? (
-                          <>
-                            <Button variant="info" className="me-auto" onClick={ (e) => setConfirming(false) }>
-                              Cancel
-                            </Button>
-                            <Button variant="danger" className="ms-auto" onClick={ onHide }>
-                              Confirm
-                            </Button>
-                          </>
-                        ) : (
-                          <>
-                            { !!props.item.get('_id') && (
-                              <>
-                                <Button variant="danger" className={ updated ? 'me-auto' : 'me-2' } onClick={ (e) => setRemoving(true) }>
-                                  Remove
-                                </Button>
-                                { !updated && (
-                                  <Button variant="info" className="me-auto" onClick={ (e) => onCreate(dashup) }>
-                                    Create New
-                                  </Button>
-                                ) }
-                              </>
-                            ) }
-                            <Button variant="success" className="ms-auto" disabled={ !updated || prevent || submitting } onClick={ (e) => onSubmit(e, chosenForm, data) }>
-                              { submitting ? 'Submitting...' : 'Submit' }
-                            </Button>
-                          </>
-                        )
-                      ) }
-                    </div>
-
-                  </div>
-                  <div className="col-lg-4 d-flex flex-column">
-                    <div className="modal-sidebar">
-                      <div className="card-header d-flex">
-                        <div className="d-inline-block me-auto">
-                          <small className="d-block">
-                            Created At
-                          </small>
-                          <div>
-                            { moment(props.item.get('_meta.created_at')).format('Do MMM, h:mma') }
-                          </div>
-                        </div>
-                        <button type="button" className="btn btn-link ms-auto" onClick={ props.onHide }>
-                          <i className="fa fa-times" />
-                        </button>
-                      </div>
-                      
-                      <div className="flex-1 card-audits mh-25 fit-content">
-                        <SimpleBar className="p-relative">
-                          <div className="card-body">
-                            { audits.map((audit, i) => {
-                              // changes
-                              if (!audit?.changes?.length) return null;
-
-                              // return jsx
-                              return (
-                                <DashupUIPageAudit
-                                  key={ `audit-${audit.id}` }
-                                  page={ page }
-                                  item={ props.item }
-                                  forms={ forms }
-                                  audit={ audit }
-                                  dashup={ dashup }
-                                  getFields={ getFields }
-                                  getFieldStruct={ getFieldStruct }
-                                  />
-                              );
-                            }) }
-                          </div>
-                        </SimpleBar>
-                      </div>
-                      
-                      <div className="card-footer chat-sm d-flex flex-column border-top border-secondary h-75 flex-1 py-3">
-                        { !!props.item.get('_id') && (
-                          <Chat size="sm" dashup={ dashup } page={ page } thread={ `${props.item.get('_id')}` }>
-                            <div className="d-flex flex-column flex-1">
-                              <div className="flex-1 fit-content">
-                                <Chat.Thread />
-                              </div>
-                              <div className="flex-0">
-                                <Chat.Input />
-                              </div>
-                            </div>
-                          </Chat>
-                        ) }
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <Overlay show={ !!tagOpen } target={ tagRef.current } onHide={ () => setTagOpen(false) } rootClose placement="bottom-start">
-                  <Popover className="dropdown-menu dropdown-menu-edit p-2">
-                    { getTagFields(data).map((field, i) => {
                       // return jsx
                       return (
-                        <React.Fragment key={ `tag-${field.uuid}` }>
-                          { i !== 0 && (
-                            <Dropdown.Divider />
-                          ) }
-                          <div className="tags">
-                            { (field.options || []).map((opt, a) => {
-                              // return jsx
-                              return (
-                                <button
-                                  key={ `opt-${opt.value}` }
-                                  onClick={ () => onTag(field, opt.value) }
-                                  className={ `btn w-100${a !== 0 ? ' mt-2' : ''} btn-${opt.color || 'secondary'}` }
-                                  >
-                                  { opt.label }
-                                </button>
-                              );
-                            }) }
-                          </div>
-                        </React.Fragment>
+                        <DashupUIPageAudit
+                          key={ `audit-${audit.id}` }
+                          page={ page }
+                          item={ props.item }
+                          forms={ forms }
+                          audit={ audit }
+                          dashup={ dashup }
+                          getFields={ getFields }
+                          getFieldStruct={ getFieldStruct }
+                          />
                       );
                     }) }
-                  </Popover>
-                </Overlay>
+                  </SimpleBar>
+                </Box>
+              ) }
+            >
+              <DialogTitle sx={ { padding : 0 } }>
+                <Stack spacing={ 1 } direction="row" flexWrap="wrap">
+                  { !!props.item.get('_id') && (
+                    <Tooltip title="Copy URL">
+                      <IconButton color={ copying ? 'primary' : undefined } onClick={ (e) => onCopy(e, page, props.item) }>
+                        { copying ? (
+                          <Icon type="fas" icon="clipboard-check" fontSize="small" />
+                        ) : (
+                          <Icon type="fas" icon="clipboard" fontSize="small" />
+                        ) }
+                      </IconButton>
+                    </Tooltip>
+                  ) }
 
-                <Overlay show={ !!userOpen } target={ userRef.current } onHide={ () => setUserOpen(false) } rootClose placement="bottom-start">
-                  <Popover className="dropdown-menu popover-grid">
-                    <View
-                      view="input"
-                      type="field"
-                      struct="user"
-                      dashup={ data.dashup }
+                  { !!hasTags(data) && (
+                    getTagFields(data).map((type, i) => {
+                      // return jsx
+                      return (
+                        <Stack spacing={ 1 } direction="row" key={ `tag-${type.uuid}` } alignItems="center">
+                          { getTags(type).map((tag, a) => {
+                            // get color
+                            const color = tag.color?.hex;
 
-                      field={ userOpen }
-                      value={ props.item && props.item.get(userOpen?.name || userOpen?.uuid) }
+                            // return jsx
+                            return (
+                              <Tooltip title={ `${type.label}: ${tag.value}`} key={ `tag-${type.uuid}-${tag.value}` }>
+                                <Chip
+                                  sx={ {
+                                    color           : color && window.theme?.palette?.getContrastText(color),
+                                    backgroundColor : color,
+                                  } }
+                                  label={ tag.label }
+                                  onClick={ (e) => setTagOpen({ type : type.uuid, el : e.target }) }
+                                  onDelete={ () => {} }
+                                />
+                              </Tooltip>
+                            );
+                          }) }
 
-                      noLabel
-                      onClick={ (e) => e.preventDefault() }
-                      onChange={ onUser }
-                      menuIsOpen
-                    />
-                  </Popover>
-                </Overlay>
-              </Modal.Body>
-            ) }
-          </Modal>
+                          <Tooltip title={ `Add ${type.label}` }>
+                            <IconButton onClick={ (e) => setTagOpen({ type : type.uuid, el : e.target }) }>
+                              <Icon type="fas" icon="tag" fontSize="small" />
+                            </IconButton>
+                          </Tooltip>
+                          <Menu
+                            open={ tagOpen?.type === type.uuid }
+                            onClose={ () => setTagOpen(null) }
+                            anchorEl={ tagOpen?.el }
+                            MenuListProps={ {
+                              sx : {
+                                width : 240,
+                              },
+                            } }
+                          >
+                            <View
+                              view="input"
+                              type="field"
+                              struct={ type.type }
+                              dashup={ data.dashup }
+
+                              field={ type }
+                              value={ props.item && props.item.get(type.name || type.uuid) }
+
+                              onChange={ onTag }
+                              isInline
+                              autoFocus
+                            />
+                          </Menu>
+                        </Stack>
+                      );
+                    })
+                  ) }
+
+                  { !!hasUser(data) && (
+                    getUserFields(data).map((type, i) => {
+                      // return jsx
+                      return (
+                        <Stack spacing={ 1 } direction="row" key={ `tag-${type.uuid}` } flexWrap="wrap" alignItems="center">
+                          { getUsers(type).map((user, a) => {
+                            // return jsx
+                            return (
+                              <Tooltip title={ `${type.label}: ${user.name}`} key={ `tag-${type.uuid}-${user._id || user.id}` }>
+                                <Chip
+                                  label={ user.name }
+                                  avatar={ <Avatar image={ user.image || user.avatar } name={ user.name } /> }
+                                  onClick={ (e) => setUserOpen({ type : type.uuid, el : e.target }) }
+                                  onDelete={ () => {} }
+                                />
+                              </Tooltip>
+                            );
+                          }) }
+
+                          <Tooltip title={ `Add ${type.label}` }>
+                            <IconButton onClick={ (e) => setUserOpen({ type : type.uuid, el : e.target }) }>
+                              <Icon type="fas" icon="user-plus" fontSize="small" />
+                            </IconButton>
+                          </Tooltip>
+                          <Menu
+                            open={ userOpen?.type === type.uuid }
+                            onClose={ () => setUserOpen(null) }
+                            anchorEl={ userOpen?.el }
+                            MenuListProps={ {
+                              sx : {
+                                width : 240,
+                              },
+                            } }
+                          >
+                            <View
+                              view="input"
+                              type="field"
+                              struct="user"
+                              dashup={ data.dashup }
+
+                              field={ type }
+                              value={ props.item && props.item.get(type.name || type.uuid) }
+
+                              onChange={ onUser }
+                              isInline
+                              autoFocus
+                            />
+                          </Menu>
+                        </Stack>
+                      );
+                    })
+                  ) }
+                </Stack>
+              </DialogTitle>
+              <Box flex={ 1 }>
+                { !!creating && (
+                  <Box py={ 2 }>
+                    <TabContext value={ chosenForm.get('_id') }>
+                      <Box sx={ { borderBottom : 1, borderColor : 'divider' } }>
+                        <TabList onChange={ (e, v) => setForm(v) }>
+                          { forms.map((t, i) => {
+                            // return jsx
+                            return <Tab key={ `tab-${t.get('_id')}` } value={ t.get('_id') } label={ t.get('name') } />;
+                          }) }
+                        </TabList>
+                      </Box>
+                      { forms.map((t, i) => {
+                        // return jsx
+                        return (
+                          <TabPanel key={ `tab-${t.get('_id')}` } value={ t.get('_id').toLowerCase() } sx={ {
+                            paddingLeft  : 0,
+                            paddingRight : 0,
+                          } }>
+                            <Form
+                              { ...data }
+    
+                              id={ page.get('_id') }
+                              data={ actualData }
+                              fields={ t.get('data.fields') || [] }
+                              setData={ onData }
+                              onSubmit={ (e) => onSubmit(e, t, data) }
+                              setPrevent={ setPrevent }
+                            />
+                          </TabPanel>
+                        );
+                      }) }
+                    </TabContext>
+                  </Box>
+                ) }
+              </Box>
+              <Box pt={ 2 } flex={ 0 }>
+                <Stack spacing={ 1 } direction="row" sx={ {
+                  width : '100%',
+                } } alignItems="center">
+                  { !!props.item.get('_id') && (
+                    <Tooltip title="Remove Item">
+                      <IconButton onClick={ (e) => setRemoving(true) }>
+                        <Icon type="fas" icon="trash" fontSize="small" />
+                      </IconButton>
+                    </Tooltip>
+                  ) }
+                  { !!props.item.get('_id') && (
+                    <Tooltip title="Create New">
+                      <IconButton onClick={ (e) => onCreate(dashup) }>
+                        <Icon type="fas" icon="plus" fontSize="small" />
+                      </IconButton>
+                    </Tooltip>
+                  ) }
+                  <Box flex={ 1 } textAlign="right">
+                    <LoadingButton color="success" variant="contained" onClick={ (e) => onSubmit(e, chosenForm, data) } disabled={ !updated || prevent || submitting } loading={ submitting }>
+                      { submitting ? 'Submitting...' : 'Submit' }
+                    </LoadingButton>
+                  </Box>
+                </Stack>
+              </Box>
+            </Modal>
+            
+            <Dialog
+              open={ !!removing }
+              onClose={ () => setRemoving(false) }
+            >
+              <DialogTitle>
+                Confirm Remove
+              </DialogTitle>
+              <DialogContent>
+                <DialogContentText>
+                Are you sure you want to remove this item?
+                </DialogContentText>
+              </DialogContent>
+              <DialogActions>
+                <Button onClick={ () => setRemoving(false) }>Cancel</Button>
+                <LoadingButton color="error" onClick={ (e) => onRemove(e) } loading={ submitting }>
+                  Remove
+                </LoadingButton>
+              </DialogActions>
+            </Dialog>
+            
+            <Dialog
+              open={ !!confirming }
+              onClose={ () => setConfirming(false) }
+            >
+              <DialogTitle>
+                Unsaved Changes
+              </DialogTitle>
+              <DialogContent>
+                <DialogContentText>
+                  You have unsaved changes, closing the modal will clear them.
+                </DialogContentText>
+              </DialogContent>
+              <DialogActions>
+                <Button onClick={ () => setConfirming(false) }>Cancel</Button>
+                <Button color="error" onClick={ (e) => onHide() }>
+                  Continue
+                </Button>
+              </DialogActions>
+            </Dialog>
+          </>
         );
       } }
     </DashupContext.Consumer>

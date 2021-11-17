@@ -2,10 +2,10 @@
 import uuid from 'shortid';
 import Prism from 'prismjs';
 import urlRegex from 'url-regex';
-import { Overlay, Popover, Dropdown } from '../';
 import { Slate, Editable, withReact, ReactEditor } from 'slate-react';
 import { Text, Editor, Transforms, Range, createEditor } from 'slate';
 import React, { useMemo, useState, useCallback, useEffect } from 'react';
+import { Paper, Stack, Box, ToggleButton, ToggleButtonGroup, Icon, Popover } from '../';
 
 // prism
 ;Prism.languages.markdown=Prism.languages.extend("markup",{}),Prism.languages.insertBefore("markdown","prolog",{blockquote:{pattern:/^>(?:[\t ]*>)*/m,alias:"punctuation"},code:[{pattern:/^(?: {4}|\t).+/m,alias:"keyword"},{pattern:/``.+?``|`[^`\n]+`/,alias:"keyword"}],title:[{pattern:/\w+.*(?:\r?\n|\r)(?:==+|--+)/,alias:"important",inside:{punctuation:/==+$|--+$/}},{pattern:/(^\s*)#+.+/m,lookbehind:!0,alias:"important",inside:{punctuation:/^#+|#+$/}}],hr:{pattern:/(^\s*)([*-])([\t ]*\2){2,}(?=\s*$)/m,lookbehind:!0,alias:"punctuation"},list:{pattern:/(^\s*)(?:[*+-]|\d+\.)(?=[\t ].)/m,lookbehind:!0,alias:"punctuation"},"url-reference":{pattern:/!?\[[^\]]+\]:[\t ]+(?:\S+|<(?:\\.|[^>\\])+>)(?:[\t ]+(?:"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|\((?:\\.|[^)\\])*\)))?/,inside:{variable:{pattern:/^(!?\[)[^\]]+/,lookbehind:!0},string:/(?:"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|\((?:\\.|[^)\\])*\))$/,punctuation:/^[\[\]!:]|[<>]/},alias:"url"},bold:{pattern:/(^|[^\\])(\*\*|__)(?:(?:\r?\n|\r)(?!\r?\n|\r)|.)+?\2/,lookbehind:!0,inside:{punctuation:/^\*\*|^__|\*\*$|__$/}},italic:{pattern:/(^|[^\\])([*_])(?:(?:\r?\n|\r)(?!\r?\n|\r)|.)+?\2/,lookbehind:!0,inside:{punctuation:/^[*_]|[*_]$/}},url:{pattern:/!?\[[^\]]+\](?:\([^\s)]+(?:[\t ]+"(?:\\.|[^"\\])*")?\)| ?\[[^\]\n]*\])/,inside:{variable:{pattern:/(!?\[)[^\]]+(?=\]$)/,lookbehind:!0},string:{pattern:/"(?:\\.|[^"\\])*"(?=\)$)/}}}}),Prism.languages.markdown.bold.inside.url=Prism.util.clone(Prism.languages.markdown.url),Prism.languages.markdown.italic.inside.url=Prism.util.clone(Prism.languages.markdown.url),Prism.languages.markdown.bold.inside.italic=Prism.util.clone(Prism.languages.markdown.italic),Prism.languages.markdown.italic.inside.bold=Prism.util.clone(Prism.languages.markdown.bold); // prettier-ignore
@@ -456,9 +456,10 @@ const DashupUIChatInput = (props = {}) => {
             }) }
           </div>
         ) }
-        <div className={ `chat-group${posting ? ' chat-group-posting' : ''}${long ? ' border border-danger' : ''}` }>
-          <div className="chat-input-wrap">
-            <div className="flex-1 flex-column">
+
+        <Paper>
+          <Stack spacing={ 1 } direction="row" alignItems="center" pr={ 2 }>
+            <Box flex={ 1 } px={ 2 } py={ 1 }>
               <Slate
                 value={ value }
                 editor={ editor }
@@ -472,14 +473,26 @@ const DashupUIChatInput = (props = {}) => {
                   renderElement={ renderElement }
                   />
               </Slate>
-            </div>
-            <div className="chat-upload">
-              <button className={ `btn btn-${data.size || 'lg'}` } onClick={ (e) => onSend(e, data) }>
-                <i className="fa fa-plus" />
-              </button>
-            </div>
-          </div>
-        </div>
+            </Box>
+            <ToggleButtonGroup size="small">
+              <ToggleButton value="image" selected>
+                <Icon type="fas" icon="image" fixedWidth />
+              </ToggleButton>
+              <ToggleButton value="smile" selected>
+                <Icon type="fas" icon="smile" fixedWidth />
+              </ToggleButton>
+            </ToggleButtonGroup>
+            <ToggleButton size="small" value="send" selected color="primary">
+              <Icon type="fas" icon="play" fixedWidth />
+            </ToggleButton>
+          </Stack>
+        </Paper>
+      </>
+    );
+  };
+
+  /*
+  
 
         <Overlay show={ !!mentionRef } target={ mentionRef } onHide={ () => setMentionRef(null) } rootClose placement="top">
           <Popover className="dropdown-menu show">
@@ -496,9 +509,7 @@ const DashupUIChatInput = (props = {}) => {
             }) }
           </Popover>
         </Overlay>
-      </>
-    );
-  };
+        */
 
   // return jsx
   return props.noChat ? renderBody(props) : (

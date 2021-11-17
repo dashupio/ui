@@ -4,7 +4,7 @@ import React from 'react';
 
 // import rule
 import Rule from './Rule';
-import Select from '../Select';
+import { Card, CardContent, Box, IconButton, Icon, TextField, MenuItem } from '..'
 
 // create menu component
 const DashupUIQueryGroup = (props = {}) => {
@@ -52,40 +52,52 @@ const DashupUIQueryGroup = (props = {}) => {
 
   // return jsx
   return (
-    <div className="dashup-query-group card mt-2">
-      <div className="card-header p-2 d-flex">
-        <button className="btn btn-white me-2">
-          <i className="fa fa-fw fa-bars" />
-        </button>
-        <div className="d-inline-block me-auto select-inline">
-          <Select
-            value={ { value : props.operator, label : props.groups[props.operator].title } }
-            options={ Object.keys(props.groups || {}).map((op, i) => {
-              // return value
-              return {
-                label : props.groups[op].title,
-                value : op,
-              };
-            }) }
-            onChange={ (val) => setOperator(val?.value) }
-          />
-        </div>
-
-        <button className="btn ms-auto btn-success" onClick={ (e) => !props.setValue({
-          [op] : [...props.value[op], { $eq : {} }],
-        }) && e.preventDefault() }>
-          Add Rule
-        </button>
-        <button className="btn btn-danger ms-2" onClick={ (e) => !props.onRemove() && e.preventDefault() }>
-          <i className="fa fa-fw fa-trash" />
-        </button>
-      </div>
+    <Card variant="outlined" sx={ {
+      backgroundColor : 'rgba(0, 0, 0, 0)',
+    } }>
+      <CardContent sx={ {
+        display       : 'flex',
+        alignItems    : 'center',
+        flexDirection : 'row',
+      } }>
+        <IconButton sx={ {
+          mr : 2,
+        } }>
+          <Icon type="fas" icon="bars" />
+        </IconButton>
+        <TextField
+          size="small"
+          value={ props.operator || '' }
+          label="Operator"
+          select
+          onChange={ (e) => setOperator(e.target.value) }
+        >
+          { Object.keys(props.groups || {}).map((op) => {
+            // return jsx
+            return (
+              <MenuItem key={ op } value={ op }>
+                { props.groups[op].title }
+              </MenuItem>
+            )
+          }) }
+        </TextField>
+        <Box ml="auto">
+          <IconButton onClick={ (e) => !props.setValue({
+            [op] : [...props.value[op], { $eq : {} }],
+          }) && e.preventDefault() }>
+            <Icon type="fas" icon="plus" />
+          </IconButton>
+          <IconButton onClick={ (e) => props.onRemove() } color="error">
+            <Icon type="fas" icon="trash" />
+          </IconButton>
+        </Box>
+      </CardContent>
       { !!(props.value[op] || []).length && (
-        <div className="card-body p-2 pt-0">
+        <CardContent>
           { (props.value[op] || []).map((val, i) => {
             // return jsx
             return (
-              <div className="ms-3 rule-inner" key={ `rule-${i}` }>
+              <Box ml={ 2 } key={ `rule-${i}` }>
                 <Rule
                   page={ props.page }
                   value={ val }
@@ -96,12 +108,13 @@ const DashupUIQueryGroup = (props = {}) => {
                   setValue={ (val) => setValue(i, val) }
                   operators={ props.operators }
                 />
-              </div>
+              </Box>
             );
           }) }
-        </div>
+        </CardContent>
       ) }
-    </div>
+      <Box />
+    </Card>
   );
 };
 

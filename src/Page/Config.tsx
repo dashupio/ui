@@ -1,9 +1,10 @@
 
 
 // import dependencies
-import moment from 'moment';
-import React, { useState, useEffect } from 'react';
-import { View, Chat, Page, Modal, Tabs, Tab } from '../';
+import { Tab } from '@mui/material';
+import React, { useRef, useState } from 'react';
+import { TabContext, TabList, TabPanel } from '@mui/lab';
+import { colors, Page, Menu, MenuItem, ListItemIcon, ListItemText, Modal, Icon, View, Color, Box, TextField, Stack, Button, IconPicker } from '../';
 
 // let context
 let DashupContext = null;
@@ -12,13 +13,19 @@ let DashupContext = null;
 const DashupUIPageConfig = (props = {}) => {
   // tabs
   let [tab, setTab] = useState(null);
+  const [icon, setIcon] = useState(false);
+  const [color, setColor] = useState(false);
+  const [colorMenu, setColorMenu] = useState(false);
+
+  // ref
+  const colorRef = useRef(null);
 
   // return JSX
   return (
     <DashupContext.Consumer>
       { (data) => {
         // destruct
-        const { type, page, dashup, getPageStruct } = data;
+        const { type, page, dashup, setPage, getPageStruct } = data;
 
         // get struct
         const struct = getPageStruct();
@@ -30,102 +37,112 @@ const DashupUIPageConfig = (props = {}) => {
         const tabs = struct.data?.tabs || ['Config', 'Connects'];
 
         // check tab
-        if (!tab) tab = tabs[0];
+        if (!tab) tab = `${tabs[0]}`.toLowerCase();
 
         // return jsx
         return (
-          <Modal size="xl" show={ !!props.show } onHide={ props.onHide } enforceFocus={ false }>
-            { !!props.show && (
-              <Modal.Body className="card p-0">
-                <div className="row g-0">
-                  <div className="col-lg-8 d-flex flex-column has-shadow">
-                    
-                    <div className="card-header py-3 border-bottom flex-0">
-                      <h5 className="modal-title">
-                        <i className={ `me-2 fa-fw fa-${page.get('icon') || 'pencil fa'}` } />
-                        { page.get('name') || page.get('_id') }
-                      </h5>
-                      <button type="button" className="btn btn-link ms-auto d-inline d-lg-none" onClick={ props.onHide }>
-                        <i className="fa fa-times" />
-                      </button>
-                    </div>
+          <>
+            <Modal
+              open={ !!props.show }
+              icon={ page.get('icon') || struct?.icon }
+              page={ page }
+              title={ page.get('name') || page.get('_id') }
+              dashup={ dashup }
+              thread={ `${page.get('_id')}` }
+              onClose={ props.onHide || props.onClose }
+            >
+              <Menu
+                open={ !!colorMenu }
+                onClose={ () => setColorMenu(null) }
+                anchorEl={ colorRef?.current }
+              >
+                <MenuItem onClick={ (e) => !setIcon(true) && setColorMenu(false) }>
+                  <ListItemIcon>
+                    <Icon icon={ page.get('icon') || 'pencil' } />
+                  </ListItemIcon>
+                  <ListItemText>
+                    Change Icon
+                  </ListItemText>
+                </MenuItem>
+                <MenuItem onClick={ (e) => !setColor(true) && setColorMenu(false) }>
+                  <ListItemIcon>
+                    <Icon type="fas" icon="tint" />
+                  </ListItemIcon>
+                  <ListItemText>
+                    Change Color
+                  </ListItemText>
+                </MenuItem>
+              </Menu>
+              <Box pt={ 4 } pb={ 2 }>
+                <Stack spacing={ 2 }>
+                  <Stack direction="row" spacing={ 2 }>
+                    <Button ref={ colorRef } variant="contained" onClick={ () => setColorMenu(true) } sx={ {
+                      color           : page.get('color.hex') && theme.palette.getContrastText(page.get('color.hex')),
+                      backgroundColor : page.get('color.hex'),
+                    } }>
+                      <Icon icon={ page.get('icon') || 'pencil' } fixedWidth />
+                    </Button>
+                    <TextField
+                      label="Name"
+                      onChange={ (e) => setPage('name', e.target.value) }
+                      defaultValue={ page.get('name') }
+                      fullWidth
+                    />
+                  </Stack>
 
-                    { struct && (
-                      <div className="card-body flex-0 border-bottom">
-                        <i className={ `me-2 ${struct.icon} fa-fw` } />
-                        { struct.title }
-                      </div>
-                    ) }
-                    
-                    { props.children || (
-                      <div className="card-body flex-0 border-bottom">
-                        <Tabs
-                          id="page-config"
-                          onSelect={ (k) => setTab(k) }
-                          activeKey={ tab }
-                        >
-                          { tabs.map((tab, i) => {
-                            // return jsx
-                            return (
-                              <Tab key={ `page-config-${tab}` } eventKey={ tab } title={ `${tab.charAt(0).toUpperCase()}${tab.slice(1)}` } className="pt-4">
-                                { `${tab}`.toLowerCase() === 'connects' ? (
-                                  <Page.Connect page={ page } dashup={ dashup } />
-                                ) : (props[tab] || (
-                                  <View
+                  <TextField
+                    rows={ 4 }
+                    label="Description"
+                    onChange={ (e) => setPage('description', e.target.value) }
+                    defaultValue={ page.get('description') }
+                    fullWidth
+                    multiline
+                  />
+                </Stack>
+              </Box>
+              <Box pt={ 2 } flex={ 1 } display="flex" flexDirection="column">
+                <TabContext value={ tab }>
+                  <Box sx={ { borderBottom : 1, borderColor : 'divider' } }>
+                    <TabList onChange={ (e, v) => setTab(v.toLowerCase()) }>
+                      { tabs.map((t, i) => {
+                        // return jsx
+                        return <Tab key={ `tab-${t}` } value={ t.toLowerCase() } label={ t } />;
+                      }) }
+                    </TabList>
+                  </Box>
+                  { tabs.map((t, i) => {
+                    // return jsx
+                    return (
+                      <TabPanel key={ `tab-${t}` } value={ t.toLowerCase() } sx={ {
+                        flex          : 1,
+                        paddingLeft   : 0,
+                        paddingRight  : 0,
+                        paddingBottom : 0,
+                      } }>
+                        { `${tab}`.toLowerCase() === 'connects' ? (
+                          <Page.Connect page={ page } dashup={ dashup } />
+                        ) : (props[tab] || (
+                          <View
 
-                                    { ...{
-                                      ...data,
+                            { ...{
+                              ...data,
 
-                                      type   : 'page',
-                                      view   : `${tab}`.toLowerCase(),
-                                      struct : type,
-                                    } }
-                                    />
-                                )) }                      
-                              </Tab>
-                            );
-                          }) }
-                        </Tabs>
-                      </div>
-                    ) }
-                    
-                  </div>
-                  <div className="col-lg-4 d-flex flex-column">
-                    <div className="modal-sidebar">
-                      <div className="card-header d-flex">
-                        <div className="d-inline-block me-auto">
-                          <small className="d-block">
-                            Created At
-                          </small>
-                          <div>
-                            { moment(page.get('_meta.created')).format('Do MMM, h:mma') }
-                          </div>
-                        </div>
-                        <button type="button" className="btn btn-link ms-auto" onClick={ props.onHide }>
-                          <i className="fa fa-times" />
-                        </button>
-                      </div>
-                      
-                      <div className="card-body flex-1" />
-                      
-                      <div className="card-footer chat-sm d-flex flex-column border-top border-secondary h-75 py-3">
-                        <Chat size="sm" dashup={ dashup } page={ page } thread={ `${page.get('_id')}.config` }>
-                          <div className="d-flex flex-column flex-1">
-                            <div className="flex-1 fit-content">
-                              <Chat.Thread />
-                            </div>
-                            <div className="flex-0">
-                              <Chat.Input />
-                            </div>
-                          </div>
-                        </Chat>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </Modal.Body>
-            ) }
-          </Modal>
+                              type   : 'page',
+                              view   : `${tab}`.toLowerCase(),
+                              struct : type,
+                            } }
+                            />
+                        )) }  
+                      </TabPanel>
+                    );
+                  }) }
+                </TabContext>
+              </Box>
+            </Modal>
+
+            { !!icon && <IconPicker target={ colorRef } show icon={ page.get('icon') } onClose={ () => setIcon(false) } onChange={ (icon) => setPage('icon', icon) } /> }
+            { !!color && <Color target={ colorRef } show color={ page.get('color.hex') || 'transparent' } colors={ Object.values(colors) } onClose={ () => setColor(false) } onChange={ (hex) => setPage('color', hex.hex === 'transparent' ? null : hex) } /> }
+          </>
         );
       } }
     </DashupContext.Consumer>

@@ -3,7 +3,7 @@ import React from 'react';
 import moment from 'moment';
 import markdown from 'simple-markdown';
 import defaultRules from './rules';
-import { OverlayTrigger, Tooltip } from '../';
+import { Chip, Avatar, Stack, Tooltip, Box, Icon } from '../';
 
 // import message
 import DashupUIChatEmbed from './Embed';
@@ -57,38 +57,44 @@ const DashupUIChatMessage = (props = {}) => {
       react : (node, output, state) => {
         // page
         const page = node.trigger === '#' ? dashup.page(node.id) : null;
+        
+        // let color
+        let color = page?.get('color');
+        let parent = page && (page.get('parent') || 'root') !== 'root' && dashup.page(page.get('parent'));
 
-        // get parent
-        const parent = page && (page.get('parent') || 'root') !== 'root' && dashup.page(page.get('parent'));
-
-        // color
-        const color = (page && page.get('color')) || (parent && parent.get('color'));
+        // get parentmost color
+        while (parent && !color) {
+          // get new parent
+          parent = parent && (parent.get('parent') || 'root') !== 'root' && dashup.page(parent.get('parent'));
+          color = parent?.get('color');
+        }
 
         // url
         const url = node.trigger === '#' ? `/app/${node.id}` : null;
 
         // return jsx
         return (
-          <a
-            key={ state.key }
-            href={ url || '#!' }
-            className={ `badge badge-tag${color ? '' : ' bg-light text-dark'}` }
-            contentEditable={ false }
-            
-            style={ {
-              color      : color?.hex ? (color?.drk ? '#fff' : '#000') : null,
-              background : color?.hex,
+          <Chip
+            sx={ {
+              mx              : .5,
+              color           : color?.hex && theme.palette.getContrastText(color.hex),
+              cursor          : 'pointer',
+              backgroundColor : color?.hex,
             } }
-          >
-            { node.trigger === '@' ? (
-              <i className="fad fa-at me-1" />
-            ) : (
-              page && page.get('icon') ? (
-                <i className={ `fa fa-${page.get('icon')} me-1` } />
-              ) : node.trigger
+            key={ state.key }
+            size="small"
+            label={ node.display }
+            avatar={ (
+              <Avatar
+                name={ node.display }
+                bgColor={ color?.hex }
+              >
+                { !!page?.get('icon') && <Icon icon={ page.get('icon') } /> }
+              </Avatar>
             ) }
-            { node.display }
-          </a>
+            onClick={ () => url && eden.router.go(url) }
+            contentEditable={ false }
+          />
         );
       },
     };
@@ -111,110 +117,51 @@ const DashupUIChatMessage = (props = {}) => {
     return reactOutput(parser(text || '', state), state);
   };
 
-  // get short name
-  const getName = (user) => {
-    // get name
-    const name = `${user.name || ''}`.trim() || 'N A';
-
-    // return name
-    return `${(name.split(' ')[0] || '')[0] || ''}${(name.split(' ')[1] || '')[0] || ''}`;
-  };
-
   // render body
   const renderBody = (data) => {
     // check removed
-    if (props.message.removed) return <div />
+    if (props.message.removed) return <Box />;
 
     // return jsx
     return (
-      <div className={ `message${inThread() ? ' in-thread' : ''}` }>
-        <div className="message-avatar">
-          <div  className={ `avatar rounded-circle${props.message?.by?.avatar ? '' : ' bg-secondary'}` } style={ {
-            backgroundImage : props.message?.by?.avatar ? `url(${props.message.by.avatar})` : null,
-          } }>
-            { props.message?.by?.avatar ? '' : getName(props.message.by) }
-          </div>
-        </div>
-        <div className="message-body">
-          <div className="message-by">
-            { !!props.message?.by?.name && (
-              <b className="me-2">
-                { props.message.by.name }
-              </b>
-            ) }
-            
-            <OverlayTrigger
-              overlay={
-                <Tooltip>
-                  { moment(props.message.created_at).format('LL') }
-                </Tooltip>
-              }
-              placement="top"
-            >
-              <span className="text-muted">
-                { moment(props.message.created_at).fromNow() }
-              </span>
-            </OverlayTrigger>
-          </div>
-          <div className="message-content">
-            { parseContent(data.dashup, props.message.parsed || props.message.message) }
-          </div>
-          { !!getEmbeds().length && (
-            <div className="mb-2 message-embeds">
-              { getEmbeds().map((embed, i) => {
-                // return jsx
-                return (
-                  <div key={ `embed-${props.message.id}-${i}` } className={ `mt-2 card${embed.color ? ` card-${embed.color}` : ''}` }>
-                    { !!embed.color && (
-                      <div className={ `color-strip bg-${embed.color}` } />
-                    ) }
-                    <div className="card-body">
-                      <Embed embed={ embed } message={ props.message } noChat={ props.noChat } />
-                    </div>
-                  </div>
-                );
-              }) }
-            </div>
+      <Box mt={ inThread() ? 0 : (props.size === 'sm' ? 1 : 1.5) }>
+        <Stack spacing={ 2 } direction="row">
+          { inThread() ? (
+            <Box minWidth={ data.size === 'sm' ? 25 : 40 } />
+          ) : (
+            <Avatar src={ props.message?.by?.avatar } name={ props.message?.by?.name } sx={ {
+              width : data.size === 'sm' ? 25 : 40,
+            } } />
           ) }
-        </div>
-
-        { (!!data.canAdmin || props.message?.by?.id === data.dashup?.get('_meta.user')) && (
-          <div className="message-hover">
-            <div className="d-flex align-items-center">
-              <div className="ms-auto">
-                <div className="btn-group">
-                  { /*
-                  <OverlayTrigger
-                    overlay={
-                      <Tooltip>
-                        Update Message
-                      </Tooltip>
-                    }
-                    placement="top"
-                  >
-                    <button className="btn btn-sm btn-primary" onClick={ (e) => data.onUpdate(props.message) }>
-                      <i className="fa fa-pencil" />
-                    </button>
-                  </OverlayTrigger>
-                  */ }
-                  <OverlayTrigger
-                    overlay={
-                      <Tooltip>
-                        Remove Message
-                      </Tooltip>
-                    }
-                    placement="top"
-                  >
-                    <button className="btn btn-sm btn-danger" onClick={ (e) => data.onRemove(props.message) }>
-                      <i className="fa fa-trash" />
-                    </button>
-                  </OverlayTrigger>
-                </div>
-              </div>
-            </div>
-          </div>
-        ) }
-      </div>
+          <Stack spacing={ .5 }>
+            { !inThread() && (
+              <Stack spacing={ 1 } direction="row" alignItems="center">
+                <Box sx={ { fontWeight : 'bold' } }>
+                  { props.message.by.name }
+                </Box>
+                <Tooltip title={ moment(props.message.created_at).format('LL') }>
+                  <Box fontSize="small">
+                    { moment(props.message.created_at).fromNow() }
+                  </Box>
+                </Tooltip>
+              </Stack>
+            ) }
+            <Box display="flex" flexDirection="row" alignItems="center" flexWrap="wrap">
+              { parseContent(data.dashup, props.message.parsed || props.message.message) }
+            </Box>
+            { !!getEmbeds().length && (
+              <Box>
+                { getEmbeds().map((embed, i) => {
+                  // return jsx
+                  return (
+                    <Embed embed={ embed } message={ props.message } noChat={ props.noChat } />
+                  );
+              }) }
+              </Box>
+            ) }
+          </Stack>
+        </Stack>
+      </Box>
     );
   }
 

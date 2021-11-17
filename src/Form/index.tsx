@@ -4,7 +4,7 @@ import clone from 'clone-deep';
 import { Form } from 'react-bootstrap';
 import { ReactSortable } from 'react-sortablejs';
 import React, { useState, useEffect, createContext } from 'react';
-import { Box, Fab, Button, ToolTip, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions } from '../';
+import { Icon, Box, Fab, Button, Tooltip, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions } from '../';
 
 // import local modules
 import Menu from './Menu';
@@ -247,7 +247,7 @@ const DashupUIForm = (props = {}) => {
   return (
     <DashupUIContext.Provider value={ ctx }>
       { props.adds !== false && props.updating && (
-        <ToolTip title="Add Field">
+        <Tooltip title="Add Field">
           <Fab onClick={ (e) => setMenu(true) } color="primary" sx={ {
             top : 0,
             left : '50%',
@@ -255,9 +255,9 @@ const DashupUIForm = (props = {}) => {
             position : 'absolute',
             transform : 'translateX(-50%) translateY(-50%)',
           } }>
-            <i className="fa fa-plus" />
+            <Icon type="fas" icon="plus" />
           </Fab>
-        </ToolTip>
+        </Tooltip>
       ) }
       
       { !props.action ? formJsx : (
@@ -282,7 +282,7 @@ const DashupUIForm = (props = {}) => {
       { removeJsx }
 
       { props.adds !== false && props.updating && (
-        <ToolTip title="Add Field">
+        <Tooltip title="Add Field">
           <Fab onClick={ (e) => setMenu(true) } color="primary" sx={ {
             left : '50%',
             bottom : 0,
@@ -290,9 +290,9 @@ const DashupUIForm = (props = {}) => {
             position : 'absolute',
             transform : 'translateX(-50%) translateY(50%)',
           } }>
-            <i className="fa fa-plus" />
+            <Icon type="fas" icon="plus" />
           </Fab>
-        </ToolTip>
+        </Tooltip>
       ) }
     </DashupUIContext.Provider>
   );

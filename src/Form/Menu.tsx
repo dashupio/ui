@@ -1,9 +1,10 @@
 
 // import dependencies
+import dotProp from 'dot-prop';
 import SimpleBar from 'simplebar-react';
-import { Offcanvas } from '../';
 import { ReactSortable } from 'react-sortablejs';
 import React, { useRef, useState, useEffect } from 'react';
+import { Box, Card, useTheme, Avatar, Icon, IconButton, CardHeader, Drawer, Typography, Divider, TextField } from '../';
 
 // import on end
 import onEnd from './drag';
@@ -13,6 +14,9 @@ let DashupUIContext = null;
 
 // create dashup grid body
 const DashupUIFormMenu = (props = {}) => {
+  // theme
+  const theme = useTheme();
+
   // state
   const [search, setSearch] = useState('');
 
@@ -48,77 +52,103 @@ const DashupUIFormMenu = (props = {}) => {
           item.color = item.color || colors[t];
         });
 
-        // return jsx
         return (
-          <Offcanvas backdrop={ false } show={ props.show } onHide={ props.onHide }>
-            <Offcanvas.Header closeButton>
-              <Offcanvas.Title>
-                { props.title || 'Form Fields' }
-              </Offcanvas.Title>
-            </Offcanvas.Header>
-            <div className="w-100 h-100 d-flex flex-column">
-              <div className="p-3 lead">
+          <Drawer
+            open={ props.open || props.show }
+            anchor="left"
+            onClose={ props.onClose || props.onHide }
+            hideBackdrop
+
+            ModalProps={ {
+              sx : {
+                right : 'auto',
+              }
+            } }
+          >
+            <Box px={ 3 } py={ 2 } height="100%" display="flex" flexDirection="column" maxWidth={ 360 }>
+              <Box display="flex" flexDirection="row" alignItems="center" mb={ 1 }>
+                <Typography variant="h5">
+                  { props.title || 'Form Fields' }
+                </Typography>
+                <IconButton onClick={ props.onClose || props.onHide } sx={ {
+                  ml : 'auto',
+                } }>
+                  <Icon type="fas" icon="times" />
+                </IconButton>
+              </Box>
+              <Typography gutterBottom>
                 Drag one of these fields into the form where you need it.
-              </div>
-              <div className="p-3">
-                <input className="form-control" ref={ searchRef } placeholder="Filter Fields" type="search" onChange={ (e) => setSearch(e.target.value) } value={ search } />
-              </div>
-              <div className="flex-1 fit-content">
-                <SimpleBar className="p-3">
-                  <ReactSortable
-                    id={ `${data.id}-menu` }
-                    list={ data.available.sort((a, b) => {
-                      // return sort
-                      return a.title.toLowerCase().localeCompare(b.title.toLowerCase());
-                    }) }
-                    group={ data.id }
-                    onEnd={ (e) => onEnd(e, data.fields, data.setFields, data.onSaving, data.onConfig, props.onHide) }
-                    setList={ () => {} }
-                  >
-                    { (data.available || []).sort((a, b) => {
-                      // return sort
-                      return a.title.toLowerCase().localeCompare(b.title.toLowerCase());
-                    }).map((field, i) => {
-                      // search
-                      if (search && search.length) {
-                        // search string
-                        const str = `${field.type} ${field.title} ${field.description}`.toLowerCase();
+              </Typography>
 
-                        // check search
-                        if (search.toLowerCase().split(' ').filter((t) => t.length).find((tag) => {
-                          // find in value
-                          return !str.includes(tag);
-                        })) return (
-                          <div key={ `field-${field.type}` } className="d-none" />
+              <TextField
+                label="Search"
+                value={ search }
+                onChange={ (e) => setSearch(e.target.value) }
+                fullWidth
+                placeholder="Filter Fields"
+              />
+
+              <Box my={ 2 }>
+                <Divider />
+              </Box>
+
+              <Box flex={ 1 } position="relative">
+                <Box position="absolute" top={ 0 } left={ 0 } right={ 0 } bottom={ 0 }>
+                  <SimpleBar style={ {
+                    width  : '100%',
+                    height : '100%',
+                  } }>
+                    <ReactSortable
+                      id={ `${data.id}-menu` }
+                      list={ data.available.sort((a, b) => {
+                        // return sort
+                        return a.title.toLowerCase().localeCompare(b.title.toLowerCase());
+                      }) }
+                      group={ data.id }
+                      onEnd={ (e) => onEnd(e, data.fields, data.setFields, data.onSaving, data.onConfig, props.onHide) }
+                      setList={ () => {} }
+                    >
+                      { (data.available || []).sort((a, b) => {
+                        // return sort
+                        return a.title.toLowerCase().localeCompare(b.title.toLowerCase());
+                      }).map((field, i) => {
+                        // search
+                        if (search && search.length) {
+                          // search string
+                          const str = `${field.type} ${field.title} ${field.description}`.toLowerCase();
+
+                          // check search
+                          if (search.toLowerCase().split(' ').filter((t) => t.length).find((tag) => {
+                            // find in value
+                            return !str.includes(tag);
+                          })) return null;
+                        }
+
+                        // return jsx
+                        return (
+                          <Card variant="outlined" key={ `field-${field.type}` } sx={ {
+                            mb     : 2,
+                            cursor : 'move'
+                          } } data-type={ field.type }>
+                            <CardHeader
+                              avatar={ (
+                                <Avatar bgColor={ dotProp.get(theme.palette, `${field.color}.main`) }>
+                                  <Icon type="fas" icon={ field.icon } />
+                                </Avatar>
+                              ) }
+                              title={ field.title }
+                              subheader={ field.description }
+                            />
+                            <Box />
+                          </Card>
                         );
-                      }
-
-                      // return fields
-                      return (
-                        <div key={ `field-${field.type}` } className="card border border-secondary mb-2 cursor-move" data-type={ field.type }>
-                          <div className="card-body d-flex">
-                            <div className="row">
-                              <div className="flex-0">
-                                <i className={ `${field.icon} h4 fa-fw mx-3 my-3${field.color ? ` text-${field.color}` : ''}` } />
-                              </div>
-                              <div className="col d-flex flex-1 align-items-center">
-                                <div className="w-100">
-                                  <h5 className="mb-1">
-                                    { field.title }
-                                  </h5>
-                                  <p className="m-0">{ field.description }</p>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      );
-                    }) }
-                  </ReactSortable>
-                </SimpleBar>
-              </div>
-            </div>
-          </Offcanvas>
+                      }) }
+                    </ReactSortable>
+                  </SimpleBar>
+                </Box>
+              </Box>
+            </Box>
+          </Drawer>
         );
       } }
     </DashupUIContext.Consumer>
