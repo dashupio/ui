@@ -70080,6 +70080,8 @@ DashupUIForm.Field = Field(DashupUIContext);
 DashupUIForm.Config = Config(DashupUIContext); // export default
 
 var DashupUIItem = function DashupUIItem() {
+  var _getColor, _getColor2;
+
   var props = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
   // theme
   var theme = useTheme(); // use state
@@ -70252,8 +70254,8 @@ var DashupUIItem = function DashupUIItem() {
     variant: props.variant,
     sx: {
       color: props.color && theme.palette.getContrastText(dotProp.get(theme.palette, props.color)),
-      borderColor: !props.variant && getColor().backgroundColor,
-      borderLeftWidth: getColor().backgroundColor && !props.variant ? 3 : undefined,
+      borderColor: !props.variant && ((_getColor = getColor()) === null || _getColor === void 0 ? void 0 : _getColor.backgroundColor),
+      borderLeftWidth: (_getColor2 = getColor()) !== null && _getColor2 !== void 0 && _getColor2.backgroundColor && !props.variant ? 3 : undefined,
       borderLeftStyle: 'solid',
       backgroundColor: props.color
     }
