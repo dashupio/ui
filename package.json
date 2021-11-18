@@ -1,7 +1,7 @@
 {
   "name": "@dashup/ui",
   "description": "nothing yet",
-  "version": "1.0.9",
+  "version": "1.0.10",
   "main": "dist/index.cjs.js",
   "module": "dist/index.esm.js",
   "source": "src/index.ts",
