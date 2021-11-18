@@ -193,8 +193,8 @@ const DashupUIFormField = (props = {}) => {
         <>
           <Box sx={ {
             top             : 2,
-            left            : 5,
-            right           : 5,
+            left            : -5,
+            right           : -5,
             bottom          : -1,
             zIndex          : 0,
             display         : 'none',

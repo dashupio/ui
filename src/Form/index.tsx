@@ -231,16 +231,19 @@ const DashupUIForm = (props = {}) => {
       group={ props.id }
       onEnd={ (e) => onEnd(e, props.fields, props.setFields, setSaving, setConfig, setMenu) }
       handle=".moves"
+      style={ {
+        paddingTop    : getChildren(props.parent).length ? 0 : 15,
+        paddingBottom : getChildren(props.parent).length ? 0 : 15,
+      } }
       setList={ () => {} }
-      className={ `dashup-form${getChildren(props.parent).length ? '' : ' py-3'}` }
       swapThreshold={ 5 }
     >
       { fieldsJsx }
     </ReactSortable>
   ) : (
-    <div className="dashup-form">
+    <Box>
       { fieldsJsx }
-    </div>
+    </Box>
   );
 
   // return jsx
