@@ -5,7 +5,7 @@ import urlRegex from 'url-regex';
 import { Slate, Editable, withReact, ReactEditor } from 'slate-react';
 import { Text, Editor, Transforms, Range, createEditor } from 'slate';
 import React, { useMemo, useState, useCallback, useEffect } from 'react';
-import { Paper, Stack, Box, ToggleButton, ToggleButtonGroup, Icon, Popover } from '../';
+import { Paper, Chip, Stack, Box, useTheme, ToggleButton, ToggleButtonGroup, Avatar, Icon, Popover, MenuItem, ListItemIcon, ListItemText } from '../';
 
 // prism
 ;Prism.languages.markdown=Prism.languages.extend("markup",{}),Prism.languages.insertBefore("markdown","prolog",{blockquote:{pattern:/^>(?:[\t ]*>)*/m,alias:"punctuation"},code:[{pattern:/^(?: {4}|\t).+/m,alias:"keyword"},{pattern:/``.+?``|`[^`\n]+`/,alias:"keyword"}],title:[{pattern:/\w+.*(?:\r?\n|\r)(?:==+|--+)/,alias:"important",inside:{punctuation:/==+$|--+$/}},{pattern:/(^\s*)#+.+/m,lookbehind:!0,alias:"important",inside:{punctuation:/^#+|#+$/}}],hr:{pattern:/(^\s*)([*-])([\t ]*\2){2,}(?=\s*$)/m,lookbehind:!0,alias:"punctuation"},list:{pattern:/(^\s*)(?:[*+-]|\d+\.)(?=[\t ].)/m,lookbehind:!0,alias:"punctuation"},"url-reference":{pattern:/!?\[[^\]]+\]:[\t ]+(?:\S+|<(?:\\.|[^>\\])+>)(?:[\t ]+(?:"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|\((?:\\.|[^)\\])*\)))?/,inside:{variable:{pattern:/^(!?\[)[^\]]+/,lookbehind:!0},string:/(?:"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|\((?:\\.|[^)\\])*\))$/,punctuation:/^[\[\]!:]|[<>]/},alias:"url"},bold:{pattern:/(^|[^\\])(\*\*|__)(?:(?:\r?\n|\r)(?!\r?\n|\r)|.)+?\2/,lookbehind:!0,inside:{punctuation:/^\*\*|^__|\*\*$|__$/}},italic:{pattern:/(^|[^\\])([*_])(?:(?:\r?\n|\r)(?!\r?\n|\r)|.)+?\2/,lookbehind:!0,inside:{punctuation:/^[*_]|[*_]$/}},url:{pattern:/!?\[[^\]]+\](?:\([^\s)]+(?:[\t ]+"(?:\\.|[^"\\])*")?\)| ?\[[^\]\n]*\])/,inside:{variable:{pattern:/(!?\[)[^\]]+(?=\]$)/,lookbehind:!0},string:{pattern:/"(?:\\.|[^"\\])*"(?=\)$)/}}}}),Prism.languages.markdown.bold.inside.url=Prism.util.clone(Prism.languages.markdown.url),Prism.languages.markdown.italic.inside.url=Prism.util.clone(Prism.languages.markdown.url),Prism.languages.markdown.bold.inside.italic=Prism.util.clone(Prism.languages.markdown.italic),Prism.languages.markdown.italic.inside.bold=Prism.util.clone(Prism.languages.markdown.bold); // prettier-ignore
@@ -55,29 +55,42 @@ const Leaf = ({ attributes, children, leaf }) => {
 
 // create mention
 const Mention = ({ attributes, children, element }) => {
+  // theme
+  const theme = useTheme();
+
   // return jsx
   return (
-    <span
+    <Chip
       { ...attributes }
-      className={ `badge badge-tag${element.mention.color ? '' : ' bg-light text-dark'}` }
       contentEditable={ false }
-      
-      style={ {
-        color      : element.mention.color?.hex ? (element.mention.color?.drk ? '#fff' : '#000') : null,
-        userSelect : 'none',
-        background : element.mention.color?.hex,
+
+      sx={ {
+        color           : element.mention.color?.hex && theme.palette.getContrastText(element.mention.color.hex),
+        fontWeight      : 'bold',
+        backgroundColor : element.mention.color?.hex,
       } }
-    >
-      { element.trigger === '@' ? (
-        <i className="fa fa-at me-1" />
-      ) : (
-        element.mention.icon ? (
-          <i className={ `fa fa-${element.mention.icon} me-1` } />
-        ) : element.trigger
+
+      size="small"
+      label={ element.mention.display }
+      avatar={ (
+        element.mention.image ? (
+          <Avatar name={ element.mention.display } src={ element.mention.image } />
+        ) : (
+          !!element.mention.icon && (
+            <Avatar
+              name={ element.mention.display } 
+              sx={ {
+                backgroundColor : element.mention.color?.hex,
+              } }
+            >
+              <Icon type="fas" icon={ element.mention.icon } sx={ {
+                color : element.mention.color?.hex && theme.palette.getContrastText(element.mention.color.hex),
+              } } />
+            </Avatar>
+          )
+        )
       ) }
-      { element.mention.display }
-      { children }
-    </span>
+    />
   );
 };
 
@@ -443,18 +456,14 @@ const DashupUIChatInput = (props = {}) => {
     return (
       <>
         { !!embeds.length && (
-          <div className="chat-embeds mb-3">
+          <Box mb={ 3 }>
             { embeds.map((embed, i) => {
               // return jsx
               return (
-                <div key={ `embed-${i}` } className="card card-embed">
-                  <div className="card-body">
-                    <Embed embed={ embed } />
-                  </div>
-                </div>
+                <Embed embed={ embed } />
               );
             }) }
-          </div>
+          </Box>
         ) }
 
         <Paper>
@@ -487,29 +496,42 @@ const DashupUIChatInput = (props = {}) => {
             </ToggleButton>
           </Stack>
         </Paper>
+
+        <Popover
+          open={ !!mentionRef }
+          onClose={ () => setMentionRef(null) }
+          anchorEl={ mentionRef }
+          transformOrigin={ {
+            vertical   : 'bottom',
+            horizontal : 'right',
+          } }
+          anchorOrigin={ {
+            vertical   : 'top',
+            horizontal : 'right',
+          } }
+          hideBackdrop
+          disableAutoFocus
+          disableEnforceFocus
+        >
+          { items.map((item, i) => {
+            // return jsx
+            return (
+              <MenuItem key={ `item-${item.id}` } onClick={ (e) => onMention(item) } selected={ index === i }>
+                { item.icon && (
+                  <ListItemIcon>
+                    <Icon type="fas" icon={ item.icon } />
+                  </ListItemIcon>
+                ) }
+                <ListItemText>
+                  { item.display }
+                </ListItemText>
+              </MenuItem>
+            );
+          }) }
+        </Popover>
       </>
     );
   };
-
-  /*
-  
-
-        <Overlay show={ !!mentionRef } target={ mentionRef } onHide={ () => setMentionRef(null) } rootClose placement="top">
-          <Popover className="dropdown-menu show">
-            { items.map((item, i) => {
-              // return jsx
-              return (
-                <Dropdown.Item key={ `item-${item.id}` } onClick={ (e) => onMention(item) } active={ index === i }>
-                  { item.icon && (
-                    <i className={ `fa fa-fw fa-${item.icon} me-2` } />
-                  ) }
-                  { item.display }
-                </Dropdown.Item>
-              );
-            }) }
-          </Popover>
-        </Overlay>
-        */
 
   // return jsx
   return props.noChat ? renderBody(props) : (

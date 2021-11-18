@@ -17,8 +17,8 @@ var React = require('react');
 var material = require('@mui/material');
 var slateReact = require('slate-react');
 var slate = require('slate');
-var reactBootstrap = require('react-bootstrap');
 var styles$1 = require('@mui/material/styles');
+var reactBootstrap = require('react-bootstrap');
 var lab = require('@mui/lab');
 var reactColor = require('react-color');
 var fontAwesomeIconChars = require('font-awesome-icon-chars');
@@ -7168,25 +7168,39 @@ var Leaf = function Leaf(_ref) {
 
 
 var Mention = function Mention(_ref2) {
-  var _element$mention$colo, _element$mention$colo2, _element$mention$colo3;
+  var _element$mention$colo, _element$mention$colo2, _element$mention$colo3, _element$mention$colo4;
 
-  var attributes = _ref2.attributes,
-      children = _ref2.children,
-      element = _ref2.element;
-  // return jsx
-  return /*#__PURE__*/React__default['default'].createElement("span", _extends({}, attributes, {
-    className: "badge badge-tag".concat(element.mention.color ? '' : ' bg-light text-dark'),
+  var attributes = _ref2.attributes;
+      _ref2.children;
+      var element = _ref2.element;
+  // theme
+  var theme = styles$1.useTheme(); // return jsx
+
+  return /*#__PURE__*/React__default['default'].createElement(material.Chip, _extends({}, attributes, {
     contentEditable: false,
-    style: {
-      color: (_element$mention$colo = element.mention.color) !== null && _element$mention$colo !== void 0 && _element$mention$colo.hex ? (_element$mention$colo2 = element.mention.color) !== null && _element$mention$colo2 !== void 0 && _element$mention$colo2.drk ? '#fff' : '#000' : null,
-      userSelect: 'none',
-      background: (_element$mention$colo3 = element.mention.color) === null || _element$mention$colo3 === void 0 ? void 0 : _element$mention$colo3.hex
-    }
-  }), element.trigger === '@' ? /*#__PURE__*/React__default['default'].createElement("i", {
-    className: "fa fa-at me-1"
-  }) : element.mention.icon ? /*#__PURE__*/React__default['default'].createElement("i", {
-    className: "fa fa-".concat(element.mention.icon, " me-1")
-  }) : element.trigger, element.mention.display, children);
+    sx: {
+      color: ((_element$mention$colo = element.mention.color) === null || _element$mention$colo === void 0 ? void 0 : _element$mention$colo.hex) && theme.palette.getContrastText(element.mention.color.hex),
+      fontWeight: 'bold',
+      backgroundColor: (_element$mention$colo2 = element.mention.color) === null || _element$mention$colo2 === void 0 ? void 0 : _element$mention$colo2.hex
+    },
+    size: "small",
+    label: element.mention.display,
+    avatar: element.mention.image ? /*#__PURE__*/React__default['default'].createElement(DashupAvatar, {
+      name: element.mention.display,
+      src: element.mention.image
+    }) : !!element.mention.icon && /*#__PURE__*/React__default['default'].createElement(DashupAvatar, {
+      name: element.mention.display,
+      sx: {
+        backgroundColor: (_element$mention$colo3 = element.mention.color) === null || _element$mention$colo3 === void 0 ? void 0 : _element$mention$colo3.hex
+      }
+    }, /*#__PURE__*/React__default['default'].createElement(DashupUIIcon, {
+      type: "fas",
+      icon: element.mention.icon,
+      sx: {
+        color: ((_element$mention$colo4 = element.mention.color) === null || _element$mention$colo4 === void 0 ? void 0 : _element$mention$colo4.hex) && theme.palette.getContrastText(element.mention.color.hex)
+      }
+    }))
+  }));
 }; // create element
 
 
@@ -7652,18 +7666,13 @@ var DashupUIChatInput = function DashupUIChatInput() {
 
   var renderBody = function renderBody(data) {
     // return jsx
-    return /*#__PURE__*/React__default['default'].createElement(React__default['default'].Fragment, null, !!embeds.length && /*#__PURE__*/React__default['default'].createElement("div", {
-      className: "chat-embeds mb-3"
+    return /*#__PURE__*/React__default['default'].createElement(React__default['default'].Fragment, null, !!embeds.length && /*#__PURE__*/React__default['default'].createElement(material.Box, {
+      mb: 3
     }, embeds.map(function (embed, i) {
       // return jsx
-      return /*#__PURE__*/React__default['default'].createElement("div", {
-        key: "embed-".concat(i),
-        className: "card card-embed"
-      }, /*#__PURE__*/React__default['default'].createElement("div", {
-        className: "card-body"
-      }, /*#__PURE__*/React__default['default'].createElement(Embed$1, {
+      return /*#__PURE__*/React__default['default'].createElement(Embed$1, {
         embed: embed
-      })));
+      });
     })), /*#__PURE__*/React__default['default'].createElement(material.Paper, null, /*#__PURE__*/React__default['default'].createElement(material.Stack, {
       spacing: 1,
       direction: "row",
@@ -7712,27 +7721,37 @@ var DashupUIChatInput = function DashupUIChatInput() {
       type: "fas",
       icon: "play",
       fixedWidth: true
-    })))));
-  };
-  /*
-  
-         <Overlay show={ !!mentionRef } target={ mentionRef } onHide={ () => setMentionRef(null) } rootClose placement="top">
-          <Popover className="dropdown-menu show">
-            { items.map((item, i) => {
-              // return jsx
-              return (
-                <Dropdown.Item key={ `item-${item.id}` } onClick={ (e) => onMention(item) } active={ index === i }>
-                  { item.icon && (
-                    <i className={ `fa fa-fw fa-${item.icon} me-2` } />
-                  ) }
-                  { item.display }
-                </Dropdown.Item>
-              );
-            }) }
-          </Popover>
-        </Overlay>
-        */
-  // return jsx
+    })))), /*#__PURE__*/React__default['default'].createElement(material.Popover, {
+      open: !!mentionRef,
+      onClose: function onClose() {
+        return setMentionRef(null);
+      },
+      anchorEl: mentionRef,
+      transformOrigin: {
+        vertical: 'bottom',
+        horizontal: 'right'
+      },
+      anchorOrigin: {
+        vertical: 'top',
+        horizontal: 'right'
+      },
+      hideBackdrop: true,
+      disableAutoFocus: true,
+      disableEnforceFocus: true
+    }, items.map(function (item, i) {
+      // return jsx
+      return /*#__PURE__*/React__default['default'].createElement(material.MenuItem, {
+        key: "item-".concat(item.id),
+        onClick: function onClick(e) {
+          return onMention(item);
+        },
+        selected: index === i
+      }, item.icon && /*#__PURE__*/React__default['default'].createElement(material.ListItemIcon, null, /*#__PURE__*/React__default['default'].createElement(DashupUIIcon, {
+        type: "fas",
+        icon: item.icon
+      })), /*#__PURE__*/React__default['default'].createElement(material.ListItemText, null, item.display));
+    })));
+  }; // return jsx
 
 
   return props.noChat ? renderBody(props) : /*#__PURE__*/React__default['default'].createElement(DashupUIContext$6.Consumer, null, function (data) {
@@ -9940,8 +9959,9 @@ var DashupUIContext$5 = null; // create dashup grid body
 
 var DashupUIChatMessage = function DashupUIChatMessage() {
   var props = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+  // theme
+  var theme = styles$1.useTheme(); // get embeds
 
-  // get embeds
   var getEmbeds = function getEmbeds() {
     var _props$message;
 
@@ -9989,7 +10009,7 @@ var DashupUIChatMessage = function DashupUIChatMessage() {
         };
       },
       react: function react(node, output, state) {
-        var _color, _color2, _color3;
+        var _color, _color2, _color3, _color4;
 
         // page
         var page = node.trigger === '#' ? dashup.page(node.id) : null; // let color
@@ -10013,6 +10033,7 @@ var DashupUIChatMessage = function DashupUIChatMessage() {
             mx: .5,
             color: ((_color = color) === null || _color === void 0 ? void 0 : _color.hex) && theme.palette.getContrastText(color.hex),
             cursor: 'pointer',
+            fontWeight: 'bold',
             backgroundColor: (_color2 = color) === null || _color2 === void 0 ? void 0 : _color2.hex
           },
           key: state.key,
@@ -10022,7 +10043,10 @@ var DashupUIChatMessage = function DashupUIChatMessage() {
             name: node.display,
             bgColor: (_color3 = color) === null || _color3 === void 0 ? void 0 : _color3.hex
           }, !!(page !== null && page !== void 0 && page.get('icon')) && /*#__PURE__*/React__default['default'].createElement(DashupUIIcon, {
-            icon: page.get('icon')
+            icon: page.get('icon'),
+            sx: {
+              color: ((_color4 = color) === null || _color4 === void 0 ? void 0 : _color4.hex) && theme.palette.getContrastText(color.hex)
+            }
           })),
           onClick: function onClick() {
             return url && eden.router.go(url);
@@ -14142,7 +14166,9 @@ var DashupAvatar = function DashupAvatar() {
   var _theme$palette;
 
   var props = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-  // get image thumb
+  // theme
+  var theme = styles$1.useTheme(); // get image thumb
+
   var name = props.name || '';
   var thumb = !props.image ? props.src : dotProp.get(props, 'image.thumbs.2x-sq.url') || dotProp.get(props, 'image.0.thumbs.2x-sq.url'); // string to color
 

@@ -3,9 +3,13 @@
 import React from 'react';
 import dotProp from 'dot-prop';
 import { Avatar } from '@mui/material';
+import { useTheme } from '..';
 
 // avatar
 const DashupAvatar = (props = {}) => {
+  // theme
+  const theme = useTheme();
+
   // get image thumb
   const name = props.name || '';
   const thumb = !props.image ? props.src : dotProp.get(props, 'image.thumbs.2x-sq.url') || dotProp.get(props, 'image.0.thumbs.2x-sq.url');

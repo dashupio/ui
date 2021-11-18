@@ -3,7 +3,7 @@ import React from 'react';
 import moment from 'moment';
 import markdown from 'simple-markdown';
 import defaultRules from './rules';
-import { Chip, Avatar, Stack, Tooltip, Box, Icon } from '../';
+import { Chip, Avatar, useTheme, Stack, Tooltip, Box, Icon } from '../';
 
 // import message
 import DashupUIChatEmbed from './Embed';
@@ -14,6 +14,8 @@ let DashupUIContext = null;
 
 // create dashup grid body
 const DashupUIChatMessage = (props = {}) => {
+  // theme
+  const theme = useTheme();
 
   // get embeds
   const getEmbeds = () => {
@@ -79,6 +81,7 @@ const DashupUIChatMessage = (props = {}) => {
               mx              : .5,
               color           : color?.hex && theme.palette.getContrastText(color.hex),
               cursor          : 'pointer',
+              fontWeight      : 'bold',
               backgroundColor : color?.hex,
             } }
             key={ state.key }
@@ -89,7 +92,9 @@ const DashupUIChatMessage = (props = {}) => {
                 name={ node.display }
                 bgColor={ color?.hex }
               >
-                { !!page?.get('icon') && <Icon icon={ page.get('icon') } /> }
+                { !!page?.get('icon') && <Icon icon={ page.get('icon') } sx={ {
+                  color : color?.hex && theme.palette.getContrastText(color.hex),
+                } } /> }
               </Avatar>
             ) }
             onClick={ () => url && eden.router.go(url) }
