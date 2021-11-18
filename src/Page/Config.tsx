@@ -51,28 +51,6 @@ const DashupUIPageConfig = (props = {}) => {
               thread={ `${page.get('_id')}` }
               onClose={ props.onHide || props.onClose }
             >
-              <Menu
-                open={ !!colorMenu }
-                onClose={ () => setColorMenu(null) }
-                anchorEl={ colorRef?.current }
-              >
-                <MenuItem onClick={ (e) => !setIcon(true) && setColorMenu(false) }>
-                  <ListItemIcon>
-                    <Icon icon={ page.get('icon') || 'pencil' } />
-                  </ListItemIcon>
-                  <ListItemText>
-                    Change Icon
-                  </ListItemText>
-                </MenuItem>
-                <MenuItem onClick={ (e) => !setColor(true) && setColorMenu(false) }>
-                  <ListItemIcon>
-                    <Icon type="fas" icon="tint" />
-                  </ListItemIcon>
-                  <ListItemText>
-                    Change Color
-                  </ListItemText>
-                </MenuItem>
-              </Menu>
               <Box pt={ 4 } pb={ 2 }>
                 <Stack spacing={ 2 }>
                   <Stack direction="row" spacing={ 2 }>
@@ -139,6 +117,29 @@ const DashupUIPageConfig = (props = {}) => {
                 </TabContext>
               </Box>
             </Modal>
+            
+            <Menu
+              open={ !!colorMenu }
+              onClose={ () => setColorMenu(null) }
+              anchorEl={ colorRef?.current }
+            >
+              <MenuItem onClick={ (e) => !setIcon(true) && setColorMenu(false) }>
+                <ListItemIcon>
+                  <Icon icon={ page.get('icon') || 'pencil' } />
+                </ListItemIcon>
+                <ListItemText>
+                  Change Icon
+                </ListItemText>
+              </MenuItem>
+              <MenuItem onClick={ (e) => !setColor(true) && setColorMenu(false) }>
+                <ListItemIcon>
+                  <Icon type="fas" icon="tint" />
+                </ListItemIcon>
+                <ListItemText>
+                  Change Color
+                </ListItemText>
+              </MenuItem>
+            </Menu>
 
             { !!icon && <IconPicker target={ colorRef } show icon={ page.get('icon') } onClose={ () => setIcon(false) } onChange={ (icon) => setPage('icon', icon) } /> }
             { !!color && <Color target={ colorRef } show color={ page.get('color.hex') || 'transparent' } colors={ Object.values(colors) } onClose={ () => setColor(false) } onChange={ (hex) => setPage('color', hex.hex === 'transparent' ? null : hex) } /> }

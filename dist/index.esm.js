@@ -5,10 +5,11 @@ import reactDOM from 'react-dom';
 import Handlebars from 'handlebars';
 import dashupCore from '@dashup/core';
 import * as dashupUI from '@dashup/ui';
+import { Box as Box$1, Stack as Stack$1, View } from '@dashup/ui';
 import ReactSortable$1, { ReactSortable } from 'react-sortablejs';
 import SimpleBar from 'simplebar-react';
 import HandlebarsHelpers from 'handlebars-helpers';
-import View from '@dashup/view';
+import View$1 from '@dashup/view';
 export { default as View } from '@dashup/view';
 import React, { useState, useEffect, useRef, createContext, useMemo, useCallback } from 'react';
 import { Fab, Box, Typography, Stack, AvatarGroup, Tooltip, IconButton, DialogTitle, Chip, Menu as Menu$2, Tab, Dialog, DialogContent, DialogContentText, DialogActions, Button, Alert, TextField, InputAdornment, Divider, MenuItem, ListItemIcon, ListItemText, CircularProgress, Icon, Paper, ToggleButtonGroup, ToggleButton, Drawer, Card, CardHeader, FormGroup, FormControlLabel, Switch, CardContent, Badge, Popover, Avatar, Grid } from '@mui/material';
@@ -24,7 +25,7 @@ import { BlockPicker } from 'react-color';
 import { solid } from 'font-awesome-icon-chars';
 export { default as AdapterMoment } from '@mui/lab/AdapterMoment';
 import { LicenseInfo } from '@mui/x-data-grid-pro';
-export { DataGridPro as DataGrid, GridActionsCellItem } from '@mui/x-data-grid-pro';
+export { DataGridPro as DataGrid, GridActionsCellItem, GridColumnMenuContainer, SortGridMenuItems } from '@mui/x-data-grid-pro';
 export { withStyles } from '@mui/styles';
 
 function ownKeys(object, enumerableOnly) {
@@ -674,36 +675,39 @@ var DashupUIPageAuditChange = function DashupUIPageAuditChange() {
     });
   }, []); // return jsx
 
-  return !!field && !!(Array.isArray(value || []) ? (value || []).length : value) && /*#__PURE__*/React.createElement("li", null, /*#__PURE__*/React.createElement("b", {
-    className: "d-block"
-  }, props.change.label), /*#__PURE__*/React.createElement("div", {
-    className: "text-overflow"
-  }, /*#__PURE__*/React.createElement(props.dashup.View, {
+  return !!field && !!(Array.isArray(value || []) ? (value || []).length : value) && /*#__PURE__*/React.createElement(Box$1, null, /*#__PURE__*/React.createElement(Box$1, {
+    component: "small",
+    width: "100%",
+    fontWeight: "bold",
+    gutterBottom: true
+  }, props.change.label), /*#__PURE__*/React.createElement(Box$1, {
+    width: "100%"
+  }, /*#__PURE__*/React.createElement(View, {
     view: "view",
     type: "field",
-    size: "sm",
+    size: "small",
     item: props.item,
     field: field,
     value: value,
     struct: field.type,
     dashup: props.dashup
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "text-center"
-  }, /*#__PURE__*/React.createElement("i", {
-    className: "fa fa-spinner fa-spin"
-  })))));
+  })));
 }; // create menu component
 
 
 var DashupUIPageAudit = function DashupUIPageAudit() {
+  var _props$audit$user;
+
   var props = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
   // return jsx
-  return /*#__PURE__*/React.createElement("div", {
-    className: "d-block mb-2 text-sm"
-  }, /*#__PURE__*/React.createElement("small", {
-    className: "text-muted d-block"
-  }, moment(props.audit.created_at).format('Do MMM, h:mma')), /*#__PURE__*/React.createElement("b", null, props.audit.user.name), " set:", /*#__PURE__*/React.createElement("ul", {
-    className: "ps-3"
+  return /*#__PURE__*/React.createElement(Box$1, null, /*#__PURE__*/React.createElement(Box$1, {
+    component: "small",
+    width: "100%"
+  }, /*#__PURE__*/React.createElement(Box$1, {
+    fontWeight: "bold",
+    component: "span"
+  }, (_props$audit$user = props.audit.user) === null || _props$audit$user === void 0 ? void 0 : _props$audit$user.name), ' set:'), /*#__PURE__*/React.createElement(Stack$1, {
+    spacing: 1
   }, props.audit.changes.map(function (change, a) {
     // return jsx
     return /*#__PURE__*/React.createElement(DashupUIPageAuditChange, _extends({
@@ -1156,6 +1160,8 @@ var DashupUIPageItem = function DashupUIPageItem() {
         style: {
           height: '100%'
         }
+      }, /*#__PURE__*/React.createElement(Stack, {
+        spacing: 1
       }, audits.map(function (audit, i) {
         var _audit$changes;
 
@@ -1172,7 +1178,7 @@ var DashupUIPageItem = function DashupUIPageItem() {
           getFields: getFields,
           getFieldStruct: getFieldStruct
         });
-      })))
+      }))))
     }, /*#__PURE__*/React.createElement(DialogTitle, {
       sx: {
         padding: 0
@@ -1250,7 +1256,7 @@ var DashupUIPageItem = function DashupUIPageItem() {
             width: 240
           }
         }
-      }, /*#__PURE__*/React.createElement(View, {
+      }, /*#__PURE__*/React.createElement(View$1, {
         view: "input",
         type: "field",
         struct: type.type,
@@ -1312,7 +1318,7 @@ var DashupUIPageItem = function DashupUIPageItem() {
             width: 240
           }
         }
-      }, /*#__PURE__*/React.createElement(View, {
+      }, /*#__PURE__*/React.createElement(View$1, {
         view: "input",
         type: "field",
         struct: "user",
@@ -1748,7 +1754,7 @@ var DashupUIPageShare = function DashupUIPageShare() {
       py: 2
     }, /*#__PURE__*/React.createElement(Divider, null)), /*#__PURE__*/React.createElement(Alert, {
       severity: "info"
-    }, "Adding this page to the marketplace will make it available for anyone to see once approved."), /*#__PURE__*/React.createElement(View, {
+    }, "Adding this page to the marketplace will make it available for anyone to see once approved."), /*#__PURE__*/React.createElement(View$1, {
       type: "field",
       view: "input",
       struct: "image",
@@ -1764,7 +1770,7 @@ var DashupUIPageShare = function DashupUIPageShare() {
         return setShare('image', val);
       },
       setPrevent: setPrevent
-    }), !!categories && /*#__PURE__*/React.createElement(View, {
+    }), !!categories && /*#__PURE__*/React.createElement(View$1, {
       type: "field",
       view: "input",
       struct: "select",
@@ -1775,7 +1781,7 @@ var DashupUIPageShare = function DashupUIPageShare() {
       onChange: function onChange(f, val) {
         return setShare('categories', val);
       }
-    }), /*#__PURE__*/React.createElement(View, {
+    }), /*#__PURE__*/React.createElement(View$1, {
       type: "field",
       view: "input",
       struct: "textarea",
@@ -2067,7 +2073,7 @@ var DashupUIPageFilter = function DashupUIPageFilter() {
     })), !!props.onSort && /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement(Tooltip, {
       title: "Sort View"
     }, /*#__PURE__*/React.createElement(IconButton, {
-      color: page.get('user.filter.me') ? 'primary' : undefined,
+      color: typeof page.get('data.sort.way') !== 'undefined' ? 'primary' : undefined,
       onClick: function onClick(e) {
         return setSortMenu(e.target);
       }
@@ -2139,13 +2145,8 @@ var DashupUIPageFilter = function DashupUIPageFilter() {
       }, /*#__PURE__*/React.createElement(Chip, {
         sx: {
           color: ((_option$color = option.color) === null || _option$color === void 0 ? void 0 : _option$color.hex) && theme.palette.getContrastText((_option$color2 = option.color) === null || _option$color2 === void 0 ? void 0 : _option$color2.hex),
-          borderColor: (_option$color3 = option.color) === null || _option$color3 === void 0 ? void 0 : _option$color3.hex
+          backgroundColor: (_option$color3 = option.color) === null || _option$color3 === void 0 ? void 0 : _option$color3.hex
         },
-        icon: /*#__PURE__*/React.createElement(DashupUIIcon, {
-          type: "fas",
-          icon: "tag",
-          fixedWidth: true
-        }),
         label: option.label || (tag === null || tag === void 0 ? void 0 : tag.value),
         onDelete: function onDelete(e) {
           return props.onTag(field, option || tag);
@@ -2154,7 +2155,7 @@ var DashupUIPageFilter = function DashupUIPageFilter() {
     }), !!props.onTag && hasTags(page) && /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement(Tooltip, {
       title: "Filter by Tag"
     }, /*#__PURE__*/React.createElement(IconButton, {
-      color: page.get('user.filter.me') ? 'primary' : undefined,
+      color: (page.get('user.filter.tags') || []).length ? 'primary' : undefined,
       onClick: function onClick(e) {
         return setTagMenu(e.target);
       }
@@ -2199,7 +2200,7 @@ var DashupUIPageFilter = function DashupUIPageFilter() {
       type: "fas",
       icon: "filter",
       fixedWidth: true
-    }))))), !!filter && !!props.onFilter && /*#__PURE__*/React.createElement(Box, {
+    }))), props.children)), !!filter && !!props.onFilter && /*#__PURE__*/React.createElement(Box, {
       mb: 2
     }, /*#__PURE__*/React.createElement(DashupUIQuery, {
       page: page,
@@ -2277,26 +2278,7 @@ var DashupUIPageConfig = function DashupUIPageConfig() {
       dashup: dashup,
       thread: "".concat(page.get('_id')),
       onClose: props.onHide || props.onClose
-    }, /*#__PURE__*/React.createElement(Menu$2, {
-      open: !!colorMenu,
-      onClose: function onClose() {
-        return setColorMenu(null);
-      },
-      anchorEl: colorRef === null || colorRef === void 0 ? void 0 : colorRef.current
-    }, /*#__PURE__*/React.createElement(MenuItem, {
-      onClick: function onClick(e) {
-        return !setIcon(true) && setColorMenu(false);
-      }
-    }, /*#__PURE__*/React.createElement(ListItemIcon, null, /*#__PURE__*/React.createElement(DashupUIIcon, {
-      icon: page.get('icon') || 'pencil'
-    })), /*#__PURE__*/React.createElement(ListItemText, null, "Change Icon")), /*#__PURE__*/React.createElement(MenuItem, {
-      onClick: function onClick(e) {
-        return !setColor(true) && setColorMenu(false);
-      }
-    }, /*#__PURE__*/React.createElement(ListItemIcon, null, /*#__PURE__*/React.createElement(DashupUIIcon, {
-      type: "fas",
-      icon: "tint"
-    })), /*#__PURE__*/React.createElement(ListItemText, null, "Change Color"))), /*#__PURE__*/React.createElement(Box, {
+    }, /*#__PURE__*/React.createElement(Box, {
       pt: 4,
       pb: 2
     }, /*#__PURE__*/React.createElement(Stack, {
@@ -2370,12 +2352,31 @@ var DashupUIPageConfig = function DashupUIPageConfig() {
       }, "".concat(tab).toLowerCase() === 'connects' ? /*#__PURE__*/React.createElement(DashupUIPage.Connect, {
         page: page,
         dashup: dashup
-      }) : props[tab] || /*#__PURE__*/React.createElement(View, _objectSpread2(_objectSpread2({}, data), {}, {
+      }) : props[tab] || /*#__PURE__*/React.createElement(View$1, _objectSpread2(_objectSpread2({}, data), {}, {
         type: 'page',
         view: "".concat(tab).toLowerCase(),
         struct: type
       })));
-    })))), !!icon && /*#__PURE__*/React.createElement(DashupUIIconPicker, {
+    })))), /*#__PURE__*/React.createElement(Menu$2, {
+      open: !!colorMenu,
+      onClose: function onClose() {
+        return setColorMenu(null);
+      },
+      anchorEl: colorRef === null || colorRef === void 0 ? void 0 : colorRef.current
+    }, /*#__PURE__*/React.createElement(MenuItem, {
+      onClick: function onClick(e) {
+        return !setIcon(true) && setColorMenu(false);
+      }
+    }, /*#__PURE__*/React.createElement(ListItemIcon, null, /*#__PURE__*/React.createElement(DashupUIIcon, {
+      icon: page.get('icon') || 'pencil'
+    })), /*#__PURE__*/React.createElement(ListItemText, null, "Change Icon")), /*#__PURE__*/React.createElement(MenuItem, {
+      onClick: function onClick(e) {
+        return !setColor(true) && setColorMenu(false);
+      }
+    }, /*#__PURE__*/React.createElement(ListItemIcon, null, /*#__PURE__*/React.createElement(DashupUIIcon, {
+      type: "fas",
+      icon: "tint"
+    })), /*#__PURE__*/React.createElement(ListItemText, null, "Change Color"))), !!icon && /*#__PURE__*/React.createElement(DashupUIIconPicker, {
       target: colorRef,
       show: true,
       icon: page.get('icon'),
@@ -2982,7 +2983,7 @@ var DashupUIPageConnect = function DashupUIPageConnect() {
         });
       },
       fullWidth: true
-    }), /*#__PURE__*/React.createElement(View, _extends({}, data, {
+    }), /*#__PURE__*/React.createElement(View$1, _extends({}, data, {
       type: "connect",
       view: "config",
       struct: updating.type,
@@ -11860,7 +11861,7 @@ var DashupUIFormField = function DashupUIFormField() {
     sx: {
       opacity: isViewOnly(props.clean || {}) ? .5 : 1
     }
-  }, /*#__PURE__*/React.createElement(View, _extends({}, props, {
+  }, /*#__PURE__*/React.createElement(View$1, _extends({}, props, {
     view: "input",
     type: "field",
     dashup: props.dashup || props.dashup,
@@ -12207,7 +12208,7 @@ var DashupUIFormConfig = function DashupUIFormConfig() {
         return setField(field, 'viewOnly', val);
       },
       getFieldStruct: props.getFieldStruct
-    }))), /*#__PURE__*/React.createElement(View, _objectSpread2(_objectSpread2({}, props), {}, {
+    }))), /*#__PURE__*/React.createElement(View$1, _objectSpread2(_objectSpread2({}, props), {}, {
       type: 'field',
       view: "".concat(t).toLowerCase(),
       struct: field === null || field === void 0 ? void 0 : field.type
@@ -12219,7 +12220,7 @@ var DashupUIFormConfig = function DashupUIFormConfig() {
         }
       }),
       label: "Allow Multiple"
-    })), !!(struct !== null && struct !== void 0 && (_struct$data7 = struct.data) !== null && _struct$data7 !== void 0 && _struct$data7["default"]) && !loading && /*#__PURE__*/React.createElement(View, _objectSpread2(_objectSpread2({}, props), {}, {
+    })), !!(struct !== null && struct !== void 0 && (_struct$data7 = struct.data) !== null && _struct$data7 !== void 0 && _struct$data7["default"]) && !loading && /*#__PURE__*/React.createElement(View$1, _objectSpread2(_objectSpread2({}, props), {}, {
       type: 'field',
       view: 'input',
       field: _objectSpread2(_objectSpread2({}, field), {}, {
@@ -12872,7 +12873,7 @@ var DashupUIItem = function DashupUIItem() {
           width: 240
         }
       }
-    }, /*#__PURE__*/React.createElement(View, {
+    }, /*#__PURE__*/React.createElement(View$1, {
       view: "input",
       type: "field",
       struct: type.type,
@@ -12960,7 +12961,7 @@ var DashupUIItem = function DashupUIItem() {
           width: 240
         }
       }
-    }, /*#__PURE__*/React.createElement(View, {
+    }, /*#__PURE__*/React.createElement(View$1, {
       view: "input",
       type: "field",
       struct: "user",
@@ -13373,7 +13374,7 @@ var DashupUIBlockConfig = function DashupUIBlockConfig() {
       value: t.toLowerCase(),
       label: t
     });
-  })))), /*#__PURE__*/React.createElement(View, _objectSpread2(_objectSpread2({}, props), {}, {
+  })))), /*#__PURE__*/React.createElement(View$1, _objectSpread2(_objectSpread2({}, props), {}, {
     type: 'block',
     view: tab,
     struct: props.block.type
@@ -13482,7 +13483,7 @@ var DashupUIBlock = function DashupUIBlock() {
     type: "fas",
     icon: "trash",
     fontSize: "small"
-  }))))), /*#__PURE__*/React.createElement(View, _extends({
+  }))))), /*#__PURE__*/React.createElement(View$1, _extends({
     type: "block",
     view: "view",
     struct: props.block.type
@@ -13745,7 +13746,7 @@ var DashupUIQueryRule = function DashupUIQueryRule() {
     }, props.operators[key].title);
   })), !!(op && getBottom()) && /*#__PURE__*/React.createElement(Box, {
     sx: sx
-  }, /*#__PURE__*/React.createElement(View, {
+  }, /*#__PURE__*/React.createElement(View$1, {
     page: props.page,
     view: "input",
     type: "field",
@@ -14359,7 +14360,7 @@ var DashupUIPermission = function DashupUIPermission() {
 
 // regenerator
 
-View.setDefaults({
+View$1.setDefaults({
   moment: moment,
   handlebars: Handlebars,
   'pretty-ms': pretty,

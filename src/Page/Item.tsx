@@ -371,24 +371,26 @@ const DashupUIPageItem = (props = {}) => {
                   <SimpleBar className="p-relative" style={ {
                     height : '100%',
                   } }>
-                    { audits.map((audit, i) => {
-                      // changes
-                      if (!audit?.changes?.length) return null;
+                    <Stack spacing={ 1 }>
+                      { audits.map((audit, i) => {
+                        // changes
+                        if (!audit?.changes?.length) return null;
 
-                      // return jsx
-                      return (
-                        <DashupUIPageAudit
-                          key={ `audit-${audit.id}` }
-                          page={ page }
-                          item={ props.item }
-                          forms={ forms }
-                          audit={ audit }
-                          dashup={ dashup }
-                          getFields={ getFields }
-                          getFieldStruct={ getFieldStruct }
-                          />
-                      );
-                    }) }
+                        // return jsx
+                        return (
+                          <DashupUIPageAudit
+                            key={ `audit-${audit.id}` }
+                            page={ page }
+                            item={ props.item }
+                            forms={ forms }
+                            audit={ audit }
+                            dashup={ dashup }
+                            getFields={ getFields }
+                            getFieldStruct={ getFieldStruct }
+                            />
+                        );
+                      }) }
+                    </Stack>
                   </SimpleBar>
                 </Box>
               ) }

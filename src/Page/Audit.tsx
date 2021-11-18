@@ -1,6 +1,6 @@
 
 // import
-import moment from 'moment';
+import { Box, Stack, View, Typography } from '@dashup/ui';
 import React, { useState, useEffect } from 'react';
 
 // create menu component
@@ -33,27 +33,23 @@ const DashupUIPageAuditChange = (props = {}) => {
 
   // return jsx
   return !!field && !!(Array.isArray(value || []) ? (value || []).length : value) && (
-    <li>
-      <b className="d-block">
+    <Box>
+      <Box component="small" width="100%" fontWeight="bold" gutterBottom>
         { props.change.label }
-      </b>
-      <div className="text-overflow">
-        <props.dashup.View
+      </Box>
+      <Box width="100%">
+        <View
           view="view"
           type="field"
-          size="sm"
+          size="small"
           item={ props.item }
           field={ field }
           value={ value }
           struct={ field.type }
           dashup={ props.dashup }
-          >
-          <div className="text-center">
-            <i className="fa fa-spinner fa-spin" />
-          </div>
-        </props.dashup.View>
-      </div>
-    </li>
+        />
+      </Box>
+    </Box>
   );
 };
 
@@ -62,19 +58,22 @@ const DashupUIPageAudit = (props = {}) => {
   
   // return jsx
   return (
-    <div className="d-block mb-2 text-sm">
-      <small className="text-muted d-block">{ moment(props.audit.created_at).format('Do MMM, h:mma') }</small>
-      <b>{ props.audit.user.name }</b> set:
-      
-      <ul className="ps-3">
+    <Box>
+      <Box component="small" width="100%">
+        <Box fontWeight="bold" component="span">
+          { props.audit.user?.name }
+        </Box>
+        { ' set:' }
+      </Box>
+      <Stack spacing={ 1 }>
         { props.audit.changes.map((change, a) => {
           // return jsx
           return (
             <DashupUIPageAuditChange key={ `change-${props.audit.id}-${a}` } { ...props } change={ change } />
           );
         }) }
-      </ul>
-    </div>
+      </Stack>
+    </Box>
   );
 };
 

@@ -120,7 +120,7 @@ const DashupUIPageFilter = (props = {}) => {
                 { !!props.onSort && (
                   <>
                     <Tooltip title="Sort View">
-                      <IconButton color={ page.get('user.filter.me') ? 'primary' : undefined } onClick={ (e) => setSortMenu(e.target) }>
+                      <IconButton color={ typeof page.get('data.sort.way') !== 'undefined' ? 'primary' : undefined } onClick={ (e) => setSortMenu(e.target) }>
                         { page.get('data.sort.way') === -1 ? (
                           <Icon type="fas" icon="sort-up" fixedWidth />
                         ) : page.get('data.sort.way') === 1 ? (
@@ -181,10 +181,9 @@ const DashupUIPageFilter = (props = {}) => {
                     <Tooltip key={ `filter-${tag?.field}-${tag?.value}`} title={ `${field.label || field.name}: ${option.label || tag?.value}` }>
                       <Chip
                         sx={ {
-                          color       : option.color?.hex && theme.palette.getContrastText(option.color?.hex),
-                          borderColor : option.color?.hex,
+                          color           : option.color?.hex && theme.palette.getContrastText(option.color?.hex),
+                          backgroundColor : option.color?.hex,
                         } }
-                        icon={ <Icon type="fas" icon="tag" fixedWidth /> }
                         label={ option.label || tag?.value }
                         onDelete={ (e) => props.onTag(field, option || tag) }
                       />
@@ -195,7 +194,7 @@ const DashupUIPageFilter = (props = {}) => {
                 { !!props.onTag && hasTags(page) && (
                   <>
                     <Tooltip title="Filter by Tag">
-                      <IconButton color={ page.get('user.filter.me') ? 'primary' : undefined } onClick={ (e) => setTagMenu(e.target) }>
+                      <IconButton color={ (page.get('user.filter.tags') || []).length ? 'primary' : undefined } onClick={ (e) => setTagMenu(e.target) }>
                         <Icon type="fas" icon="tag" fixedWidth />
                       </IconButton>
                     </Tooltip>
@@ -239,6 +238,8 @@ const DashupUIPageFilter = (props = {}) => {
                     </IconButton>
                   </Tooltip>
                 ) }
+
+                { props.children }
               </Stack>
             </Box>
 

@@ -708,36 +708,39 @@ var DashupUIPageAuditChange = function DashupUIPageAuditChange() {
     });
   }, []); // return jsx
 
-  return !!field && !!(Array.isArray(value || []) ? (value || []).length : value) && /*#__PURE__*/React__default['default'].createElement("li", null, /*#__PURE__*/React__default['default'].createElement("b", {
-    className: "d-block"
-  }, props.change.label), /*#__PURE__*/React__default['default'].createElement("div", {
-    className: "text-overflow"
-  }, /*#__PURE__*/React__default['default'].createElement(props.dashup.View, {
+  return !!field && !!(Array.isArray(value || []) ? (value || []).length : value) && /*#__PURE__*/React__default['default'].createElement(dashupUI.Box, null, /*#__PURE__*/React__default['default'].createElement(dashupUI.Box, {
+    component: "small",
+    width: "100%",
+    fontWeight: "bold",
+    gutterBottom: true
+  }, props.change.label), /*#__PURE__*/React__default['default'].createElement(dashupUI.Box, {
+    width: "100%"
+  }, /*#__PURE__*/React__default['default'].createElement(dashupUI.View, {
     view: "view",
     type: "field",
-    size: "sm",
+    size: "small",
     item: props.item,
     field: field,
     value: value,
     struct: field.type,
     dashup: props.dashup
-  }, /*#__PURE__*/React__default['default'].createElement("div", {
-    className: "text-center"
-  }, /*#__PURE__*/React__default['default'].createElement("i", {
-    className: "fa fa-spinner fa-spin"
-  })))));
+  })));
 }; // create menu component
 
 
 var DashupUIPageAudit = function DashupUIPageAudit() {
+  var _props$audit$user;
+
   var props = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
   // return jsx
-  return /*#__PURE__*/React__default['default'].createElement("div", {
-    className: "d-block mb-2 text-sm"
-  }, /*#__PURE__*/React__default['default'].createElement("small", {
-    className: "text-muted d-block"
-  }, moment__default['default'](props.audit.created_at).format('Do MMM, h:mma')), /*#__PURE__*/React__default['default'].createElement("b", null, props.audit.user.name), " set:", /*#__PURE__*/React__default['default'].createElement("ul", {
-    className: "ps-3"
+  return /*#__PURE__*/React__default['default'].createElement(dashupUI.Box, null, /*#__PURE__*/React__default['default'].createElement(dashupUI.Box, {
+    component: "small",
+    width: "100%"
+  }, /*#__PURE__*/React__default['default'].createElement(dashupUI.Box, {
+    fontWeight: "bold",
+    component: "span"
+  }, (_props$audit$user = props.audit.user) === null || _props$audit$user === void 0 ? void 0 : _props$audit$user.name), ' set:'), /*#__PURE__*/React__default['default'].createElement(dashupUI.Stack, {
+    spacing: 1
   }, props.audit.changes.map(function (change, a) {
     // return jsx
     return /*#__PURE__*/React__default['default'].createElement(DashupUIPageAuditChange, _extends({
@@ -1190,6 +1193,8 @@ var DashupUIPageItem = function DashupUIPageItem() {
         style: {
           height: '100%'
         }
+      }, /*#__PURE__*/React__default['default'].createElement(material.Stack, {
+        spacing: 1
       }, audits.map(function (audit, i) {
         var _audit$changes;
 
@@ -1206,7 +1211,7 @@ var DashupUIPageItem = function DashupUIPageItem() {
           getFields: getFields,
           getFieldStruct: getFieldStruct
         });
-      })))
+      }))))
     }, /*#__PURE__*/React__default['default'].createElement(material.DialogTitle, {
       sx: {
         padding: 0
@@ -2101,7 +2106,7 @@ var DashupUIPageFilter = function DashupUIPageFilter() {
     })), !!props.onSort && /*#__PURE__*/React__default['default'].createElement(React__default['default'].Fragment, null, /*#__PURE__*/React__default['default'].createElement(material.Tooltip, {
       title: "Sort View"
     }, /*#__PURE__*/React__default['default'].createElement(material.IconButton, {
-      color: page.get('user.filter.me') ? 'primary' : undefined,
+      color: typeof page.get('data.sort.way') !== 'undefined' ? 'primary' : undefined,
       onClick: function onClick(e) {
         return setSortMenu(e.target);
       }
@@ -2173,13 +2178,8 @@ var DashupUIPageFilter = function DashupUIPageFilter() {
       }, /*#__PURE__*/React__default['default'].createElement(material.Chip, {
         sx: {
           color: ((_option$color = option.color) === null || _option$color === void 0 ? void 0 : _option$color.hex) && theme.palette.getContrastText((_option$color2 = option.color) === null || _option$color2 === void 0 ? void 0 : _option$color2.hex),
-          borderColor: (_option$color3 = option.color) === null || _option$color3 === void 0 ? void 0 : _option$color3.hex
+          backgroundColor: (_option$color3 = option.color) === null || _option$color3 === void 0 ? void 0 : _option$color3.hex
         },
-        icon: /*#__PURE__*/React__default['default'].createElement(DashupUIIcon, {
-          type: "fas",
-          icon: "tag",
-          fixedWidth: true
-        }),
         label: option.label || (tag === null || tag === void 0 ? void 0 : tag.value),
         onDelete: function onDelete(e) {
           return props.onTag(field, option || tag);
@@ -2188,7 +2188,7 @@ var DashupUIPageFilter = function DashupUIPageFilter() {
     }), !!props.onTag && hasTags(page) && /*#__PURE__*/React__default['default'].createElement(React__default['default'].Fragment, null, /*#__PURE__*/React__default['default'].createElement(material.Tooltip, {
       title: "Filter by Tag"
     }, /*#__PURE__*/React__default['default'].createElement(material.IconButton, {
-      color: page.get('user.filter.me') ? 'primary' : undefined,
+      color: (page.get('user.filter.tags') || []).length ? 'primary' : undefined,
       onClick: function onClick(e) {
         return setTagMenu(e.target);
       }
@@ -2233,7 +2233,7 @@ var DashupUIPageFilter = function DashupUIPageFilter() {
       type: "fas",
       icon: "filter",
       fixedWidth: true
-    }))))), !!filter && !!props.onFilter && /*#__PURE__*/React__default['default'].createElement(material.Box, {
+    }))), props.children)), !!filter && !!props.onFilter && /*#__PURE__*/React__default['default'].createElement(material.Box, {
       mb: 2
     }, /*#__PURE__*/React__default['default'].createElement(DashupUIQuery, {
       page: page,
@@ -2311,26 +2311,7 @@ var DashupUIPageConfig = function DashupUIPageConfig() {
       dashup: dashup,
       thread: "".concat(page.get('_id')),
       onClose: props.onHide || props.onClose
-    }, /*#__PURE__*/React__default['default'].createElement(material.Menu, {
-      open: !!colorMenu,
-      onClose: function onClose() {
-        return setColorMenu(null);
-      },
-      anchorEl: colorRef === null || colorRef === void 0 ? void 0 : colorRef.current
-    }, /*#__PURE__*/React__default['default'].createElement(material.MenuItem, {
-      onClick: function onClick(e) {
-        return !setIcon(true) && setColorMenu(false);
-      }
-    }, /*#__PURE__*/React__default['default'].createElement(material.ListItemIcon, null, /*#__PURE__*/React__default['default'].createElement(DashupUIIcon, {
-      icon: page.get('icon') || 'pencil'
-    })), /*#__PURE__*/React__default['default'].createElement(material.ListItemText, null, "Change Icon")), /*#__PURE__*/React__default['default'].createElement(material.MenuItem, {
-      onClick: function onClick(e) {
-        return !setColor(true) && setColorMenu(false);
-      }
-    }, /*#__PURE__*/React__default['default'].createElement(material.ListItemIcon, null, /*#__PURE__*/React__default['default'].createElement(DashupUIIcon, {
-      type: "fas",
-      icon: "tint"
-    })), /*#__PURE__*/React__default['default'].createElement(material.ListItemText, null, "Change Color"))), /*#__PURE__*/React__default['default'].createElement(material.Box, {
+    }, /*#__PURE__*/React__default['default'].createElement(material.Box, {
       pt: 4,
       pb: 2
     }, /*#__PURE__*/React__default['default'].createElement(material.Stack, {
@@ -2409,7 +2390,26 @@ var DashupUIPageConfig = function DashupUIPageConfig() {
         view: "".concat(tab).toLowerCase(),
         struct: type
       })));
-    })))), !!icon && /*#__PURE__*/React__default['default'].createElement(DashupUIIconPicker, {
+    })))), /*#__PURE__*/React__default['default'].createElement(material.Menu, {
+      open: !!colorMenu,
+      onClose: function onClose() {
+        return setColorMenu(null);
+      },
+      anchorEl: colorRef === null || colorRef === void 0 ? void 0 : colorRef.current
+    }, /*#__PURE__*/React__default['default'].createElement(material.MenuItem, {
+      onClick: function onClick(e) {
+        return !setIcon(true) && setColorMenu(false);
+      }
+    }, /*#__PURE__*/React__default['default'].createElement(material.ListItemIcon, null, /*#__PURE__*/React__default['default'].createElement(DashupUIIcon, {
+      icon: page.get('icon') || 'pencil'
+    })), /*#__PURE__*/React__default['default'].createElement(material.ListItemText, null, "Change Icon")), /*#__PURE__*/React__default['default'].createElement(material.MenuItem, {
+      onClick: function onClick(e) {
+        return !setColor(true) && setColorMenu(false);
+      }
+    }, /*#__PURE__*/React__default['default'].createElement(material.ListItemIcon, null, /*#__PURE__*/React__default['default'].createElement(DashupUIIcon, {
+      type: "fas",
+      icon: "tint"
+    })), /*#__PURE__*/React__default['default'].createElement(material.ListItemText, null, "Change Color"))), !!icon && /*#__PURE__*/React__default['default'].createElement(DashupUIIconPicker, {
       target: colorRef,
       show: true,
       icon: page.get('icon'),
@@ -14495,6 +14495,18 @@ Object.defineProperty(exports, 'GridActionsCellItem', {
   enumerable: true,
   get: function () {
     return xDataGridPro.GridActionsCellItem;
+  }
+});
+Object.defineProperty(exports, 'GridColumnMenuContainer', {
+  enumerable: true,
+  get: function () {
+    return xDataGridPro.GridColumnMenuContainer;
+  }
+});
+Object.defineProperty(exports, 'SortGridMenuItems', {
+  enumerable: true,
+  get: function () {
+    return xDataGridPro.SortGridMenuItems;
   }
 });
 Object.defineProperty(exports, 'withStyles', {

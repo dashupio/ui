@@ -61,7 +61,7 @@ LicenseInfo.setLicenseKey(
 // export mui extra
 export { withStyles } from '@mui/styles';
 export { alpha, styled, useTheme } from '@mui/material/styles';
-export { DataGridPro as DataGrid, GridActionsCellItem } from '@mui/x-data-grid-pro';
+export { DataGridPro as DataGrid, GridActionsCellItem, GridColumnMenuContainer, SortGridMenuItems } from '@mui/x-data-grid-pro';
 export { TabList, TabPanel, TabContext, LocalizationProvider, TimePicker, DatePicker, DateTimePicker, LoadingButton } from '@mui/lab';
 
 // exporting
