@@ -47,6 +47,12 @@ import IconPicker from './IconPicker';
 import Permission from './Permission';
 import AdapterMoment from '@mui/lab/AdapterMoment';
 
+// hooks
+import useCache from './hooks/useCache';
+
+// utilities
+import cacheUtility from './utilities/cache';
+
 // export all mui logic
 export * from '@mui/material';
 
@@ -83,6 +89,12 @@ export {
   Permission,
 
   AdapterMoment,
+
+  // hooks
+  useCache,
+
+  // utilites
+  cacheUtility as cache,
 
   colors,
 };

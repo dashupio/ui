@@ -5,7 +5,7 @@ import urlRegex from 'url-regex';
 import { Slate, Editable, withReact, ReactEditor } from 'slate-react';
 import { Text, Editor, Transforms, Range, createEditor } from 'slate';
 import React, { useMemo, useState, useCallback, useEffect } from 'react';
-import { Paper, Chip, Stack, Box, useTheme, ToggleButton, ToggleButtonGroup, Avatar, Icon, Popover, MenuItem, ListItemIcon, ListItemText } from '../';
+import { Paper, Grid, Chip, Stack, Box, useTheme, ToggleButton, ToggleButtonGroup, Avatar, Icon, Popover, MenuItem, ListItemIcon, ListItemText } from '../';
 
 // prism
 ;Prism.languages.markdown=Prism.languages.extend("markup",{}),Prism.languages.insertBefore("markdown","prolog",{blockquote:{pattern:/^>(?:[\t ]*>)*/m,alias:"punctuation"},code:[{pattern:/^(?: {4}|\t).+/m,alias:"keyword"},{pattern:/``.+?``|`[^`\n]+`/,alias:"keyword"}],title:[{pattern:/\w+.*(?:\r?\n|\r)(?:==+|--+)/,alias:"important",inside:{punctuation:/==+$|--+$/}},{pattern:/(^\s*)#+.+/m,lookbehind:!0,alias:"important",inside:{punctuation:/^#+|#+$/}}],hr:{pattern:/(^\s*)([*-])([\t ]*\2){2,}(?=\s*$)/m,lookbehind:!0,alias:"punctuation"},list:{pattern:/(^\s*)(?:[*+-]|\d+\.)(?=[\t ].)/m,lookbehind:!0,alias:"punctuation"},"url-reference":{pattern:/!?\[[^\]]+\]:[\t ]+(?:\S+|<(?:\\.|[^>\\])+>)(?:[\t ]+(?:"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|\((?:\\.|[^)\\])*\)))?/,inside:{variable:{pattern:/^(!?\[)[^\]]+/,lookbehind:!0},string:/(?:"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|\((?:\\.|[^)\\])*\))$/,punctuation:/^[\[\]!:]|[<>]/},alias:"url"},bold:{pattern:/(^|[^\\])(\*\*|__)(?:(?:\r?\n|\r)(?!\r?\n|\r)|.)+?\2/,lookbehind:!0,inside:{punctuation:/^\*\*|^__|\*\*$|__$/}},italic:{pattern:/(^|[^\\])([*_])(?:(?:\r?\n|\r)(?!\r?\n|\r)|.)+?\2/,lookbehind:!0,inside:{punctuation:/^[*_]|[*_]$/}},url:{pattern:/!?\[[^\]]+\](?:\([^\s)]+(?:[\t ]+"(?:\\.|[^"\\])*")?\)| ?\[[^\]\n]*\])/,inside:{variable:{pattern:/(!?\[)[^\]]+(?=\]$)/,lookbehind:!0},string:{pattern:/"(?:\\.|[^"\\])*"(?=\)$)/}}}}),Prism.languages.markdown.bold.inside.url=Prism.util.clone(Prism.languages.markdown.url),Prism.languages.markdown.italic.inside.url=Prism.util.clone(Prism.languages.markdown.url),Prism.languages.markdown.bold.inside.italic=Prism.util.clone(Prism.languages.markdown.italic),Prism.languages.markdown.italic.inside.bold=Prism.util.clone(Prism.languages.markdown.bold); // prettier-ignore
@@ -456,19 +456,23 @@ const DashupUIChatInput = (props = {}) => {
     return (
       <>
         { !!embeds.length && (
-          <Box mb={ 3 }>
+          <Stack spacing={ 2 } mb={ 3 } direction="row" flexWrap="wrap">
             { embeds.map((embed, i) => {
               // return jsx
               return (
-                <Embed embed={ embed } />
+                <Embed embed={ embed } key={ `embed-${i}` } />
               );
             }) }
-          </Box>
+          </Stack>
         ) }
 
         <Paper>
           <Stack spacing={ 1 } direction="row" alignItems="center" pr={ 2 }>
-            <Box flex={ 1 } px={ 2 } py={ 1 }>
+            <Box flex={ 1 } px={ 2 } py={ 1 } sx={ {
+              '& .chat-control' : {
+                wordBreak : 'break-word',
+              },
+            } }>
               <Slate
                 value={ value }
                 editor={ editor }
@@ -480,7 +484,7 @@ const DashupUIChatInput = (props = {}) => {
                   onKeyDown={ (e) => onKeyDown(e, data) }
                   renderLeaf={ renderLeaf }
                   renderElement={ renderElement }
-                  />
+                />
               </Slate>
             </Box>
             <ToggleButtonGroup size="small">

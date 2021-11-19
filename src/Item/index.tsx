@@ -133,6 +133,9 @@ const DashupUIItem = (props = {}) => {
 
   // on tag
   const onUser = (field, value) => {
+    // check multiple
+    if (Array.isArray(value) && !field.multiple) value = value[0] || null;
+
     // get tag value
     props.item.set(field.name || field.uuid, value);
     props.item.save();
@@ -140,182 +143,185 @@ const DashupUIItem = (props = {}) => {
 
   // on tag
   const onTag = (field, value) => {
-    // get tag value
-    let tagVal = (props.item.get(field.name || field.uuid) || []);
-
-    // check array
-    if (!Array.isArray(tagVal)) tagVal = [tagVal].filter((t) => t && typeof t === 'string');
-
-    // check includes
-    if (tagVal.includes(value)) {
-      tagVal = tagVal.filter((v) => v !== value);
-    } else {
-      tagVal.push(value);
-    }
-
+    // check multiple
+    if (Array.isArray(value) && !field.multiple) value = value[0] || null;
+    
     // set and save
-    props.item.set(field.name || field.uuid, field.multiple ? tagVal : tagVal.pop());
+    props.item.set(field.name || field.uuid, value);
     props.item.save();
   };
 
   // return jsx
   return (!props.item || props.item.get('archived')) ? null : (
-    <Card className="DuiItemCard" variant={ props.variant } sx={ {
-      color           : props.color && theme.palette.getContrastText(dotProp.get(theme.palette, props.color)),
-      borderColor     : !props.variant && (getColor() || {}).backgroundColor,
-      borderLeftWidth : (getColor() || {}).backgroundColor && !props.variant ? 3 : undefined,
-      borderLeftStyle : 'solid',
-      backgroundColor : props.color,
-    } }>
-      { !!hasTags() && (
-        <CardContent sx={ {
-          pb    : 0,
-          color : props.color && theme.palette.getContrastText(dotProp.get(theme.palette, props.color)),
+    <>
+      <Card className="DuiItemCard" variant={ props.variant } sx={ {
+        color           : props.color && theme.palette.getContrastText(dotProp.get(theme.palette, props.color)),
+        borderColor     : !props.variant && (getColor() || {}).backgroundColor,
+        borderLeftWidth : (getColor() || {}).backgroundColor && !props.variant ? 3 : undefined,
+        borderLeftStyle : 'solid',
+        backgroundColor : props.color,
+      } }>
+        { !!hasTags() && (
+          <CardContent sx={ {
+            pb    : 0,
+            color : props.color && theme.palette.getContrastText(dotProp.get(theme.palette, props.color)),
+          } }>
+            <Stack spacing={ 1 } direction="row" alignItems="center" flexWrap="wrap" sx={ {
+              width : '100%',
+            } }>
+              { getTagFields().map((type, i) => {
+                // return jsx
+                return (
+                  <React.Fragment key={ `tag-${type.uuid}` }>
+                    { getTags(type).map((tag, a) => {
+                      // get color
+                      const color = tag.color?.hex;
+
+                      // return jsx
+                      return (
+                        <Tooltip title={ `${type.label}: ${tag.value}`} key={ `tag-${type.uuid}-${tag.value}` }>
+                          <Chip
+                            sx={ {
+                              color           : color && theme.palette?.getContrastText(color),
+                              backgroundColor : color,
+                            } }
+                            size="small"
+                            label={ tag.label }
+                            onClick={ (e) => setTagOpen({ ...type, el : e.target }) }
+                            onDelete={ () => onTag(type, getTags(type).filter((t) => t.value !== tag.value)) }
+                          />
+                        </Tooltip>
+                      );
+                    }) }
+
+                    <Tooltip title={ `Add ${type.label}` }>
+                      <IconButton onClick={ (e) => setTagOpen({ ...type, el : e.target }) } size="small">
+                        <Icon type="fas" icon="tag" fontSize="small" />
+                      </IconButton>
+                    </Tooltip>
+                  </React.Fragment>
+                );
+              }) }
+            </Stack>
+          </CardContent>
+        ) }
+        <CardContent onClick={ (e) => props.onClick(props.item) } sx={ {
+          color  : props.color && theme.palette.getContrastText(dotProp.get(theme.palette, props.color)),
+          cursor : 'pointer',
         } }>
-          <Stack spacing={ 1 } direction="row" flexWrap="wrap">
-            { getTagFields().map((type, i) => {
-              // return jsx
-              return (
-                <Stack spacing={ 1 } direction="row" key={ `tag-${type.uuid}` } alignItems="center">
-                  { getTags(type).map((tag, a) => {
-                    // get color
-                    const color = tag.color?.hex;
+          { !!props.repeat && (
+            <Tooltip title={ props.repeat }>
+              <Icon type="fas" icon="repeat" />
+            </Tooltip>
+          ) }
+          <Hbs template={ props.template } data={ props.item ? props.item.toJSON() : {} } isInline={ props.size === 'sm' } />
+        </CardContent>
+        <CardContent sx={ {
+          pt            : 0,
+          color         : props.color && theme.palette.getContrastText(dotProp.get(theme.palette, props.color)),
+          display       : 'flex',
+          flexWrap      : 'wrap',
+          flexDirection : 'row',
+        } }>
+          <Stack spacing={ 1 } direction="row" alignItems="center" flexWrap="wrap" sx={ {
+            width : '100%',
+          } }>
+            { getUserFields().map((type, i) => {
+                // return jsx
+                return (
+                  <React.Fragment key={ `user-${type.uuid}` }>
+                    { getUsers(type).map((user, a) => {
+                      // return jsx
+                      return (
+                        <Tooltip key={ `tag-${type.uuid}-${user._id || user.id}` } title={ `${type.label}: ${user.name}`}>
+                          <Chip
+                            size="small"
+                            label={ user.name }
+                            avatar={ <Avatar image={ user.image || user.avatar } name={ user.name } /> }
+                            onClick={ (e) => setUserOpen({ ...type, el : e.target }) }
+                            onDelete={ () => onUser(type, getUsers(type).filter((u) => u.id !== user.id)) }
+                          />
+                        </Tooltip>
+                      );
+                    }) }
 
-                    // return jsx
-                    return (
-                      <Tooltip title={ `${type.label}: ${tag.value}`} key={ `tag-${type.uuid}-${tag.value}` }>
-                        <Chip
-                          sx={ {
-                            color           : color && theme.palette?.getContrastText(color),
-                            backgroundColor : color,
-                          } }
-                          size="small"
-                          label={ tag.label }
-                          onClick={ (e) => setTagOpen({ type : type.uuid, el : e.target }) }
-                          onDelete={ () => {} }
-                        />
-                      </Tooltip>
-                    );
-                  }) }
-
-                  <Tooltip title={ `Add ${type.label}` }>
-                    <IconButton onClick={ (e) => setTagOpen({ type : type.uuid, el : e.target }) } size="small">
-                      <Icon type="fas" icon="tag" fontSize="small" />
-                    </IconButton>
-                  </Tooltip>
-                  <Menu
-                    open={ tagOpen?.type === type.uuid }
-                    onClose={ () => setTagOpen(null) }
-                    anchorEl={ tagOpen?.el }
-                    MenuListProps={ {
-                      sx : {
-                        width : 240,
-                      },
-                    } }
-                  >
-                    <View
-                      view="input"
-                      type="field"
-                      struct={ type.type }
-                      dashup={ props.dashup }
-
-                      field={ type }
-                      value={ props.item && props.item.get(type.name || type.uuid) }
-
-                      onChange={ onTag }
-                      isInline
-                      autoFocus
-                    />
-                  </Menu>
-                </Stack>
-              );
-            }) }
+                    <Tooltip title={ `Add ${type.label}` }>
+                      <IconButton onClick={ (e) => setUserOpen({ ...type, el : e.target }) } size="small">
+                        <Icon type="fas" icon="user-plus" fontSize="small" />
+                      </IconButton>
+                    </Tooltip>
+                  </React.Fragment>
+                );
+              })
+            }
+            
+            <Box ml="auto!important">
+              <Tooltip title="Discuss Item">
+                <Badge badgeContent={ props.item.get('_alert.all') || count } color={ props.item.get('_alert.important') ? 'primary' : (props.item.get('_alert.all') ? 'info' : undefined) }>
+                  <IconButton size="small" color={ props.item.get('_alert.important') ? 'primary' : (props.item.get('_alert.all') ? 'info' : undefined) } onClick={ (e) => props.onClick(props.item) }>
+                    <Icon type="fas" icon="comments" />
+                  </IconButton>
+                </Badge>
+              </Tooltip>
+            </Box>
           </Stack>
         </CardContent>
+        <Box />
+      </Card>
+
+      { !!userOpen?.type && (
+        <Menu
+          open={ !!userOpen.el && !!userOpen.type }
+          onClose={ () => setUserOpen(null) }
+          anchorEl={ userOpen.el }
+          MenuListProps={ {
+            sx : {
+              width : 240,
+            },
+          } }
+        >
+          <View
+            view="input"
+            type="field"
+            struct="user"
+            dashup={ props.dashup }
+
+            field={ userOpen }
+            value={ props.item && props.item.get(userOpen.name || userOpen.uuid) }
+
+            onChange={ onUser }
+            isInline
+            autoFocus
+          />
+        </Menu>
       ) }
-      <CardContent onClick={ (e) => props.onClick(props.item) } sx={ {
-        color  : props.color && theme.palette.getContrastText(dotProp.get(theme.palette, props.color)),
-        cursor : 'pointer',
-      } }>
-        { !!props.repeat && (
-          <Tooltip title={ props.repeat }>
-            <Icon type="fas" icon="repeat" />
-          </Tooltip>
-        ) }
-        <Hbs template={ props.template } data={ props.item ? props.item.toJSON() : {} } isInline={ props.size === 'sm' } />
-      </CardContent>
-      <CardContent sx={ {
-        pt            : 0,
-        color         : props.color && theme.palette.getContrastText(dotProp.get(theme.palette, props.color)),
-        display       : 'flex',
-        flexWrap      : 'wrap',
-        flexDirection : 'row',
-      } }>
-        { getUserFields().map((type, i) => {
-            // return jsx
-            return (
-              <Stack spacing={ 1 } direction="row" key={ `tag-${type.uuid}` } alignItems="center">
-                { getUsers(type).map((user, a) => {
-                  // return jsx
-                  return (
-                    <Tooltip title={ `${type.label}: ${user.name}`} key={ `tag-${type.uuid}-${user._id || user.id}` }>
-                      <Chip
-                        size="small"
-                        label={ user.name }
-                        avatar={ <Avatar image={ user.image || user.avatar } name={ user.name } /> }
-                        onClick={ (e) => setUserOpen({ type : type.uuid, el : e.target }) }
-                        onDelete={ () => {} }
-                      />
-                    </Tooltip>
-                  );
-                }) }
+      { !!tagOpen?.type && (
+        <Menu
+          open={ !!tagOpen.el && !!tagOpen.type }
+          onClose={ () => setTagOpen(null) }
+          anchorEl={ tagOpen.el }
+          MenuListProps={ {
+            sx : {
+              width : 240,
+            },
+          } }
+        >
+          <View
+            view="input"
+            type="field"
+            struct={ tagOpen.type }
+            dashup={ props.dashup }
 
-                <Tooltip title={ `Add ${type.label}` }>
-                  <IconButton onClick={ (e) => setUserOpen({ type : type.uuid, el : e.target }) } size="small">
-                    <Icon type="fas" icon="user-plus" fontSize="small" />
-                  </IconButton>
-                </Tooltip>
-                <Menu
-                  open={ userOpen?.type === type.uuid }
-                  onClose={ () => setUserOpen(null) }
-                  anchorEl={ userOpen?.el }
-                  MenuListProps={ {
-                    sx : {
-                      width : 240,
-                    },
-                  } }
-                >
-                  <View
-                    view="input"
-                    type="field"
-                    struct="user"
-                    dashup={ props.dashup }
+            field={ tagOpen }
+            value={ props.item && props.item.get(tagOpen.name || tagOpen.uuid) }
 
-                    field={ type }
-                    value={ props.item && props.item.get(type.name || type.uuid) }
-
-                    onChange={ onUser }
-                    isInline
-                    autoFocus
-                  />
-                </Menu>
-              </Stack>
-            );
-          })
-        }
-
-        <Box ml="auto">
-          <Tooltip title="Discuss Item">
-            <Badge badgeContent={ props.item.get('_alert.all') || count } color={ props.item.get('_alert.important') ? 'primary' : (props.item.get('_alert.all') ? 'info' : undefined) }>
-              <IconButton size="small" color={ props.item.get('_alert.important') ? 'primary' : (props.item.get('_alert.all') ? 'info' : undefined) } onClick={ (e) => props.onClick(props.item) }>
-                <Icon type="fas" icon="comments" />
-              </IconButton>
-            </Badge>
-          </Tooltip>
-        </Box>
-      </CardContent>
-      <Box />
-    </Card>
+            onChange={ onTag }
+            isInline
+            autoFocus
+          />
+        </Menu>
+      ) }
+    </>
   );
 };
 

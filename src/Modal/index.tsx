@@ -76,7 +76,7 @@ const DashupUIModal = (props = {}) => {
                 <Stack spacing={ 2 } sx={ {
                   height : '100%',
                 } }>
-                  <Box flex={ 1 }>
+                  <Box flex={ 1 } display="flex">
                     <Chat.Thread />
                   </Box>
                   <Chat.Input />

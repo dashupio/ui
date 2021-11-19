@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import moment from 'moment';
 import dotProp from 'dot-prop';
+import { Box, Card, Icon, Stack, Link, Avatar, CardMedia, CardHeader, CardContent, Typography, CircularProgress } from '@dashup/ui';
 
 // let context
 let DashupUIContext = null;
@@ -21,112 +22,132 @@ const DashupUIChatEmbed = (props = {}) => {
   };
   // render body
   const renderBody = (data) => {
-    // return jsx
+
+    // check type
+    if (props.embed.type === 'note') return (
+      <Card>
+        <CardHeader
+          title="Note"
+          avatar={ (
+            <Avatar>
+              <Icon type="fas" icon="sticky-note" />
+            </Avatar>
+          ) }
+        />
+        <CardContent>
+          { props.embed.data?.body }
+        </CardContent>
+        <Box />
+      </Card>
+    );
+
+    // check type
+    if (props.embed.type === 'sms') return (
+      <Card>
+        <CardHeader
+          title={ props.embed.data?.title }
+          avatar={ (
+            <Avatar>
+              <Icon type="fas" icon="sms" />
+            </Avatar>
+          ) }
+        />
+        <CardContent>
+          { props.embed.data?.body }
+        </CardContent>
+        <Box />
+      </Card>
+    );
+
+    // check type
+    if (props.embed.type === 'email') return (
+      <Card>
+        <CardHeader
+          title={ props.embed.data?.title }
+          avatar={ (
+            <Avatar>
+              <Icon type="fas" icon="envelope-open-text" />
+            </Avatar>
+          ) }
+        />
+        <CardContent>
+          { props.embed.data?.body }
+        </CardContent>
+        <Box />
+      </Card>
+    );
+
+    // return card
     return (
-      <div className={ `row row-eq-height embed-${props.embed.type}` }>
-
-        { /* EMBED HAS IMAGE */ }
-        { !props.embed.loading && !!dotProp.get(props.embed, 'data.images.0.url') && (
-          <div className={ `d-flex align-items-center ${!props.message || !show ? 'col-md-4' : 'col-12 mb-2'}` }>
-            <div className="embed text-center w-100">
-              { show && !! props.embed.data?.html ? (
-                <div className="ratio ratio-16x9 rounded" dangerouslySetInnerHTML={ { __html : props.embed.data.html } } />
-              ) : (
-                <div className="ratio ratio-16x9">
-                  <a
-                    href={ props.embed.data?.url }
-                    target="_blank"
-                    onClick={ (e) => !setShow(true) && e.preventDefault() }
-                    className="rounded"
-                    style={ {
-                      backgroundImage : `url(${dotProp.get(props.embed, 'data.images.0.url')}`,
-                    } } />
-                </div>
+      <Card sx={ {
+        width    : data.size === 'small' ? 240 : 360,
+        maxWidth : data.size === 'small' ? '100%' : 360,
+      } }>
+        <CardHeader
+          title={ props.embed.data?.title }
+          avatar={ (
+            !!props.embed.data?.favicon?.url && (
+              <Avatar variant="rounded" bgColor="rgba(0,0,0,0)" src={ props.embed.data?.favicon?.url } name={ props.embed.data?.provider?.name } />
+            )
+          ) }
+          subheader={ (
+            <Stack spacing={ 1 } direction="row" sx={ {
+              alignItems : 'center',
+            } }>
+              { !!props.embed?.data?.provider?.url && (
+                <Link href={ props.embed.data.provider.url } target="_blank" title={ props.embed.data.provider.name }>
+                  { props.embed.data.provider.name }
+                </Link>
               ) }
-            </div>
-          </div>
+              { !!props.embed.data?.author?.url && (
+                <Link href={ props.embed.data.author.url } target="_blank" title={ props.embed.data.author.name }>
+                  { props.embed.data.author.name }
+                </Link>
+              ) }
+              { !!props.embed.data?.duration && (
+                <Typography fontSize="small">
+                  { getDuration(props.embed.data.duration) }
+                </Typography>
+              ) }
+            </Stack>
+          ) }
+        />
+        { !!props.embed.loading && (
+          <CardContent sx={ {
+            py             : 3,
+            display        : 'flex',
+            alignItems     : 'center',
+            justifyContent : 'center',
+          } }>
+            <CircularProgress />
+          </CardContent>
         ) }
+        { !!props.embed.data?.html && (
+          <CardMedia
+            sx={ {
+              '& .embed-responsive-item' : {
+                width  : '100%',
+                height : '100%',
+              },
+              '& img' : {
+                margin    : 'auto',
+                maxWidth  : '100%',
+                maxHeight : '100%',
+              },
 
-        { /* HAS PROVIDER */ }
-        { !!props.embed.data?.title && !!props.embed.data?.provider && (
-          <div className={ `d-flex align-items-center ${dotProp.get(props.embed, 'data.images.0.url') ? 'col-md-8' : 'col'}` }>
-            { props.embed.loading ? (
-              <div className="w-100 embed-title">
-                <b>Loading...</b>
-              </div>
-            ) : (
-              <div className="w-100">
-                <div className="embed-title text-overflow">
-                  <a href={ props.embed.data?.url } target="_blank">
-                    <b className="d-block">{ props.embed.data?.title }</b>
-                  </a>
-                </div>
-                <div className="embed-meta d-flex align-items-center">
-                  { !!props.embed.data?.provider && (
-                    <>
-                      { !!props.embed.data?.favicon?.url && (
-                        <a href={ props.embed.data.provider.url } target="_blank" title={ props.embed.data.provider.name }>
-                          <img className="icon me-2" src={ props.embed.data.favicon.url } />
-                        </a>
-                      ) }
-                      <a href={ props.embed.data.provider.url } target="_blank" title={ props.embed.data.provider.name }>
-                        { props.embed.data.provider.name }
-                      </a>
-                    </>
-                  ) }
-                  { !!props.embed.data?.provider && !!props.embed.data?.author?.name && (
-                    <span className="sep mx-1">|</span>
-                  ) }
-                  { !!props.embed.data?.author && (
-                    <a href={ props.embed.data.author.url } target="_blank">
-                      { props.embed.data.author.name }
-                    </a>
-                  ) }
-                  { !!props.embed.data?.duration && (
-                    <span className="ms-2 text-muted">
-                      { getDuration(props.embed.data.duration) }
-                    </span>
-                  ) }
-                </div>
-              </div>
-            ) }
-          </div>
-        ) }
+              display        : 'flex',
+              textAlign      : 'center',
+              alignItems     : 'center',
+              justifyContent : 'center',
+            } }
+            height={ 194 }
+            component={ Box }
 
-        { props.embed.type === 'note' && (
-          <div>
-            <div className="mb-2">
-              <i className="fa fa-fw fa-sticky-note me-2" /> Note
-            </div>
-            <pre className="m-0">
-              { props.embed.data?.body }
-            </pre>
-          </div>
+            dangerouslySetInnerHTML={ { __html : props.embed.data.html } }
+          />
         ) }
-
-        { props.embed.type === 'sms' && (
-          <div>
-            <div className="mb-2">
-              <i className="fa fa-fw fa-sms me-2" /> { props.embed.data?.title }
-            </div>
-            <pre className="m-0">
-              { props.embed.data?.body }
-            </pre>
-          </div>
-        ) }
-
-        { props.embed.type === 'email' && (
-          <div>
-            <div className="mb-2">
-              <i className="fa fa-fw fa-envelope-open-text me-2" /> { props.embed.data?.title }
-            </div>
-            <pre className="m-0">
-              { props.embed.data?.body }
-            </pre>
-          </div>
-        ) }
-        
-      </div>
+        <Box />
+      </Card>
     );
   };
 

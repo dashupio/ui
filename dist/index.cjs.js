@@ -6944,9 +6944,9 @@ var DashupUIChatEmbed = function DashupUIChatEmbed() {
 
   // use state
   var _useState = React.useState(false),
-      _useState2 = _slicedToArray(_useState, 2),
-      show = _useState2[0],
-      setShow = _useState2[1]; // get duration
+      _useState2 = _slicedToArray(_useState, 2);
+      _useState2[0];
+      _useState2[1]; // get duration
 
 
   var getDuration = function getDuration(time) {
@@ -6958,90 +6958,98 @@ var DashupUIChatEmbed = function DashupUIChatEmbed() {
 
 
   var renderBody = function renderBody(data) {
-    var _props$embed$data, _props$embed$data2, _props$embed$data3, _props$embed$data4, _props$embed$data5, _props$embed$data6, _props$embed$data7, _props$embed$data8, _props$embed$data8$fa, _props$embed$data9, _props$embed$data10, _props$embed$data10$a, _props$embed$data11, _props$embed$data12, _props$embed$data13, _props$embed$data14, _props$embed$data15, _props$embed$data16, _props$embed$data17;
+    var _props$embed$data, _props$embed$data2, _props$embed$data3, _props$embed$data4, _props$embed$data5, _props$embed$data6, _props$embed$data7, _props$embed$data7$fa, _props$embed$data8, _props$embed$data8$fa, _props$embed$data9, _props$embed$data9$pr, _props$embed, _props$embed$data10, _props$embed$data10$p, _props$embed$data11, _props$embed$data11$a, _props$embed$data12, _props$embed$data13;
 
-    // return jsx
-    return /*#__PURE__*/React__default['default'].createElement("div", {
-      className: "row row-eq-height embed-".concat(props.embed.type)
-    }, !props.embed.loading && !!dotProp.get(props.embed, 'data.images.0.url') && /*#__PURE__*/React__default['default'].createElement("div", {
-      className: "d-flex align-items-center ".concat(!props.message || !show ? 'col-md-4' : 'col-12 mb-2')
-    }, /*#__PURE__*/React__default['default'].createElement("div", {
-      className: "embed text-center w-100"
-    }, show && !!((_props$embed$data = props.embed.data) !== null && _props$embed$data !== void 0 && _props$embed$data.html) ? /*#__PURE__*/React__default['default'].createElement("div", {
-      className: "ratio ratio-16x9 rounded",
+    // check type
+    if (props.embed.type === 'note') return /*#__PURE__*/React__default['default'].createElement(dashupUI.Card, null, /*#__PURE__*/React__default['default'].createElement(dashupUI.CardHeader, {
+      title: "Note",
+      avatar: /*#__PURE__*/React__default['default'].createElement(dashupUI.Avatar, null, /*#__PURE__*/React__default['default'].createElement(dashupUI.Icon, {
+        type: "fas",
+        icon: "sticky-note"
+      }))
+    }), /*#__PURE__*/React__default['default'].createElement(dashupUI.CardContent, null, (_props$embed$data = props.embed.data) === null || _props$embed$data === void 0 ? void 0 : _props$embed$data.body), /*#__PURE__*/React__default['default'].createElement(dashupUI.Box, null)); // check type
+
+    if (props.embed.type === 'sms') return /*#__PURE__*/React__default['default'].createElement(dashupUI.Card, null, /*#__PURE__*/React__default['default'].createElement(dashupUI.CardHeader, {
+      title: (_props$embed$data2 = props.embed.data) === null || _props$embed$data2 === void 0 ? void 0 : _props$embed$data2.title,
+      avatar: /*#__PURE__*/React__default['default'].createElement(dashupUI.Avatar, null, /*#__PURE__*/React__default['default'].createElement(dashupUI.Icon, {
+        type: "fas",
+        icon: "sms"
+      }))
+    }), /*#__PURE__*/React__default['default'].createElement(dashupUI.CardContent, null, (_props$embed$data3 = props.embed.data) === null || _props$embed$data3 === void 0 ? void 0 : _props$embed$data3.body), /*#__PURE__*/React__default['default'].createElement(dashupUI.Box, null)); // check type
+
+    if (props.embed.type === 'email') return /*#__PURE__*/React__default['default'].createElement(dashupUI.Card, null, /*#__PURE__*/React__default['default'].createElement(dashupUI.CardHeader, {
+      title: (_props$embed$data4 = props.embed.data) === null || _props$embed$data4 === void 0 ? void 0 : _props$embed$data4.title,
+      avatar: /*#__PURE__*/React__default['default'].createElement(dashupUI.Avatar, null, /*#__PURE__*/React__default['default'].createElement(dashupUI.Icon, {
+        type: "fas",
+        icon: "envelope-open-text"
+      }))
+    }), /*#__PURE__*/React__default['default'].createElement(dashupUI.CardContent, null, (_props$embed$data5 = props.embed.data) === null || _props$embed$data5 === void 0 ? void 0 : _props$embed$data5.body), /*#__PURE__*/React__default['default'].createElement(dashupUI.Box, null)); // return card
+
+    return /*#__PURE__*/React__default['default'].createElement(dashupUI.Card, {
+      sx: {
+        width: data.size === 'small' ? 240 : 360,
+        maxWidth: data.size === 'small' ? '100%' : 360
+      }
+    }, /*#__PURE__*/React__default['default'].createElement(dashupUI.CardHeader, {
+      title: (_props$embed$data6 = props.embed.data) === null || _props$embed$data6 === void 0 ? void 0 : _props$embed$data6.title,
+      avatar: !!((_props$embed$data7 = props.embed.data) !== null && _props$embed$data7 !== void 0 && (_props$embed$data7$fa = _props$embed$data7.favicon) !== null && _props$embed$data7$fa !== void 0 && _props$embed$data7$fa.url) && /*#__PURE__*/React__default['default'].createElement(dashupUI.Avatar, {
+        variant: "rounded",
+        bgColor: "rgba(0,0,0,0)",
+        src: (_props$embed$data8 = props.embed.data) === null || _props$embed$data8 === void 0 ? void 0 : (_props$embed$data8$fa = _props$embed$data8.favicon) === null || _props$embed$data8$fa === void 0 ? void 0 : _props$embed$data8$fa.url,
+        name: (_props$embed$data9 = props.embed.data) === null || _props$embed$data9 === void 0 ? void 0 : (_props$embed$data9$pr = _props$embed$data9.provider) === null || _props$embed$data9$pr === void 0 ? void 0 : _props$embed$data9$pr.name
+      }),
+      subheader: /*#__PURE__*/React__default['default'].createElement(dashupUI.Stack, {
+        spacing: 1,
+        direction: "row",
+        sx: {
+          alignItems: 'center'
+        }
+      }, !!((_props$embed = props.embed) !== null && _props$embed !== void 0 && (_props$embed$data10 = _props$embed.data) !== null && _props$embed$data10 !== void 0 && (_props$embed$data10$p = _props$embed$data10.provider) !== null && _props$embed$data10$p !== void 0 && _props$embed$data10$p.url) && /*#__PURE__*/React__default['default'].createElement(dashupUI.Link, {
+        href: props.embed.data.provider.url,
+        target: "_blank",
+        title: props.embed.data.provider.name
+      }, props.embed.data.provider.name), !!((_props$embed$data11 = props.embed.data) !== null && _props$embed$data11 !== void 0 && (_props$embed$data11$a = _props$embed$data11.author) !== null && _props$embed$data11$a !== void 0 && _props$embed$data11$a.url) && /*#__PURE__*/React__default['default'].createElement(dashupUI.Link, {
+        href: props.embed.data.author.url,
+        target: "_blank",
+        title: props.embed.data.author.name
+      }, props.embed.data.author.name), !!((_props$embed$data12 = props.embed.data) !== null && _props$embed$data12 !== void 0 && _props$embed$data12.duration) && /*#__PURE__*/React__default['default'].createElement(dashupUI.Typography, {
+        fontSize: "small"
+      }, getDuration(props.embed.data.duration)))
+    }), !!props.embed.loading && /*#__PURE__*/React__default['default'].createElement(dashupUI.CardContent, {
+      sx: {
+        py: 3,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center'
+      }
+    }, /*#__PURE__*/React__default['default'].createElement(dashupUI.CircularProgress, null)), !!((_props$embed$data13 = props.embed.data) !== null && _props$embed$data13 !== void 0 && _props$embed$data13.html) && /*#__PURE__*/React__default['default'].createElement(dashupUI.CardMedia, {
+      sx: {
+        '& .embed-responsive-item': {
+          width: '100%',
+          height: '100%'
+        },
+        '& img': {
+          margin: 'auto',
+          maxWidth: '100%',
+          maxHeight: '100%'
+        },
+        display: 'flex',
+        textAlign: 'center',
+        alignItems: 'center',
+        justifyContent: 'center'
+      },
+      height: 194,
+      component: dashupUI.Box,
       dangerouslySetInnerHTML: {
         __html: props.embed.data.html
       }
-    }) : /*#__PURE__*/React__default['default'].createElement("div", {
-      className: "ratio ratio-16x9"
-    }, /*#__PURE__*/React__default['default'].createElement("a", {
-      href: (_props$embed$data2 = props.embed.data) === null || _props$embed$data2 === void 0 ? void 0 : _props$embed$data2.url,
-      target: "_blank",
-      onClick: function onClick(e) {
-        return !setShow(true) && e.preventDefault();
-      },
-      className: "rounded",
-      style: {
-        backgroundImage: "url(".concat(dotProp.get(props.embed, 'data.images.0.url'))
-      }
-    })))), !!((_props$embed$data3 = props.embed.data) !== null && _props$embed$data3 !== void 0 && _props$embed$data3.title) && !!((_props$embed$data4 = props.embed.data) !== null && _props$embed$data4 !== void 0 && _props$embed$data4.provider) && /*#__PURE__*/React__default['default'].createElement("div", {
-      className: "d-flex align-items-center ".concat(dotProp.get(props.embed, 'data.images.0.url') ? 'col-md-8' : 'col')
-    }, props.embed.loading ? /*#__PURE__*/React__default['default'].createElement("div", {
-      className: "w-100 embed-title"
-    }, /*#__PURE__*/React__default['default'].createElement("b", null, "Loading...")) : /*#__PURE__*/React__default['default'].createElement("div", {
-      className: "w-100"
-    }, /*#__PURE__*/React__default['default'].createElement("div", {
-      className: "embed-title text-overflow"
-    }, /*#__PURE__*/React__default['default'].createElement("a", {
-      href: (_props$embed$data5 = props.embed.data) === null || _props$embed$data5 === void 0 ? void 0 : _props$embed$data5.url,
-      target: "_blank"
-    }, /*#__PURE__*/React__default['default'].createElement("b", {
-      className: "d-block"
-    }, (_props$embed$data6 = props.embed.data) === null || _props$embed$data6 === void 0 ? void 0 : _props$embed$data6.title))), /*#__PURE__*/React__default['default'].createElement("div", {
-      className: "embed-meta d-flex align-items-center"
-    }, !!((_props$embed$data7 = props.embed.data) !== null && _props$embed$data7 !== void 0 && _props$embed$data7.provider) && /*#__PURE__*/React__default['default'].createElement(React__default['default'].Fragment, null, !!((_props$embed$data8 = props.embed.data) !== null && _props$embed$data8 !== void 0 && (_props$embed$data8$fa = _props$embed$data8.favicon) !== null && _props$embed$data8$fa !== void 0 && _props$embed$data8$fa.url) && /*#__PURE__*/React__default['default'].createElement("a", {
-      href: props.embed.data.provider.url,
-      target: "_blank",
-      title: props.embed.data.provider.name
-    }, /*#__PURE__*/React__default['default'].createElement("img", {
-      className: "icon me-2",
-      src: props.embed.data.favicon.url
-    })), /*#__PURE__*/React__default['default'].createElement("a", {
-      href: props.embed.data.provider.url,
-      target: "_blank",
-      title: props.embed.data.provider.name
-    }, props.embed.data.provider.name)), !!((_props$embed$data9 = props.embed.data) !== null && _props$embed$data9 !== void 0 && _props$embed$data9.provider) && !!((_props$embed$data10 = props.embed.data) !== null && _props$embed$data10 !== void 0 && (_props$embed$data10$a = _props$embed$data10.author) !== null && _props$embed$data10$a !== void 0 && _props$embed$data10$a.name) && /*#__PURE__*/React__default['default'].createElement("span", {
-      className: "sep mx-1"
-    }, "|"), !!((_props$embed$data11 = props.embed.data) !== null && _props$embed$data11 !== void 0 && _props$embed$data11.author) && /*#__PURE__*/React__default['default'].createElement("a", {
-      href: props.embed.data.author.url,
-      target: "_blank"
-    }, props.embed.data.author.name), !!((_props$embed$data12 = props.embed.data) !== null && _props$embed$data12 !== void 0 && _props$embed$data12.duration) && /*#__PURE__*/React__default['default'].createElement("span", {
-      className: "ms-2 text-muted"
-    }, getDuration(props.embed.data.duration))))), props.embed.type === 'note' && /*#__PURE__*/React__default['default'].createElement("div", null, /*#__PURE__*/React__default['default'].createElement("div", {
-      className: "mb-2"
-    }, /*#__PURE__*/React__default['default'].createElement("i", {
-      className: "fa fa-fw fa-sticky-note me-2"
-    }), " Note"), /*#__PURE__*/React__default['default'].createElement("pre", {
-      className: "m-0"
-    }, (_props$embed$data13 = props.embed.data) === null || _props$embed$data13 === void 0 ? void 0 : _props$embed$data13.body)), props.embed.type === 'sms' && /*#__PURE__*/React__default['default'].createElement("div", null, /*#__PURE__*/React__default['default'].createElement("div", {
-      className: "mb-2"
-    }, /*#__PURE__*/React__default['default'].createElement("i", {
-      className: "fa fa-fw fa-sms me-2"
-    }), " ", (_props$embed$data14 = props.embed.data) === null || _props$embed$data14 === void 0 ? void 0 : _props$embed$data14.title), /*#__PURE__*/React__default['default'].createElement("pre", {
-      className: "m-0"
-    }, (_props$embed$data15 = props.embed.data) === null || _props$embed$data15 === void 0 ? void 0 : _props$embed$data15.body)), props.embed.type === 'email' && /*#__PURE__*/React__default['default'].createElement("div", null, /*#__PURE__*/React__default['default'].createElement("div", {
-      className: "mb-2"
-    }, /*#__PURE__*/React__default['default'].createElement("i", {
-      className: "fa fa-fw fa-envelope-open-text me-2"
-    }), " ", (_props$embed$data16 = props.embed.data) === null || _props$embed$data16 === void 0 ? void 0 : _props$embed$data16.title), /*#__PURE__*/React__default['default'].createElement("pre", {
-      className: "m-0"
-    }, (_props$embed$data17 = props.embed.data) === null || _props$embed$data17 === void 0 ? void 0 : _props$embed$data17.body)));
+    }), /*#__PURE__*/React__default['default'].createElement(dashupUI.Box, null));
   }; // return jsx
 
 
-  return props.noChat ? renderBody() : /*#__PURE__*/React__default['default'].createElement(DashupUIContext$7.Consumer, null, function (data) {
+  return props.noChat ? renderBody(props) : /*#__PURE__*/React__default['default'].createElement(DashupUIContext$7.Consumer, null, function (data) {
     // render body
-    return renderBody();
+    return renderBody(data);
   });
 }; // export default page menu
 
@@ -7666,12 +7674,16 @@ var DashupUIChatInput = function DashupUIChatInput() {
 
   var renderBody = function renderBody(data) {
     // return jsx
-    return /*#__PURE__*/React__default['default'].createElement(React__default['default'].Fragment, null, !!embeds.length && /*#__PURE__*/React__default['default'].createElement(material.Box, {
-      mb: 3
+    return /*#__PURE__*/React__default['default'].createElement(React__default['default'].Fragment, null, !!embeds.length && /*#__PURE__*/React__default['default'].createElement(material.Stack, {
+      spacing: 2,
+      mb: 3,
+      direction: "row",
+      flexWrap: "wrap"
     }, embeds.map(function (embed, i) {
       // return jsx
       return /*#__PURE__*/React__default['default'].createElement(Embed$1, {
-        embed: embed
+        embed: embed,
+        key: "embed-".concat(i)
       });
     })), /*#__PURE__*/React__default['default'].createElement(material.Paper, null, /*#__PURE__*/React__default['default'].createElement(material.Stack, {
       spacing: 1,
@@ -7681,7 +7693,12 @@ var DashupUIChatInput = function DashupUIChatInput() {
     }, /*#__PURE__*/React__default['default'].createElement(material.Box, {
       flex: 1,
       px: 2,
-      py: 1
+      py: 1,
+      sx: {
+        '& .chat-control': {
+          wordBreak: 'break-word'
+        }
+      }
     }, /*#__PURE__*/React__default['default'].createElement(slateReact.Slate, {
       value: value,
       editor: editor,
@@ -10101,10 +10118,18 @@ var DashupUIChatMessage = function DashupUIChatMessage() {
       display: "flex",
       flexDirection: "row",
       alignItems: "center",
+      flexWrap: "wrap",
+      sx: {
+        wordBreak: 'break-word'
+      }
+    }, parseContent(data.dashup, props.message.parsed || props.message.message)), !!getEmbeds().length && /*#__PURE__*/React__default['default'].createElement(material.Stack, {
+      spacing: 2,
+      direction: "row",
       flexWrap: "wrap"
-    }, parseContent(data.dashup, props.message.parsed || props.message.message)), !!getEmbeds().length && /*#__PURE__*/React__default['default'].createElement(material.Box, null, getEmbeds().map(function (embed, i) {
+    }, getEmbeds().map(function (embed, i) {
       // return jsx
       return /*#__PURE__*/React__default['default'].createElement(Embed, {
+        key: "embed-".concat(i),
         embed: embed,
         message: props.message,
         noChat: props.noChat
@@ -12827,35 +12852,24 @@ var DashupUIItem = function DashupUIItem() {
 
 
   var onUser = function onUser(field, value) {
-    // get tag value
+    // check multiple
+    if (Array.isArray(value) && !field.multiple) value = value[0] || null; // get tag value
+
     props.item.set(field.name || field.uuid, value);
     props.item.save();
   }; // on tag
 
 
   var onTag = function onTag(field, value) {
-    // get tag value
-    var tagVal = props.item.get(field.name || field.uuid) || []; // check array
+    // check multiple
+    if (Array.isArray(value) && !field.multiple) value = value[0] || null; // set and save
 
-    if (!Array.isArray(tagVal)) tagVal = [tagVal].filter(function (t) {
-      return t && typeof t === 'string';
-    }); // check includes
-
-    if (tagVal.includes(value)) {
-      tagVal = tagVal.filter(function (v) {
-        return v !== value;
-      });
-    } else {
-      tagVal.push(value);
-    } // set and save
-
-
-    props.item.set(field.name || field.uuid, field.multiple ? tagVal : tagVal.pop());
+    props.item.set(field.name || field.uuid, value);
     props.item.save();
   }; // return jsx
 
 
-  return !props.item || props.item.get('archived') ? null : /*#__PURE__*/React__default['default'].createElement(material.Card, {
+  return !props.item || props.item.get('archived') ? null : /*#__PURE__*/React__default['default'].createElement(React__default['default'].Fragment, null, /*#__PURE__*/React__default['default'].createElement(material.Card, {
     className: "DuiItemCard",
     variant: props.variant,
     sx: {
@@ -12873,14 +12887,15 @@ var DashupUIItem = function DashupUIItem() {
   }, /*#__PURE__*/React__default['default'].createElement(material.Stack, {
     spacing: 1,
     direction: "row",
-    flexWrap: "wrap"
+    alignItems: "center",
+    flexWrap: "wrap",
+    sx: {
+      width: '100%'
+    }
   }, getTagFields().map(function (type, i) {
     // return jsx
-    return /*#__PURE__*/React__default['default'].createElement(material.Stack, {
-      spacing: 1,
-      direction: "row",
-      key: "tag-".concat(type.uuid),
-      alignItems: "center"
+    return /*#__PURE__*/React__default['default'].createElement(React__default['default'].Fragment, {
+      key: "tag-".concat(type.uuid)
     }, getTags(type).map(function (tag, a) {
       var _tag$color, _theme$palette;
 
@@ -12898,49 +12913,30 @@ var DashupUIItem = function DashupUIItem() {
         size: "small",
         label: tag.label,
         onClick: function onClick(e) {
-          return setTagOpen({
-            type: type.uuid,
+          return setTagOpen(_objectSpread2(_objectSpread2({}, type), {}, {
             el: e.target
-          });
+          }));
         },
-        onDelete: function onDelete() {}
+        onDelete: function onDelete() {
+          return onTag(type, getTags(type).filter(function (t) {
+            return t.value !== tag.value;
+          }));
+        }
       }));
     }), /*#__PURE__*/React__default['default'].createElement(material.Tooltip, {
       title: "Add ".concat(type.label)
     }, /*#__PURE__*/React__default['default'].createElement(material.IconButton, {
       onClick: function onClick(e) {
-        return setTagOpen({
-          type: type.uuid,
+        return setTagOpen(_objectSpread2(_objectSpread2({}, type), {}, {
           el: e.target
-        });
+        }));
       },
       size: "small"
     }, /*#__PURE__*/React__default['default'].createElement(DashupUIIcon, {
       type: "fas",
       icon: "tag",
       fontSize: "small"
-    }))), /*#__PURE__*/React__default['default'].createElement(material.Menu, {
-      open: (tagOpen === null || tagOpen === void 0 ? void 0 : tagOpen.type) === type.uuid,
-      onClose: function onClose() {
-        return setTagOpen(null);
-      },
-      anchorEl: tagOpen === null || tagOpen === void 0 ? void 0 : tagOpen.el,
-      MenuListProps: {
-        sx: {
-          width: 240
-        }
-      }
-    }, /*#__PURE__*/React__default['default'].createElement(View__default['default'], {
-      view: "input",
-      type: "field",
-      struct: type.type,
-      dashup: props.dashup,
-      field: type,
-      value: props.item && props.item.get(type.name || type.uuid),
-      onChange: onTag,
-      isInline: true,
-      autoFocus: true
-    })));
+    }))));
   }))), /*#__PURE__*/React__default['default'].createElement(material.CardContent, {
     onClick: function onClick(e) {
       return props.onClick(props.item);
@@ -12966,18 +12962,23 @@ var DashupUIItem = function DashupUIItem() {
       flexWrap: 'wrap',
       flexDirection: 'row'
     }
+  }, /*#__PURE__*/React__default['default'].createElement(material.Stack, {
+    spacing: 1,
+    direction: "row",
+    alignItems: "center",
+    flexWrap: "wrap",
+    sx: {
+      width: '100%'
+    }
   }, getUserFields().map(function (type, i) {
     // return jsx
-    return /*#__PURE__*/React__default['default'].createElement(material.Stack, {
-      spacing: 1,
-      direction: "row",
-      key: "tag-".concat(type.uuid),
-      alignItems: "center"
+    return /*#__PURE__*/React__default['default'].createElement(React__default['default'].Fragment, {
+      key: "user-".concat(type.uuid)
     }, getUsers(type).map(function (user, a) {
       // return jsx
       return /*#__PURE__*/React__default['default'].createElement(material.Tooltip, {
-        title: "".concat(type.label, ": ").concat(user.name),
-        key: "tag-".concat(type.uuid, "-").concat(user._id || user.id)
+        key: "tag-".concat(type.uuid, "-").concat(user._id || user.id),
+        title: "".concat(type.label, ": ").concat(user.name)
       }, /*#__PURE__*/React__default['default'].createElement(material.Chip, {
         size: "small",
         label: user.name,
@@ -12986,51 +12987,32 @@ var DashupUIItem = function DashupUIItem() {
           name: user.name
         }),
         onClick: function onClick(e) {
-          return setUserOpen({
-            type: type.uuid,
+          return setUserOpen(_objectSpread2(_objectSpread2({}, type), {}, {
             el: e.target
-          });
+          }));
         },
-        onDelete: function onDelete() {}
+        onDelete: function onDelete() {
+          return onUser(type, getUsers(type).filter(function (u) {
+            return u.id !== user.id;
+          }));
+        }
       }));
     }), /*#__PURE__*/React__default['default'].createElement(material.Tooltip, {
       title: "Add ".concat(type.label)
     }, /*#__PURE__*/React__default['default'].createElement(material.IconButton, {
       onClick: function onClick(e) {
-        return setUserOpen({
-          type: type.uuid,
+        return setUserOpen(_objectSpread2(_objectSpread2({}, type), {}, {
           el: e.target
-        });
+        }));
       },
       size: "small"
     }, /*#__PURE__*/React__default['default'].createElement(DashupUIIcon, {
       type: "fas",
       icon: "user-plus",
       fontSize: "small"
-    }))), /*#__PURE__*/React__default['default'].createElement(material.Menu, {
-      open: (userOpen === null || userOpen === void 0 ? void 0 : userOpen.type) === type.uuid,
-      onClose: function onClose() {
-        return setUserOpen(null);
-      },
-      anchorEl: userOpen === null || userOpen === void 0 ? void 0 : userOpen.el,
-      MenuListProps: {
-        sx: {
-          width: 240
-        }
-      }
-    }, /*#__PURE__*/React__default['default'].createElement(View__default['default'], {
-      view: "input",
-      type: "field",
-      struct: "user",
-      dashup: props.dashup,
-      field: type,
-      value: props.item && props.item.get(type.name || type.uuid),
-      onChange: onUser,
-      isInline: true,
-      autoFocus: true
-    })));
+    }))));
   }), /*#__PURE__*/React__default['default'].createElement(material.Box, {
-    ml: "auto"
+    ml: "auto!important"
   }, /*#__PURE__*/React__default['default'].createElement(material.Tooltip, {
     title: "Discuss Item"
   }, /*#__PURE__*/React__default['default'].createElement(material.Badge, {
@@ -13045,7 +13027,49 @@ var DashupUIItem = function DashupUIItem() {
   }, /*#__PURE__*/React__default['default'].createElement(DashupUIIcon, {
     type: "fas",
     icon: "comments"
-  })))))), /*#__PURE__*/React__default['default'].createElement(material.Box, null));
+  }))))))), /*#__PURE__*/React__default['default'].createElement(material.Box, null)), !!(userOpen !== null && userOpen !== void 0 && userOpen.type) && /*#__PURE__*/React__default['default'].createElement(material.Menu, {
+    open: !!userOpen.el && !!userOpen.type,
+    onClose: function onClose() {
+      return setUserOpen(null);
+    },
+    anchorEl: userOpen.el,
+    MenuListProps: {
+      sx: {
+        width: 240
+      }
+    }
+  }, /*#__PURE__*/React__default['default'].createElement(View__default['default'], {
+    view: "input",
+    type: "field",
+    struct: "user",
+    dashup: props.dashup,
+    field: userOpen,
+    value: props.item && props.item.get(userOpen.name || userOpen.uuid),
+    onChange: onUser,
+    isInline: true,
+    autoFocus: true
+  })), !!(tagOpen !== null && tagOpen !== void 0 && tagOpen.type) && /*#__PURE__*/React__default['default'].createElement(material.Menu, {
+    open: !!tagOpen.el && !!tagOpen.type,
+    onClose: function onClose() {
+      return setTagOpen(null);
+    },
+    anchorEl: tagOpen.el,
+    MenuListProps: {
+      sx: {
+        width: 240
+      }
+    }
+  }, /*#__PURE__*/React__default['default'].createElement(View__default['default'], {
+    view: "input",
+    type: "field",
+    struct: tagOpen.type,
+    dashup: props.dashup,
+    field: tagOpen,
+    value: props.item && props.item.get(tagOpen.name || tagOpen.uuid),
+    onChange: onTag,
+    isInline: true,
+    autoFocus: true
+  })));
 }; // export default
 
 // import dependencies
@@ -13131,7 +13155,8 @@ var DashupUIModal = function DashupUIModal() {
       height: '100%'
     }
   }, /*#__PURE__*/React__default['default'].createElement(material.Box, {
-    flex: 1
+    flex: 1,
+    display: "flex"
   }, /*#__PURE__*/React__default['default'].createElement(DashupUIChat.Thread, null)), /*#__PURE__*/React__default['default'].createElement(DashupUIChat.Input, null))))))));
 }; // export default page menu
 
@@ -14417,6 +14442,116 @@ var DashupUIPermission = function DashupUIPermission() {
   })));
 }; // export default
 
+// memory cache
+var asyncCache = new Map();
+var timeoutCache$1 = new Map(); // create use cache hook
+
+var cacheUtility = function cacheUtility(key, fn) {
+  var timeout = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
+
+  // check async
+  if (!asyncCache.get(key)) {
+    // set key
+    asyncCache.set(key, fn());
+  } // check/reset timeout
+
+
+  if (timeout) {
+    // clear previous timeout
+    clearTimeout(timeoutCache$1.get(key)); // add new timeout
+
+    timeoutCache$1.set(key, setTimeout(function () {
+      asyncCache["delete"](key);
+      timeoutCache$1["delete"](key);
+    }, timeout));
+  }
+
+  if (typeof window !== 'undefined') window.asynCache = asyncCache; // return cached
+
+  return asyncCache.get(key);
+}; // export default
+
+var memoryCache = new Map();
+var timeoutCache = new Map(); // create use cache hook
+
+var useCache = function useCache(fn, keys) {
+  var timeout = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
+  // get key
+  var cacheKey = JSON.stringify(keys); // get from cache
+
+  var cachedPromise = cacheUtility(cacheKey, fn, timeout); // check promise
+
+  if (!(cachedPromise instanceof Promise)) {
+    memoryCache.set(cacheKey, cachedPromise);
+  } // check/reset timeout
+
+
+  if (timeout) {
+    // clear previous timeout
+    clearTimeout(timeoutCache.get(cacheKey)); // add new timeout
+
+    timeoutCache.set(cacheKey, setTimeout(function () {
+      memoryCache["delete"](cacheKey);
+      timeoutCache["delete"](cacheKey);
+    }, timeout));
+  } // cache key
+
+
+  var _useState = React.useState(cacheKey),
+      _useState2 = _slicedToArray(_useState, 2),
+      key = _useState2[0],
+      setKey = _useState2[1];
+
+  var _useState3 = React.useState(memoryCache.get(cacheKey)),
+      _useState4 = _slicedToArray(_useState3, 2),
+      cached = _useState4[0],
+      setCached = _useState4[1];
+
+  var _useState5 = React.useState(!cached),
+      _useState6 = _slicedToArray(_useState5, 2),
+      loading = _useState6[0],
+      setLoading = _useState6[1]; // use effect
+
+
+  React.useEffect(function () {
+    // check already cached
+    if (cacheKey === key && cached) return; // set key
+
+    setKey(cacheKey); // await done
+
+    var awaitDone = true; // load function
+
+    if (!loading) setLoading(true); // get from cache
+
+    var newCachedPromise = cacheUtility(cacheKey, fn, timeout); // check type
+
+    if (newCachedPromise instanceof Promise) {
+      // result
+      newCachedPromise.then(function (result) {
+        // no state set if unloaded
+        if (!awaitDone) return; // complete async cache function
+
+        memoryCache.set(cacheKey, result);
+        setCached(result);
+        setLoading(false);
+      });
+    } else {
+      // complete non-async cache function
+      memoryCache.set(cacheKey, newCachedPromise);
+      setCached(newCachedPromise);
+      setLoading(false);
+    } // return
+
+
+    return function () {
+      // set await done false
+      awaitDone = false;
+    };
+  }, [cacheKey]); // return data
+
+  return [cached, loading];
+}; // export default
+
 // regenerator
 
 View__default['default'].setDefaults({
@@ -14555,7 +14690,9 @@ exports.Modal = DashupUIModal;
 exports.Page = DashupUIPage;
 exports.Permission = DashupUIPermission;
 exports.Query = DashupUIQuery;
+exports.cache = cacheUtility;
 exports.colors = colors;
+exports.useCache = useCache;
 Object.keys(material).forEach(function (k) {
   if (k !== 'default' && !exports.hasOwnProperty(k)) Object.defineProperty(exports, k, {
     enumerable: true,

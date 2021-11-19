@@ -151,18 +151,20 @@ const DashupUIChatMessage = (props = {}) => {
                 </Tooltip>
               </Stack>
             ) }
-            <Box display="flex" flexDirection="row" alignItems="center" flexWrap="wrap">
+            <Box display="flex" flexDirection="row" alignItems="center" flexWrap="wrap" sx={ {
+              wordBreak : 'break-word',
+            } }>
               { parseContent(data.dashup, props.message.parsed || props.message.message) }
             </Box>
             { !!getEmbeds().length && (
-              <Box>
+              <Stack spacing={ 2 } direction="row" flexWrap="wrap">
                 { getEmbeds().map((embed, i) => {
                   // return jsx
                   return (
-                    <Embed embed={ embed } message={ props.message } noChat={ props.noChat } />
+                    <Embed key={ `embed-${i}` } embed={ embed } message={ props.message } noChat={ props.noChat } />
                   );
               }) }
-              </Box>
+              </Stack>
             ) }
           </Stack>
         </Stack>
