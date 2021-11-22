@@ -1,8 +1,7 @@
 
-import React, { useState } from 'react';
 import moment from 'moment';
-import dotProp from 'dot-prop';
-import { Box, Card, Icon, Stack, Link, Avatar, CardMedia, CardHeader, CardContent, Typography, CircularProgress } from '@dashup/ui';
+import React, { useState } from 'react';
+import { Box, Card, Icon, Stack, colors, Link, Avatar, CardMedia, CardHeader, CardContent, Typography, CircularProgress } from '@dashup/ui';
 
 // let context
 let DashupUIContext = null;
@@ -25,11 +24,11 @@ const DashupUIChatEmbed = (props = {}) => {
 
     // check type
     if (props.embed.type === 'note') return (
-      <Card>
+      <Card variant="outlined">
         <CardHeader
           title="Note"
           avatar={ (
-            <Avatar>
+            <Avatar bgColor={ colors[props.embed.color] }>
               <Icon type="fas" icon="sticky-note" />
             </Avatar>
           ) }
@@ -43,11 +42,11 @@ const DashupUIChatEmbed = (props = {}) => {
 
     // check type
     if (props.embed.type === 'sms') return (
-      <Card>
+      <Card variant="outlined">
         <CardHeader
           title={ props.embed.data?.title }
           avatar={ (
-            <Avatar>
+            <Avatar bgColor={ colors[props.embed.color] }>
               <Icon type="fas" icon="sms" />
             </Avatar>
           ) }
@@ -61,17 +60,18 @@ const DashupUIChatEmbed = (props = {}) => {
 
     // check type
     if (props.embed.type === 'email') return (
-      <Card>
+      <Card variant="outlined">
         <CardHeader
           title={ props.embed.data?.title }
           avatar={ (
-            <Avatar>
+            <Avatar bgColor={ colors[props.embed.color] }>
               <Icon type="fas" icon="envelope-open-text" />
             </Avatar>
           ) }
+          subheader={ props.embed.data?.subject }
         />
         <CardContent>
-          { props.embed.data?.body }
+          <Box dangerouslySetInnerHTML={ { __html : props.embed.data?.body } } />
         </CardContent>
         <Box />
       </Card>

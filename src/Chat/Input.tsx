@@ -495,7 +495,7 @@ const DashupUIChatInput = (props = {}) => {
                 <Icon type="fas" icon="smile" fixedWidth />
               </ToggleButton>
             </ToggleButtonGroup>
-            <ToggleButton size="small" value="send" selected color="primary">
+            <ToggleButton size="small" value="send" selected color="primary" onClick={ (e) => onSend(e, data) }>
               <Icon type="fas" icon="play" fixedWidth />
             </ToggleButton>
           </Stack>

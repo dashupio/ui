@@ -6796,147 +6796,6 @@ var urlRegex = options => {
 	return options.exact ? new RegExp(`(?:^${regex}$)`, 'i') : new RegExp(regex, 'ig');
 };
 
-var isObj = value => {
-	const type = typeof value;
-	return value !== null && (type === 'object' || type === 'function');
-};
-
-const disallowedKeys = new Set([
-	'__proto__',
-	'prototype',
-	'constructor'
-]);
-
-const isValidPath = pathSegments => !pathSegments.some(segment => disallowedKeys.has(segment));
-
-function getPathSegments(path) {
-	const pathArray = path.split('.');
-	const parts = [];
-
-	for (let i = 0; i < pathArray.length; i++) {
-		let p = pathArray[i];
-
-		while (p[p.length - 1] === '\\' && pathArray[i + 1] !== undefined) {
-			p = p.slice(0, -1) + '.';
-			p += pathArray[++i];
-		}
-
-		parts.push(p);
-	}
-
-	if (!isValidPath(parts)) {
-		return [];
-	}
-
-	return parts;
-}
-
-var dotProp = {
-	get(object, path, value) {
-		if (!isObj(object) || typeof path !== 'string') {
-			return value === undefined ? object : value;
-		}
-
-		const pathArray = getPathSegments(path);
-		if (pathArray.length === 0) {
-			return;
-		}
-
-		for (let i = 0; i < pathArray.length; i++) {
-			object = object[pathArray[i]];
-
-			if (object === undefined || object === null) {
-				// `object` is either `undefined` or `null` so we want to stop the loop, and
-				// if this is not the last bit of the path, and
-				// if it did't return `undefined`
-				// it would return `null` if `object` is `null`
-				// but we want `get({foo: null}, 'foo.bar')` to equal `undefined`, or the supplied value, not `null`
-				if (i !== pathArray.length - 1) {
-					return value;
-				}
-
-				break;
-			}
-		}
-
-		return object === undefined ? value : object;
-	},
-
-	set(object, path, value) {
-		if (!isObj(object) || typeof path !== 'string') {
-			return object;
-		}
-
-		const root = object;
-		const pathArray = getPathSegments(path);
-
-		for (let i = 0; i < pathArray.length; i++) {
-			const p = pathArray[i];
-
-			if (!isObj(object[p])) {
-				object[p] = {};
-			}
-
-			if (i === pathArray.length - 1) {
-				object[p] = value;
-			}
-
-			object = object[p];
-		}
-
-		return root;
-	},
-
-	delete(object, path) {
-		if (!isObj(object) || typeof path !== 'string') {
-			return false;
-		}
-
-		const pathArray = getPathSegments(path);
-
-		for (let i = 0; i < pathArray.length; i++) {
-			const p = pathArray[i];
-
-			if (i === pathArray.length - 1) {
-				delete object[p];
-				return true;
-			}
-
-			object = object[p];
-
-			if (!isObj(object)) {
-				return false;
-			}
-		}
-	},
-
-	has(object, path) {
-		if (!isObj(object) || typeof path !== 'string') {
-			return false;
-		}
-
-		const pathArray = getPathSegments(path);
-		if (pathArray.length === 0) {
-			return false;
-		}
-
-		// eslint-disable-next-line unicorn/no-for-loop
-		for (let i = 0; i < pathArray.length; i++) {
-			if (isObj(object)) {
-				if (!(pathArray[i] in object)) {
-					return false;
-				}
-
-				object = object[pathArray[i]];
-			} else {
-				return false;
-			}
-		}
-
-		return true;
-	}
-};
-
 var DashupUIContext$7 = null; // create dashup grid body
 
 var DashupUIChatEmbed = function DashupUIChatEmbed() {
@@ -6958,32 +6817,49 @@ var DashupUIChatEmbed = function DashupUIChatEmbed() {
 
 
   var renderBody = function renderBody(data) {
-    var _props$embed$data, _props$embed$data2, _props$embed$data3, _props$embed$data4, _props$embed$data5, _props$embed$data6, _props$embed$data7, _props$embed$data7$fa, _props$embed$data8, _props$embed$data8$fa, _props$embed$data9, _props$embed$data9$pr, _props$embed, _props$embed$data10, _props$embed$data10$p, _props$embed$data11, _props$embed$data11$a, _props$embed$data12, _props$embed$data13;
+    var _props$embed$data, _props$embed$data2, _props$embed$data3, _props$embed$data4, _props$embed$data5, _props$embed$data6, _props$embed$data7, _props$embed$data8, _props$embed$data8$fa, _props$embed$data9, _props$embed$data9$fa, _props$embed$data10, _props$embed$data10$p, _props$embed, _props$embed$data11, _props$embed$data11$p, _props$embed$data12, _props$embed$data12$a, _props$embed$data13, _props$embed$data14;
 
     // check type
-    if (props.embed.type === 'note') return /*#__PURE__*/React__default['default'].createElement(dashupUI.Card, null, /*#__PURE__*/React__default['default'].createElement(dashupUI.CardHeader, {
+    if (props.embed.type === 'note') return /*#__PURE__*/React__default['default'].createElement(dashupUI.Card, {
+      variant: "outlined"
+    }, /*#__PURE__*/React__default['default'].createElement(dashupUI.CardHeader, {
       title: "Note",
-      avatar: /*#__PURE__*/React__default['default'].createElement(dashupUI.Avatar, null, /*#__PURE__*/React__default['default'].createElement(dashupUI.Icon, {
+      avatar: /*#__PURE__*/React__default['default'].createElement(dashupUI.Avatar, {
+        bgColor: dashupUI.colors[props.embed.color]
+      }, /*#__PURE__*/React__default['default'].createElement(dashupUI.Icon, {
         type: "fas",
         icon: "sticky-note"
       }))
     }), /*#__PURE__*/React__default['default'].createElement(dashupUI.CardContent, null, (_props$embed$data = props.embed.data) === null || _props$embed$data === void 0 ? void 0 : _props$embed$data.body), /*#__PURE__*/React__default['default'].createElement(dashupUI.Box, null)); // check type
 
-    if (props.embed.type === 'sms') return /*#__PURE__*/React__default['default'].createElement(dashupUI.Card, null, /*#__PURE__*/React__default['default'].createElement(dashupUI.CardHeader, {
+    if (props.embed.type === 'sms') return /*#__PURE__*/React__default['default'].createElement(dashupUI.Card, {
+      variant: "outlined"
+    }, /*#__PURE__*/React__default['default'].createElement(dashupUI.CardHeader, {
       title: (_props$embed$data2 = props.embed.data) === null || _props$embed$data2 === void 0 ? void 0 : _props$embed$data2.title,
-      avatar: /*#__PURE__*/React__default['default'].createElement(dashupUI.Avatar, null, /*#__PURE__*/React__default['default'].createElement(dashupUI.Icon, {
+      avatar: /*#__PURE__*/React__default['default'].createElement(dashupUI.Avatar, {
+        bgColor: dashupUI.colors[props.embed.color]
+      }, /*#__PURE__*/React__default['default'].createElement(dashupUI.Icon, {
         type: "fas",
         icon: "sms"
       }))
     }), /*#__PURE__*/React__default['default'].createElement(dashupUI.CardContent, null, (_props$embed$data3 = props.embed.data) === null || _props$embed$data3 === void 0 ? void 0 : _props$embed$data3.body), /*#__PURE__*/React__default['default'].createElement(dashupUI.Box, null)); // check type
 
-    if (props.embed.type === 'email') return /*#__PURE__*/React__default['default'].createElement(dashupUI.Card, null, /*#__PURE__*/React__default['default'].createElement(dashupUI.CardHeader, {
+    if (props.embed.type === 'email') return /*#__PURE__*/React__default['default'].createElement(dashupUI.Card, {
+      variant: "outlined"
+    }, /*#__PURE__*/React__default['default'].createElement(dashupUI.CardHeader, {
       title: (_props$embed$data4 = props.embed.data) === null || _props$embed$data4 === void 0 ? void 0 : _props$embed$data4.title,
-      avatar: /*#__PURE__*/React__default['default'].createElement(dashupUI.Avatar, null, /*#__PURE__*/React__default['default'].createElement(dashupUI.Icon, {
+      avatar: /*#__PURE__*/React__default['default'].createElement(dashupUI.Avatar, {
+        bgColor: dashupUI.colors[props.embed.color]
+      }, /*#__PURE__*/React__default['default'].createElement(dashupUI.Icon, {
         type: "fas",
         icon: "envelope-open-text"
-      }))
-    }), /*#__PURE__*/React__default['default'].createElement(dashupUI.CardContent, null, (_props$embed$data5 = props.embed.data) === null || _props$embed$data5 === void 0 ? void 0 : _props$embed$data5.body), /*#__PURE__*/React__default['default'].createElement(dashupUI.Box, null)); // return card
+      })),
+      subheader: (_props$embed$data5 = props.embed.data) === null || _props$embed$data5 === void 0 ? void 0 : _props$embed$data5.subject
+    }), /*#__PURE__*/React__default['default'].createElement(dashupUI.CardContent, null, /*#__PURE__*/React__default['default'].createElement(dashupUI.Box, {
+      dangerouslySetInnerHTML: {
+        __html: (_props$embed$data6 = props.embed.data) === null || _props$embed$data6 === void 0 ? void 0 : _props$embed$data6.body
+      }
+    })), /*#__PURE__*/React__default['default'].createElement(dashupUI.Box, null)); // return card
 
     return /*#__PURE__*/React__default['default'].createElement(dashupUI.Card, {
       sx: {
@@ -6991,12 +6867,12 @@ var DashupUIChatEmbed = function DashupUIChatEmbed() {
         maxWidth: data.size === 'small' ? '100%' : 360
       }
     }, /*#__PURE__*/React__default['default'].createElement(dashupUI.CardHeader, {
-      title: (_props$embed$data6 = props.embed.data) === null || _props$embed$data6 === void 0 ? void 0 : _props$embed$data6.title,
-      avatar: !!((_props$embed$data7 = props.embed.data) !== null && _props$embed$data7 !== void 0 && (_props$embed$data7$fa = _props$embed$data7.favicon) !== null && _props$embed$data7$fa !== void 0 && _props$embed$data7$fa.url) && /*#__PURE__*/React__default['default'].createElement(dashupUI.Avatar, {
+      title: (_props$embed$data7 = props.embed.data) === null || _props$embed$data7 === void 0 ? void 0 : _props$embed$data7.title,
+      avatar: !!((_props$embed$data8 = props.embed.data) !== null && _props$embed$data8 !== void 0 && (_props$embed$data8$fa = _props$embed$data8.favicon) !== null && _props$embed$data8$fa !== void 0 && _props$embed$data8$fa.url) && /*#__PURE__*/React__default['default'].createElement(dashupUI.Avatar, {
         variant: "rounded",
         bgColor: "rgba(0,0,0,0)",
-        src: (_props$embed$data8 = props.embed.data) === null || _props$embed$data8 === void 0 ? void 0 : (_props$embed$data8$fa = _props$embed$data8.favicon) === null || _props$embed$data8$fa === void 0 ? void 0 : _props$embed$data8$fa.url,
-        name: (_props$embed$data9 = props.embed.data) === null || _props$embed$data9 === void 0 ? void 0 : (_props$embed$data9$pr = _props$embed$data9.provider) === null || _props$embed$data9$pr === void 0 ? void 0 : _props$embed$data9$pr.name
+        src: (_props$embed$data9 = props.embed.data) === null || _props$embed$data9 === void 0 ? void 0 : (_props$embed$data9$fa = _props$embed$data9.favicon) === null || _props$embed$data9$fa === void 0 ? void 0 : _props$embed$data9$fa.url,
+        name: (_props$embed$data10 = props.embed.data) === null || _props$embed$data10 === void 0 ? void 0 : (_props$embed$data10$p = _props$embed$data10.provider) === null || _props$embed$data10$p === void 0 ? void 0 : _props$embed$data10$p.name
       }),
       subheader: /*#__PURE__*/React__default['default'].createElement(dashupUI.Stack, {
         spacing: 1,
@@ -7004,15 +6880,15 @@ var DashupUIChatEmbed = function DashupUIChatEmbed() {
         sx: {
           alignItems: 'center'
         }
-      }, !!((_props$embed = props.embed) !== null && _props$embed !== void 0 && (_props$embed$data10 = _props$embed.data) !== null && _props$embed$data10 !== void 0 && (_props$embed$data10$p = _props$embed$data10.provider) !== null && _props$embed$data10$p !== void 0 && _props$embed$data10$p.url) && /*#__PURE__*/React__default['default'].createElement(dashupUI.Link, {
+      }, !!((_props$embed = props.embed) !== null && _props$embed !== void 0 && (_props$embed$data11 = _props$embed.data) !== null && _props$embed$data11 !== void 0 && (_props$embed$data11$p = _props$embed$data11.provider) !== null && _props$embed$data11$p !== void 0 && _props$embed$data11$p.url) && /*#__PURE__*/React__default['default'].createElement(dashupUI.Link, {
         href: props.embed.data.provider.url,
         target: "_blank",
         title: props.embed.data.provider.name
-      }, props.embed.data.provider.name), !!((_props$embed$data11 = props.embed.data) !== null && _props$embed$data11 !== void 0 && (_props$embed$data11$a = _props$embed$data11.author) !== null && _props$embed$data11$a !== void 0 && _props$embed$data11$a.url) && /*#__PURE__*/React__default['default'].createElement(dashupUI.Link, {
+      }, props.embed.data.provider.name), !!((_props$embed$data12 = props.embed.data) !== null && _props$embed$data12 !== void 0 && (_props$embed$data12$a = _props$embed$data12.author) !== null && _props$embed$data12$a !== void 0 && _props$embed$data12$a.url) && /*#__PURE__*/React__default['default'].createElement(dashupUI.Link, {
         href: props.embed.data.author.url,
         target: "_blank",
         title: props.embed.data.author.name
-      }, props.embed.data.author.name), !!((_props$embed$data12 = props.embed.data) !== null && _props$embed$data12 !== void 0 && _props$embed$data12.duration) && /*#__PURE__*/React__default['default'].createElement(dashupUI.Typography, {
+      }, props.embed.data.author.name), !!((_props$embed$data13 = props.embed.data) !== null && _props$embed$data13 !== void 0 && _props$embed$data13.duration) && /*#__PURE__*/React__default['default'].createElement(dashupUI.Typography, {
         fontSize: "small"
       }, getDuration(props.embed.data.duration)))
     }), !!props.embed.loading && /*#__PURE__*/React__default['default'].createElement(dashupUI.CardContent, {
@@ -7022,7 +6898,7 @@ var DashupUIChatEmbed = function DashupUIChatEmbed() {
         alignItems: 'center',
         justifyContent: 'center'
       }
-    }, /*#__PURE__*/React__default['default'].createElement(dashupUI.CircularProgress, null)), !!((_props$embed$data13 = props.embed.data) !== null && _props$embed$data13 !== void 0 && _props$embed$data13.html) && /*#__PURE__*/React__default['default'].createElement(dashupUI.CardMedia, {
+    }, /*#__PURE__*/React__default['default'].createElement(dashupUI.CircularProgress, null)), !!((_props$embed$data14 = props.embed.data) !== null && _props$embed$data14 !== void 0 && _props$embed$data14.html) && /*#__PURE__*/React__default['default'].createElement(dashupUI.CardMedia, {
       sx: {
         '& .embed-responsive-item': {
           width: '100%',
@@ -7733,7 +7609,10 @@ var DashupUIChatInput = function DashupUIChatInput() {
       size: "small",
       value: "send",
       selected: true,
-      color: "primary"
+      color: "primary",
+      onClick: function onClick(e) {
+        return onSend(e, data);
+      }
     }, /*#__PURE__*/React__default['default'].createElement(DashupUIIcon, {
       type: "fas",
       icon: "play",
@@ -10735,6 +10614,147 @@ function cloneArrayDeep(val, instanceClone) {
  */
 
 var cloneDeep_1 = cloneDeep;
+
+var isObj = value => {
+	const type = typeof value;
+	return value !== null && (type === 'object' || type === 'function');
+};
+
+const disallowedKeys = new Set([
+	'__proto__',
+	'prototype',
+	'constructor'
+]);
+
+const isValidPath = pathSegments => !pathSegments.some(segment => disallowedKeys.has(segment));
+
+function getPathSegments(path) {
+	const pathArray = path.split('.');
+	const parts = [];
+
+	for (let i = 0; i < pathArray.length; i++) {
+		let p = pathArray[i];
+
+		while (p[p.length - 1] === '\\' && pathArray[i + 1] !== undefined) {
+			p = p.slice(0, -1) + '.';
+			p += pathArray[++i];
+		}
+
+		parts.push(p);
+	}
+
+	if (!isValidPath(parts)) {
+		return [];
+	}
+
+	return parts;
+}
+
+var dotProp = {
+	get(object, path, value) {
+		if (!isObj(object) || typeof path !== 'string') {
+			return value === undefined ? object : value;
+		}
+
+		const pathArray = getPathSegments(path);
+		if (pathArray.length === 0) {
+			return;
+		}
+
+		for (let i = 0; i < pathArray.length; i++) {
+			object = object[pathArray[i]];
+
+			if (object === undefined || object === null) {
+				// `object` is either `undefined` or `null` so we want to stop the loop, and
+				// if this is not the last bit of the path, and
+				// if it did't return `undefined`
+				// it would return `null` if `object` is `null`
+				// but we want `get({foo: null}, 'foo.bar')` to equal `undefined`, or the supplied value, not `null`
+				if (i !== pathArray.length - 1) {
+					return value;
+				}
+
+				break;
+			}
+		}
+
+		return object === undefined ? value : object;
+	},
+
+	set(object, path, value) {
+		if (!isObj(object) || typeof path !== 'string') {
+			return object;
+		}
+
+		const root = object;
+		const pathArray = getPathSegments(path);
+
+		for (let i = 0; i < pathArray.length; i++) {
+			const p = pathArray[i];
+
+			if (!isObj(object[p])) {
+				object[p] = {};
+			}
+
+			if (i === pathArray.length - 1) {
+				object[p] = value;
+			}
+
+			object = object[p];
+		}
+
+		return root;
+	},
+
+	delete(object, path) {
+		if (!isObj(object) || typeof path !== 'string') {
+			return false;
+		}
+
+		const pathArray = getPathSegments(path);
+
+		for (let i = 0; i < pathArray.length; i++) {
+			const p = pathArray[i];
+
+			if (i === pathArray.length - 1) {
+				delete object[p];
+				return true;
+			}
+
+			object = object[p];
+
+			if (!isObj(object)) {
+				return false;
+			}
+		}
+	},
+
+	has(object, path) {
+		if (!isObj(object) || typeof path !== 'string') {
+			return false;
+		}
+
+		const pathArray = getPathSegments(path);
+		if (pathArray.length === 0) {
+			return false;
+		}
+
+		// eslint-disable-next-line unicorn/no-for-loop
+		for (let i = 0; i < pathArray.length; i++) {
+			if (isObj(object)) {
+				if (!(pathArray[i] in object)) {
+					return false;
+				}
+
+				object = object[pathArray[i]];
+			} else {
+				return false;
+			}
+		}
+
+		return true;
+	}
+};
 
 var _onEnd = /*#__PURE__*/(function () {
   var _ref = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee(e, fields, setFields, setSaving, setConfig, setMenu) {
