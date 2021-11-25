@@ -1,43 +1,25 @@
 
+import shortid from 'shortid';
 import SimpleBar from 'simplebar-react';
-import React, { useState, useRef } from 'react';
+import InfiniteScroll from 'react-infinite-scroll-component';
+import React, { useRef, useState } from 'react';
 
 // import message
-import { Box } from '../';
 import DashupUIChatMessage from './Message';
+import { Box, Typography, CircularProgress } from '../';
 
 // let context
 let Message = null;
 let DashupUIContext = null;
 
-// key
-let key = null;
-
 // create dashup grid body
 const DashupUIChatThread = (props = {}) => {
+  // use state
+  const [id] = useState(shortid());
+  const [key, setKey] = useState(null);
+
   // scroll ref
   const scrollRef = useRef(null);
-
-  // scroll down
-  const scrollDown = () => {
-    // scroll down
-    if (!scrollRef.current) return;
-
-    // get element
-    const scrollElement = scrollRef.current?.getScrollElement();
-
-    // check element
-    if (!scrollElement) return;
-
-    // scroll down
-    scrollElement.scrollTop = scrollElement.scrollHeight;
-  };
-
-  // key
-  const getKey = (messages = []) => {
-    // return key
-    return messages.map((m) => m.id || m.temp).join(':');
-  };
 
   // return jsx
   return (
@@ -46,34 +28,75 @@ const DashupUIChatThread = (props = {}) => {
         // messages
         const messages = props.messages || data.messages || [];
 
-        // check messages
-        if (getKey(messages) !== key) {
-          scrollDown();
-          setTimeout(scrollDown, 100);
+        // check last message
+        if (key !== messages[0]?.temp || messages[0]?.id) {
+          // set key
+          setKey(messages[0]?.id || messages[0]?.temp);
 
-          // key
-          key = getKey(messages);
+          // scroll down
+          if (scrollRef.current?.getScrollElement()) scrollRef.current.getScrollElement().scrollTop = 0;
         }
 
         // return jsx
         return (
           <Box flex={ 1 } position="relative">
-            <Box position="absolute" top={ 0 } left={ 0 } right={ 0 } bottom={ 0 }>
+            <Box position="absolute" top={ 0 } left={ 0 } right={ 0 } bottom={ 0 } sx={ {
+              '& .simplebar-scrollbar' : {
+                bottom : 0,
+              }
+            } }>
               <SimpleBar ref={ scrollRef } style={ {
                 width  : '100%',
                 height : '100%',
+              } } scrollableNodeProps={ {
+                id,
+                style : {
+                  display       : 'flex',
+                  flexDirection : 'column-reverse',
+                }
               } }>
-                { messages.map((m, i) => {
-                  // return jsx
-                  return (
-                    <Message
-                      key={ `message-${m.temp || m.id}` }
-                      prev={ messages[i - 1] }
-                      next={ messages[i + 1] }
-                      message={ m }
-                    />
-                  );
-                }) }
+                { !!scrollRef.current?.getScrollElement() && (
+                  <InfiniteScroll
+                    next={ props.onNext || data.onNext }
+                    style={ {
+                      display       : 'flex',
+                      flexDirection : 'column-reverse',
+                    } }
+                    inverse={ true }
+                    hasMore={ props.hasMore || data.hasMore }
+                    dataLength={ (messages || []).length }
+
+                    loader={ (
+                      <Box display="flex" py={ 3 } justifyContent="center" alignItems="center">
+                        <CircularProgress />
+                      </Box>
+                    ) }
+                    endMessage={ (
+                      <Typography variant="h5" sx={ {
+                        textAlign : 'center',
+                      } } gutterBottom>
+                        { !(messages || []).length ? (
+                          'Nothing here yet, say hi!'
+                        ) : (
+                          'Yay! You have seen it all.'
+                        ) }
+                      </Typography>
+                    ) }
+                    scrollableTarget={ id }
+                  >
+                    { messages.map((m, i) => {
+                      // return jsx
+                      return (
+                        <Message
+                          key={ `message-${m.temp || m.id}` }
+                          prev={ messages[i + 1] }
+                          next={ messages[i - 1] }
+                          message={ m }
+                        />
+                      );
+                    }) }
+                  </InfiniteScroll>
+                ) }
               </SimpleBar>
             </Box>
           </Box>

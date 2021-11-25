@@ -11,6 +11,7 @@ import dashupCore from '@dashup/core';
 import * as dashupUI from '@dashup/ui';
 import ReactSortable from 'react-sortablejs';
 import SimplebarReact from 'simplebar-react';
+import InfiniteScroll from 'react-infinite-scroll-component';
 import HandlebarsHelpers from 'handlebars-helpers';
 
 // view
@@ -20,13 +21,14 @@ import View from '@dashup/view';
 View.setDefaults({
   moment,
   handlebars,
-  'pretty-ms'          : prettyMs,
-  'react-dom'          : reactDOM,
-  '@dashup/ui'         : dashupUI,
-  '@dashup/core'       : dashupCore,
-  'simplebar-react'    : SimplebarReact,
-  'react-sortablejs'   : ReactSortable,
-  'handlebars-helpers' : HandlebarsHelpers,
+  'pretty-ms'                       : prettyMs,
+  'react-dom'                       : reactDOM,
+  '@dashup/ui'                      : dashupUI,
+  '@dashup/core'                    : dashupCore,
+  'simplebar-react'                 : SimplebarReact,
+  'react-sortablejs'                : ReactSortable,
+  'handlebars-helpers'              : HandlebarsHelpers,
+  'react-infinite-scroll-component' : InfiniteScroll,
 });
 
 // create library

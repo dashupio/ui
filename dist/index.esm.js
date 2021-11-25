@@ -8,12 +8,14 @@ import * as dashupUI from '@dashup/ui';
 import { Box as Box$1, Stack as Stack$1, View, Card, CardHeader, Avatar, colors as colors$1, Icon as Icon$1, CardContent, Link, Typography as Typography$1, CircularProgress as CircularProgress$1, CardMedia } from '@dashup/ui';
 import ReactSortable$1, { ReactSortable } from 'react-sortablejs';
 import SimpleBar from 'simplebar-react';
+import InfiniteScroll from 'react-infinite-scroll-component';
 import HandlebarsHelpers from 'handlebars-helpers';
 import View$1 from '@dashup/view';
 export { default as View } from '@dashup/view';
 import React, { useState, useEffect, useRef, createContext, useMemo, useCallback } from 'react';
-import { Fab, Box, Typography, Stack, AvatarGroup, Tooltip, IconButton, DialogTitle, Chip, Menu as Menu$2, Tab, Dialog, DialogContent, DialogContentText, DialogActions, Button, Alert, TextField, InputAdornment, Divider, MenuItem, ListItemIcon, ListItemText, CircularProgress, Icon, Paper, ToggleButtonGroup, ToggleButton, Popover, Drawer, Card as Card$1, CardHeader as CardHeader$1, FormGroup, FormControlLabel, Switch, CardContent as CardContent$1, Badge, Avatar as Avatar$1, Grid } from '@mui/material';
+import { Fab, Box, Typography, Stack, AvatarGroup, Tooltip, IconButton, DialogTitle, Chip, Menu as Menu$2, Tab, Dialog, DialogContent, DialogContentText, DialogActions, Button, Alert, TextField, InputAdornment, Divider, MenuItem, ListItemIcon, ListItemText, CircularProgress, Icon, Paper, ToggleButtonGroup, ToggleButton, Popover, Link as Link$1, Drawer, Card as Card$1, CardHeader as CardHeader$1, FormGroup, FormControlLabel, Switch, CardContent as CardContent$1, Badge, Avatar as Avatar$1, Grid } from '@mui/material';
 export * from '@mui/material';
+import { Picker } from 'emoji-mart';
 import { withReact, ReactEditor, Slate, Editable } from 'slate-react';
 import { createEditor, Text, Transforms, Editor, Range } from 'slate';
 import { styled, useTheme } from '@mui/material/styles';
@@ -2021,9 +2023,9 @@ var DashupUIPageFilter = function DashupUIPageFilter() {
     }, !!props.onSearch && /*#__PURE__*/React.createElement(TextField, {
       label: "Search",
       onChange: function onChange(e) {
-        return debounce$4(props.onSearch, 500)(e.target.value);
+        return debounce$4(props.onSearch, 500)(e.target.value && e.target.value.length ? e.target.value : null);
       },
-      defaultValue: page.get('data.search') || '',
+      defaultValue: page.get('data.search') || page.get('user.search') || '',
       InputProps: {
         startAdornment: /*#__PURE__*/React.createElement(InputAdornment, {
           position: "start"
@@ -3413,6 +3415,11 @@ var DashupUIIcon = function DashupUIIcon() {
     className: "".concat(size, " fa-").concat(icon).concat(fixed ? ' fa-fw' : '').concat(props.spin ? ' fa-spin' : '')
   }));
 }; // export default
+
+var e=[],t=[];function n(n,r){if(n&&"undefined"!=typeof document){var a,s=!0===r.prepend?"prepend":"append",d=!0===r.singleTag,i="string"==typeof r.container?document.querySelector(r.container):document.getElementsByTagName("head")[0];if(d){var u=e.indexOf(i);-1===u&&(u=e.push(i)-1,t[u]={}),a=t[u]&&t[u][s]?t[u][s]:t[u][s]=c();}else a=c();65279===n.charCodeAt(0)&&(n=n.substring(1)),a.styleSheet?a.styleSheet.cssText+=n:a.appendChild(document.createTextNode(n));}function c(){var e=document.createElement("style");if(e.setAttribute("type","text/css"),r.attributes)for(var t=Object.keys(r.attributes),n=0;n<t.length;n++)e.setAttribute(t[n],r.attributes[t[n]]);var a="prepend"===s?"afterbegin":"beforeend";return i.insertAdjacentElement(a,e),e}}
+
+var css = ".emoji-mart,\n.emoji-mart * {\n  box-sizing: border-box;\n  line-height: 1.15;\n}\n\n.emoji-mart {\n  font-family: -apple-system, BlinkMacSystemFont, \"Helvetica Neue\", sans-serif;\n  font-size: 16px;\n  display: inline-block;\n  color: #222427;\n  border: 1px solid #d9d9d9;\n  border-radius: 5px;\n  background: #fff;\n}\n\n.emoji-mart .emoji-mart-emoji {\n  padding: 6px;\n}\n\n.emoji-mart-bar {\n  border: 0 solid #d9d9d9;\n}\n.emoji-mart-bar:first-child {\n  border-bottom-width: 1px;\n  border-top-left-radius: 5px;\n  border-top-right-radius: 5px;\n}\n.emoji-mart-bar:last-child {\n  border-top-width: 1px;\n  border-bottom-left-radius: 5px;\n  border-bottom-right-radius: 5px;\n}\n\n.emoji-mart-anchors {\n  display: flex;\n  flex-direction: row;\n  justify-content: space-between;\n  padding: 0 6px;\n  line-height: 0;\n}\n\n.emoji-mart-anchor {\n  position: relative;\n  display: block;\n  flex: 1 1 auto;\n  color: #858585;\n  text-align: center;\n  padding: 12px 4px;\n  overflow: hidden;\n  transition: color .1s ease-out;\n  margin: 0;\n  box-shadow: none;\n  background: none;\n  border: none;\n}\n.emoji-mart-anchor:focus { outline: 0 }\n.emoji-mart-anchor:hover,\n.emoji-mart-anchor:focus,\n.emoji-mart-anchor-selected {\n  color: #464646;\n}\n\n.emoji-mart-anchor-selected .emoji-mart-anchor-bar {\n  bottom: 0;\n}\n\n.emoji-mart-anchor-bar {\n  position: absolute;\n  bottom: -3px; left: 0;\n  width: 100%; height: 3px;\n  background-color: #464646;\n}\n\n.emoji-mart-anchors i {\n  display: inline-block;\n  width: 100%;\n  max-width: 22px;\n}\n\n.emoji-mart-anchors svg,\n.emoji-mart-anchors img {\n  fill: currentColor;\n  height: 18px;\n  width: 18px;\n}\n\n.emoji-mart-scroll {\n  overflow-y: scroll;\n  overflow-x: hidden;\n  height: 270px;\n  padding: 0 6px 6px 6px;\n  will-change: transform; /* avoids \"repaints on scroll\" in mobile Chrome */\n}\n\n.emoji-mart-search {\n  margin-top: 6px;\n  padding: 0 6px;\n  position: relative;\n}\n\n.emoji-mart-search input {\n  font-size: 16px;\n  display: block;\n  width: 100%;\n  padding: 5px 25px 6px 10px;\n  border-radius: 5px;\n  border: 1px solid #d9d9d9;\n  outline: 0;\n}\n\n.emoji-mart-search input,\n.emoji-mart-search input::-webkit-search-decoration,\n.emoji-mart-search input::-webkit-search-cancel-button,\n.emoji-mart-search input::-webkit-search-results-button,\n.emoji-mart-search input::-webkit-search-results-decoration {\n  /* remove webkit/blink styles for <input type=\"search\">\n   * via https://stackoverflow.com/a/9422689 */\n  -webkit-appearance: none;\n}\n\n.emoji-mart-search-icon {\n  position: absolute;\n  top: 7px;\n  right: 11px;\n  z-index: 2;\n  padding: 2px 5px 1px;\n  border: none;\n  background: none;\n}\n\n.emoji-mart-category .emoji-mart-emoji span {\n  z-index: 1;\n  position: relative;\n  text-align: center;\n  cursor: default;\n}\n\n.emoji-mart-category .emoji-mart-emoji:hover:before {\n  z-index: 0;\n  content: \"\";\n  position: absolute;\n  top: 0; left: 0;\n  width: 100%; height: 100%;\n  background-color: #f4f4f4;\n  border-radius: 100%;\n}\n\n.emoji-mart-category-label {\n  z-index: 2;\n  position: relative;\n  position: -webkit-sticky;\n  position: sticky;\n  top: 0;\n}\n\n.emoji-mart-category-label span {\n  display: block;\n  width: 100%;\n  font-weight: 500;\n  padding: 5px 6px;\n  background-color: #fff;\n  background-color: rgba(255, 255, 255, .95);\n}\n\n.emoji-mart-category-list {\n  margin: 0;\n  padding: 0;\n}\n\n.emoji-mart-category-list li {\n  list-style: none;\n  margin: 0;\n  padding: 0;\n  display: inline-block;\n}\n\n.emoji-mart-emoji {\n  position: relative;\n  display: inline-block;\n  font-size: 0;\n  margin: 0;\n  padding: 0;\n  border: none;\n  background: none;\n  box-shadow: none;\n}\n\n.emoji-mart-emoji-native {\n  font-family: \"Segoe UI Emoji\", \"Segoe UI Symbol\", \"Segoe UI\", \"Apple Color Emoji\", \"Twemoji Mozilla\", \"Noto Color Emoji\", \"Android Emoji\";\n}\n\n.emoji-mart-no-results {\n  font-size: 14px;\n  text-align: center;\n  padding-top: 70px;\n  color: #858585;\n}\n.emoji-mart-no-results-img {\n  display: block;\n  margin-left: auto;\n  margin-right: auto;\n  width: 50%;\n}\n.emoji-mart-no-results .emoji-mart-category-label {\n  display: none;\n}\n.emoji-mart-no-results .emoji-mart-no-results-label {\n  margin-top: .2em;\n}\n.emoji-mart-no-results .emoji-mart-emoji:hover:before {\n  content: none;\n}\n\n.emoji-mart-preview {\n  position: relative;\n  height: 70px;\n}\n\n.emoji-mart-preview-emoji,\n.emoji-mart-preview-data,\n.emoji-mart-preview-skins {\n  position: absolute;\n  top: 50%;\n  transform: translateY(-50%);\n}\n\n.emoji-mart-preview-emoji {\n  left: 12px;\n}\n\n.emoji-mart-preview-data {\n  left: 68px; right: 12px;\n  word-break: break-all;\n}\n\n.emoji-mart-preview-skins {\n  right: 30px;\n  text-align: right;\n}\n\n.emoji-mart-preview-skins.custom {\n  right: 10px;\n  text-align: right;\n}\n\n.emoji-mart-preview-name {\n  font-size: 14px;\n}\n\n.emoji-mart-preview-shortname {\n  font-size: 12px;\n  color: #888;\n}\n.emoji-mart-preview-shortname + .emoji-mart-preview-shortname,\n.emoji-mart-preview-shortname + .emoji-mart-preview-emoticon,\n.emoji-mart-preview-emoticon + .emoji-mart-preview-emoticon {\n  margin-left: .5em;\n}\n\n.emoji-mart-preview-emoticon {\n  font-size: 11px;\n  color: #bbb;\n}\n\n.emoji-mart-title span {\n  display: inline-block;\n  vertical-align: middle;\n}\n\n.emoji-mart-title .emoji-mart-emoji {\n  padding: 0;\n}\n\n.emoji-mart-title-label {\n  color: #999A9C;\n  font-size: 26px;\n  font-weight: 300;\n}\n\n.emoji-mart-skin-swatches {\n  font-size: 0;\n  padding: 2px 0;\n  border: 1px solid #d9d9d9;\n  border-radius: 12px;\n  background-color: #fff;\n}\n\n.emoji-mart-skin-swatches.custom {\n  font-size: 0;\n  border: none;\n  background-color: #fff;\n}\n\n.emoji-mart-skin-swatches.opened .emoji-mart-skin-swatch {\n  width: 16px;\n  padding: 0 2px;\n}\n\n.emoji-mart-skin-swatches.opened .emoji-mart-skin-swatch.selected:after {\n  opacity: .75;\n}\n\n.emoji-mart-skin-swatch {\n  display: inline-block;\n  width: 0;\n  vertical-align: middle;\n  transition-property: width, padding;\n  transition-duration: .125s;\n  transition-timing-function: ease-out;\n}\n\n.emoji-mart-skin-swatch:nth-child(1) { transition-delay: 0s }\n.emoji-mart-skin-swatch:nth-child(2) { transition-delay: .03s }\n.emoji-mart-skin-swatch:nth-child(3) { transition-delay: .06s }\n.emoji-mart-skin-swatch:nth-child(4) { transition-delay: .09s }\n.emoji-mart-skin-swatch:nth-child(5) { transition-delay: .12s }\n.emoji-mart-skin-swatch:nth-child(6) { transition-delay: .15s }\n\n.emoji-mart-skin-swatch.selected {\n  position: relative;\n  width: 16px;\n  padding: 0 2px;\n}\n\n.emoji-mart-skin-swatch.selected:after {\n  content: \"\";\n  position: absolute;\n  top: 50%; left: 50%;\n  width: 4px; height: 4px;\n  margin: -2px 0 0 -2px;\n  background-color: #fff;\n  border-radius: 100%;\n  pointer-events: none;\n  opacity: 0;\n  transition: opacity .2s ease-out;\n}\n\n.emoji-mart-skin-swatch.custom {\n  display: inline-block;\n  width: 0;\n  height: 38px;\n  overflow: hidden;\n  vertical-align: middle;\n  transition-property: width, height;\n  transition-duration: .125s;\n  transition-timing-function: ease-out;\n  cursor: default;\n}\n\n.emoji-mart-skin-swatch.custom.selected {\n  position: relative;\n  width: 36px;\n  height: 38px;\n  padding: 0 2px 0 0;\n}\n\n.emoji-mart-skin-swatch.custom.selected:after {\n  content: \"\";\n  width: 0;\n  height: 0;\n}\n\n.emoji-mart-skin-swatches.custom .emoji-mart-skin-swatch.custom:hover {\n  background-color: #f4f4f4;\n  border-radius: 10%;\n}\n\n.emoji-mart-skin-swatches.custom.opened .emoji-mart-skin-swatch.custom {\n  width: 36px;\n  height: 38px;\n  padding: 0 2px 0 0;\n}\n\n.emoji-mart-skin-swatches.custom.opened .emoji-mart-skin-swatch.custom.selected:after {\n  opacity: .75;\n}\n\n.emoji-mart-skin-text.opened {\n  display: inline-block;\n  vertical-align: middle;\n  text-align: left;\n  color: #888;\n  font-size: 11px;\n  padding: 5px 2px;\n  width: 95px;\n  height: 40px;\n  border-radius: 10%;\n  background-color: #fff;\n}\n\n.emoji-mart-skin {\n  display: inline-block;\n  width: 100%;\n  padding-top: 100%;\n  max-width: 12px;\n  border-radius: 100%;\n}\n\n.emoji-mart-skin-tone-1 { background-color: #ffc93a }\n.emoji-mart-skin-tone-2 { background-color: #fadcbc }\n.emoji-mart-skin-tone-3 { background-color: #e0bb95 }\n.emoji-mart-skin-tone-4 { background-color: #bf8f68 }\n.emoji-mart-skin-tone-5 { background-color: #9b643d }\n.emoji-mart-skin-tone-6 { background-color: #594539 }\n\n/* For screenreaders only, via https://stackoverflow.com/a/19758620 */\n.emoji-mart-sr-only {\n  position: absolute;\n  width: 1px;\n  height: 1px;\n  padding: 0;\n  margin: -1px;\n  overflow: hidden;\n  clip: rect(0, 0, 0, 0);\n  border: 0;\n}\n\n/*\n * Dark mode styles\n */\n\n.emoji-mart-dark {\n  color: #fff;\n  border-color: #555453;\n  background-color: #222;\n}\n\n.emoji-mart-dark .emoji-mart-bar {\n  border-color: #555453;\n}\n\n.emoji-mart-dark .emoji-mart-search input {\n  color: #fff;\n  border-color: #555453;\n  background-color: #2f2f2f;\n}\n\n.emoji-mart-dark .emoji-mart-search-icon svg {\n  fill: #fff;\n}\n\n.emoji-mart-dark .emoji-mart-category .emoji-mart-emoji:hover:before {\n  background-color: #444;\n}\n\n.emoji-mart-dark .emoji-mart-category-label span {\n  background-color: #222;\n  color: #fff;\n}\n\n.emoji-mart-dark .emoji-mart-skin-swatches {\n  border-color: #555453;\n  background-color: #222;\n}\n\n.emoji-mart-dark .emoji-mart-anchor:hover,\n.emoji-mart-dark .emoji-mart-anchor:focus,\n.emoji-mart-dark .emoji-mart-anchor-selected {\n  color: #bfbfbf;\n}\n";
+n(css,{});
 
 var prism = createCommonjsModule(function (module) {
 /* **********************************************
@@ -6784,7 +6791,7 @@ var DashupUIChatEmbed = function DashupUIChatEmbed() {
 
 
   var renderBody = function renderBody(data) {
-    var _props$embed$data, _props$embed$data2, _props$embed$data3, _props$embed$data4, _props$embed$data5, _props$embed$data6, _props$embed$data7, _props$embed$data8, _props$embed$data8$fa, _props$embed$data9, _props$embed$data9$fa, _props$embed$data10, _props$embed$data10$p, _props$embed, _props$embed$data11, _props$embed$data11$p, _props$embed$data12, _props$embed$data12$a, _props$embed$data13, _props$embed$data14;
+    var _props$embed$data, _props$embed$data2, _props$embed$data3, _props$embed$data4, _props$embed$data5, _props$embed$data5$fr, _props$embed$data6, _props$embed$data7, _props$embed$data8, _props$embed$data9, _props$embed$data10, _props$embed$data10$f, _props$embed$data11, _props$embed$data11$f, _props$embed$data12, _props$embed$data12$p, _props$embed, _props$embed$data13, _props$embed$data13$p, _props$embed$data14, _props$embed$data14$a, _props$embed$data15, _props$embed$data16;
 
     // check type
     if (props.embed.type === 'note') return /*#__PURE__*/React.createElement(Card, {
@@ -6811,7 +6818,7 @@ var DashupUIChatEmbed = function DashupUIChatEmbed() {
       }))
     }), /*#__PURE__*/React.createElement(CardContent, null, (_props$embed$data3 = props.embed.data) === null || _props$embed$data3 === void 0 ? void 0 : _props$embed$data3.body), /*#__PURE__*/React.createElement(Box$1, null)); // check type
 
-    if (props.embed.type === 'email') return /*#__PURE__*/React.createElement(Card, {
+    if (props.embed.type === 'phone') return /*#__PURE__*/React.createElement(Card, {
       variant: "outlined"
     }, /*#__PURE__*/React.createElement(CardHeader, {
       title: (_props$embed$data4 = props.embed.data) === null || _props$embed$data4 === void 0 ? void 0 : _props$embed$data4.title,
@@ -6819,12 +6826,25 @@ var DashupUIChatEmbed = function DashupUIChatEmbed() {
         bgColor: colors$1[props.embed.color]
       }, /*#__PURE__*/React.createElement(Icon$1, {
         type: "fas",
+        icon: "phone"
+      })),
+      subheader: "From: ".concat((_props$embed$data5 = props.embed.data) === null || _props$embed$data5 === void 0 ? void 0 : (_props$embed$data5$fr = _props$embed$data5.from) === null || _props$embed$data5$fr === void 0 ? void 0 : _props$embed$data5$fr.number)
+    }), /*#__PURE__*/React.createElement(Box$1, null)); // check type
+
+    if (props.embed.type === 'email') return /*#__PURE__*/React.createElement(Card, {
+      variant: "outlined"
+    }, /*#__PURE__*/React.createElement(CardHeader, {
+      title: (_props$embed$data6 = props.embed.data) === null || _props$embed$data6 === void 0 ? void 0 : _props$embed$data6.title,
+      avatar: /*#__PURE__*/React.createElement(Avatar, {
+        bgColor: colors$1[props.embed.color]
+      }, /*#__PURE__*/React.createElement(Icon$1, {
+        type: "fas",
         icon: "envelope-open-text"
       })),
-      subheader: (_props$embed$data5 = props.embed.data) === null || _props$embed$data5 === void 0 ? void 0 : _props$embed$data5.subject
+      subheader: (_props$embed$data7 = props.embed.data) === null || _props$embed$data7 === void 0 ? void 0 : _props$embed$data7.subject
     }), /*#__PURE__*/React.createElement(CardContent, null, /*#__PURE__*/React.createElement(Box$1, {
       dangerouslySetInnerHTML: {
-        __html: (_props$embed$data6 = props.embed.data) === null || _props$embed$data6 === void 0 ? void 0 : _props$embed$data6.body
+        __html: (_props$embed$data8 = props.embed.data) === null || _props$embed$data8 === void 0 ? void 0 : _props$embed$data8.body
       }
     })), /*#__PURE__*/React.createElement(Box$1, null)); // return card
 
@@ -6834,12 +6854,12 @@ var DashupUIChatEmbed = function DashupUIChatEmbed() {
         maxWidth: data.size === 'small' ? '100%' : 360
       }
     }, /*#__PURE__*/React.createElement(CardHeader, {
-      title: (_props$embed$data7 = props.embed.data) === null || _props$embed$data7 === void 0 ? void 0 : _props$embed$data7.title,
-      avatar: !!((_props$embed$data8 = props.embed.data) !== null && _props$embed$data8 !== void 0 && (_props$embed$data8$fa = _props$embed$data8.favicon) !== null && _props$embed$data8$fa !== void 0 && _props$embed$data8$fa.url) && /*#__PURE__*/React.createElement(Avatar, {
+      title: (_props$embed$data9 = props.embed.data) === null || _props$embed$data9 === void 0 ? void 0 : _props$embed$data9.title,
+      avatar: !!((_props$embed$data10 = props.embed.data) !== null && _props$embed$data10 !== void 0 && (_props$embed$data10$f = _props$embed$data10.favicon) !== null && _props$embed$data10$f !== void 0 && _props$embed$data10$f.url) && /*#__PURE__*/React.createElement(Avatar, {
         variant: "rounded",
         bgColor: "rgba(0,0,0,0)",
-        src: (_props$embed$data9 = props.embed.data) === null || _props$embed$data9 === void 0 ? void 0 : (_props$embed$data9$fa = _props$embed$data9.favicon) === null || _props$embed$data9$fa === void 0 ? void 0 : _props$embed$data9$fa.url,
-        name: (_props$embed$data10 = props.embed.data) === null || _props$embed$data10 === void 0 ? void 0 : (_props$embed$data10$p = _props$embed$data10.provider) === null || _props$embed$data10$p === void 0 ? void 0 : _props$embed$data10$p.name
+        src: (_props$embed$data11 = props.embed.data) === null || _props$embed$data11 === void 0 ? void 0 : (_props$embed$data11$f = _props$embed$data11.favicon) === null || _props$embed$data11$f === void 0 ? void 0 : _props$embed$data11$f.url,
+        name: (_props$embed$data12 = props.embed.data) === null || _props$embed$data12 === void 0 ? void 0 : (_props$embed$data12$p = _props$embed$data12.provider) === null || _props$embed$data12$p === void 0 ? void 0 : _props$embed$data12$p.name
       }),
       subheader: /*#__PURE__*/React.createElement(Stack$1, {
         spacing: 1,
@@ -6847,15 +6867,15 @@ var DashupUIChatEmbed = function DashupUIChatEmbed() {
         sx: {
           alignItems: 'center'
         }
-      }, !!((_props$embed = props.embed) !== null && _props$embed !== void 0 && (_props$embed$data11 = _props$embed.data) !== null && _props$embed$data11 !== void 0 && (_props$embed$data11$p = _props$embed$data11.provider) !== null && _props$embed$data11$p !== void 0 && _props$embed$data11$p.url) && /*#__PURE__*/React.createElement(Link, {
+      }, !!((_props$embed = props.embed) !== null && _props$embed !== void 0 && (_props$embed$data13 = _props$embed.data) !== null && _props$embed$data13 !== void 0 && (_props$embed$data13$p = _props$embed$data13.provider) !== null && _props$embed$data13$p !== void 0 && _props$embed$data13$p.url) && /*#__PURE__*/React.createElement(Link, {
         href: props.embed.data.provider.url,
         target: "_blank",
         title: props.embed.data.provider.name
-      }, props.embed.data.provider.name), !!((_props$embed$data12 = props.embed.data) !== null && _props$embed$data12 !== void 0 && (_props$embed$data12$a = _props$embed$data12.author) !== null && _props$embed$data12$a !== void 0 && _props$embed$data12$a.url) && /*#__PURE__*/React.createElement(Link, {
+      }, props.embed.data.provider.name), !!((_props$embed$data14 = props.embed.data) !== null && _props$embed$data14 !== void 0 && (_props$embed$data14$a = _props$embed$data14.author) !== null && _props$embed$data14$a !== void 0 && _props$embed$data14$a.url) && /*#__PURE__*/React.createElement(Link, {
         href: props.embed.data.author.url,
         target: "_blank",
         title: props.embed.data.author.name
-      }, props.embed.data.author.name), !!((_props$embed$data13 = props.embed.data) !== null && _props$embed$data13 !== void 0 && _props$embed$data13.duration) && /*#__PURE__*/React.createElement(Typography$1, {
+      }, props.embed.data.author.name), !!((_props$embed$data15 = props.embed.data) !== null && _props$embed$data15 !== void 0 && _props$embed$data15.duration) && /*#__PURE__*/React.createElement(Typography$1, {
         fontSize: "small"
       }, getDuration(props.embed.data.duration)))
     }), !!props.embed.loading && /*#__PURE__*/React.createElement(CardContent, {
@@ -6865,7 +6885,7 @@ var DashupUIChatEmbed = function DashupUIChatEmbed() {
         alignItems: 'center',
         justifyContent: 'center'
       }
-    }, /*#__PURE__*/React.createElement(CircularProgress$1, null)), !!((_props$embed$data14 = props.embed.data) !== null && _props$embed$data14 !== void 0 && _props$embed$data14.html) && /*#__PURE__*/React.createElement(CardMedia, {
+    }, /*#__PURE__*/React.createElement(CircularProgress$1, null)), !!((_props$embed$data16 = props.embed.data) !== null && _props$embed$data16 !== void 0 && _props$embed$data16.html) && /*#__PURE__*/React.createElement(CardMedia, {
       sx: {
         '& .embed-responsive-item': {
           width: '100%',
@@ -7019,20 +7039,41 @@ var Leaf = function Leaf(_ref) {
 
 
 var Mention = function Mention(_ref2) {
-  var _element$mention$colo, _element$mention$colo2, _element$mention$colo3, _element$mention$colo4;
+  var _element$mention, _element$mention2;
 
   var attributes = _ref2.attributes;
       _ref2.children;
       var element = _ref2.element;
   // theme
-  var theme = useTheme(); // return jsx
+  var theme = useTheme(); // dashup
+
+  var dashup = (typeof eden === 'undefined' ? null : eden).dashup; // page
+
+  var page = element.trigger === '#' ? dashup === null || dashup === void 0 ? void 0 : dashup.page((_element$mention = element.mention) === null || _element$mention === void 0 ? void 0 : _element$mention.id) : null; // let color
+
+  var color = page === null || page === void 0 ? void 0 : page.get('color');
+  var parent = page && ((page === null || page === void 0 ? void 0 : page.get('parent')) || 'root') !== 'root' ? dashup === null || dashup === void 0 ? void 0 : dashup.page(page === null || page === void 0 ? void 0 : page.get('parent')) : null; // check page
+
+  if (page) {
+    // get parentmost color
+    while (parent && !color) {
+      // get new parent
+      var newParent = (parent.get('parent') || 'root') !== 'root' ? dashup === null || dashup === void 0 ? void 0 : dashup.page(parent.get('parent')) : null;
+      color = newParent === null || newParent === void 0 ? void 0 : newParent.get('color'); // set parent
+
+      parent = newParent;
+    }
+  } // set color
+
+
+  var actualColor = ((_element$mention2 = element.mention) === null || _element$mention2 === void 0 ? void 0 : _element$mention2.color) || color; // return jsx
 
   return /*#__PURE__*/React.createElement(Chip, _extends({}, attributes, {
     contentEditable: false,
     sx: {
-      color: ((_element$mention$colo = element.mention.color) === null || _element$mention$colo === void 0 ? void 0 : _element$mention$colo.hex) && theme.palette.getContrastText(element.mention.color.hex),
+      color: (actualColor === null || actualColor === void 0 ? void 0 : actualColor.hex) && theme.palette.getContrastText(actualColor.hex),
       fontWeight: 'bold',
-      backgroundColor: (_element$mention$colo2 = element.mention.color) === null || _element$mention$colo2 === void 0 ? void 0 : _element$mention$colo2.hex
+      backgroundColor: actualColor === null || actualColor === void 0 ? void 0 : actualColor.hex
     },
     size: "small",
     label: element.mention.display,
@@ -7042,13 +7083,13 @@ var Mention = function Mention(_ref2) {
     }) : !!element.mention.icon && /*#__PURE__*/React.createElement(DashupAvatar, {
       name: element.mention.display,
       sx: {
-        backgroundColor: (_element$mention$colo3 = element.mention.color) === null || _element$mention$colo3 === void 0 ? void 0 : _element$mention$colo3.hex
+        backgroundColor: actualColor === null || actualColor === void 0 ? void 0 : actualColor.hex
       }
     }, /*#__PURE__*/React.createElement(DashupUIIcon, {
       type: "fas",
       icon: element.mention.icon,
       sx: {
-        color: ((_element$mention$colo4 = element.mention.color) === null || _element$mention$colo4 === void 0 ? void 0 : _element$mention$colo4.hex) && theme.palette.getContrastText(element.mention.color.hex)
+        color: (actualColor === null || actualColor === void 0 ? void 0 : actualColor.hex) && theme.palette.getContrastText(actualColor.hex)
       }
     }))
   }));
@@ -7066,7 +7107,9 @@ var allEmbeds = {}; // chat input
 
 var DashupUIChatInput = function DashupUIChatInput() {
   var props = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-  // editor
+  // theme
+  var theme = useTheme(); // editor
+
   var editor = useMemo(function () {
     return withMentions(withReact(createEditor()));
   }, []); // empty state
@@ -7090,41 +7133,58 @@ var DashupUIChatInput = function DashupUIChatInput() {
       _long = _useState4[0];
       _useState4[1];
 
-  var _useState5 = useState(0),
+  var _useState5 = useState(null),
       _useState6 = _slicedToArray(_useState5, 2),
-      index = _useState6[0],
-      setIndex = _useState6[1];
+      emoji = _useState6[0],
+      setEmoji = _useState6[1];
 
-  var _useState7 = useState(emptyState),
+  var _useState7 = useState(0),
       _useState8 = _slicedToArray(_useState7, 2),
-      value = _useState8[0],
-      setValue = _useState8[1];
+      index = _useState8[0],
+      setIndex = _useState8[1];
 
-  var _useState9 = useState([]),
+  var _useState9 = useState(emptyState),
       _useState10 = _slicedToArray(_useState9, 2),
-      items = _useState10[0],
-      setItems = _useState10[1];
+      value = _useState10[0],
+      setValue = _useState10[1];
 
-  var _useState11 = useState(allEmbeds[embedId]),
+  var _useState11 = useState([]),
       _useState12 = _slicedToArray(_useState11, 2),
-      embeds = _useState12[0],
-      setEmbeds = _useState12[1];
+      items = _useState12[0],
+      setItems = _useState12[1];
 
-  var _useState13 = useState(null),
+  var _useState13 = useState(allEmbeds[embedId]),
       _useState14 = _slicedToArray(_useState13, 2),
-      mention = _useState14[0],
-      setMention = _useState14[1];
+      embeds = _useState14[0],
+      setEmbeds = _useState14[1];
 
-  var _useState15 = useState(false),
+  var _useState15 = useState(null),
       _useState16 = _slicedToArray(_useState15, 2),
-      posting = _useState16[0],
-      setPosting = _useState16[1];
+      mention = _useState16[0],
+      setMention = _useState16[1];
 
-  var _useState17 = useState(null),
+  var _useState17 = useState(false),
       _useState18 = _slicedToArray(_useState17, 2),
-      mentionRef = _useState18[0],
-      setMentionRef = _useState18[1]; // render methods
+      posting = _useState18[0],
+      setPosting = _useState18[1];
 
+  var _useState19 = useState(null),
+      _useState20 = _slicedToArray(_useState19, 2),
+      emojiRef = _useState20[0],
+      setEmojiRef = _useState20[1];
+
+  var _useState21 = useState(null),
+      _useState22 = _slicedToArray(_useState21, 2),
+      mentionRef = _useState22[0],
+      setMentionRef = _useState22[1];
+
+  var _useState23 = useState(''),
+      _useState24 = _slicedToArray(_useState23, 2),
+      emojiSearch = _useState24[0],
+      setEmojiSearch = _useState24[1]; // picker ref
+
+
+  var pickerRef = useRef(null); // render methods
 
   var renderLeaf = useCallback(function (props) {
     return /*#__PURE__*/React.createElement(Leaf, props);
@@ -7159,7 +7219,7 @@ var DashupUIChatInput = function DashupUIChatInput() {
     }; // tokens
 
 
-    var tokens = prism.tokenize(node.text, prism.languages.markdown); // start
+    var tokens = prism.tokenize(node === null || node === void 0 ? void 0 : node.text, prism.languages.markdown); // start
 
     var start = 0; // loop tokens
 
@@ -7200,11 +7260,16 @@ var DashupUIChatInput = function DashupUIChatInput() {
   var toText = function toText(children) {
     // map children
     return children.map(function (child) {
-      // if text
-      if (child.text) return child.text;
-      if (child.mention) return "".concat(child.trigger, "[").concat(child.mention.display, "](").concat(child.mention.id, ")"); // if children
+      // empty child
+      if (!child) return; // if text
 
-      if (child.children) return toText(child.children);
+      if (child.text) return child.text;
+      if (child.mention) return "".concat(child.trigger, "[").concat(child.mention.display, "](").concat(child.mention.id, ")");
+      if (child.type === 'paragraph') return "".concat(toText(child.children), "\n"); // if children
+
+      if (child.children) return "".concat(toText(child.children));
+    }).filter(function (i) {
+      return i;
     }).join('');
   }; // on send
 
@@ -7238,7 +7303,9 @@ var DashupUIChatInput = function DashupUIChatInput() {
                 temp: shortid(),
                 embeds: [],
                 subject: data.thread,
-                message: text
+                message: text,
+                created_at: new Date(),
+                updated_at: new Date()
               };
               allEmbeds[embedId] = [];
               setEmbeds(_toConsumableArray(allEmbeds[embedId])); // set embeds
@@ -7417,7 +7484,16 @@ var DashupUIChatInput = function DashupUIChatInput() {
         if (beforeText) {
           var _eden$chat;
 
-          // find match in text
+          // emoji picker
+          if (beforeText.split('')[0] === ':') {
+            // set emoji picker
+            setMention(null);
+            setEmojiSearch(beforeText.split('').slice(1).join('')); // set emoji
+
+            return setEmoji(beforeRange);
+          } // find match in text
+
+
           trigger = (typeof eden === 'undefined' ? [] : ((_eden$chat = eden.chat) === null || _eden$chat === void 0 ? void 0 : _eden$chat.triggers()) || []).find(function (m) {
             // find trigger
             return beforeText.split('')[0] === m.trigger;
@@ -7431,13 +7507,17 @@ var DashupUIChatInput = function DashupUIChatInput() {
               setIndex(items.length - 1);
             }); // mention
 
+            setEmoji(null);
+            setEmojiSearch('');
             return setMention(beforeRange);
           }
         }
       } // unset
 
 
+      setEmoji(null);
       setMention(null);
+      setEmojiSearch('');
     } catch (e) {} // load embeds
 
 
@@ -7466,7 +7546,7 @@ var DashupUIChatInput = function DashupUIChatInput() {
 
 
   var onMention = function onMention(data) {
-    var _trigger;
+    var _trigger2;
 
     // select target
     Transforms.select(editor, mention); // mention
@@ -7474,7 +7554,7 @@ var DashupUIChatInput = function DashupUIChatInput() {
     var insertMention = {
       type: 'mention',
       mention: data,
-      trigger: (_trigger = trigger) === null || _trigger === void 0 ? void 0 : _trigger.trigger,
+      trigger: (_trigger2 = trigger) === null || _trigger2 === void 0 ? void 0 : _trigger2.trigger,
       children: [{
         text: ''
       }]
@@ -7509,11 +7589,49 @@ var DashupUIChatInput = function DashupUIChatInput() {
   }, [mention]); // use effect
 
   useEffect(function () {
+    // try/catch
+    try {
+      var _domRange$endContaine2;
+
+      // check mention
+      if (!emoji) {
+        // set index
+        setIndex(0);
+        setEmojiRef(null); // check index
+
+        return;
+      } // dom range
+
+
+      var domRange = ReactEditor.toDOMRange(editor, emoji); // set ref
+
+      setEmojiRef(domRange === null || domRange === void 0 ? void 0 : (_domRange$endContaine2 = domRange.endContainer) === null || _domRange$endContaine2 === void 0 ? void 0 : _domRange$endContaine2.parentNode);
+    } catch (e) {}
+  }, [emoji]); // use effect
+
+  useEffect(function () {
     // done
     return function () {
       delete allEmbeds[embedId];
     };
-  }, [embedId]); // create body
+  }, [embedId]); // set search
+
+  useEffect(function () {
+    // input
+    var input = document.querySelector('.emoji-mart-search > input'); // check view
+
+    if (!input) return; // set value
+
+    input.value = emojiSearch; // trigger enter
+
+    var event = new KeyboardEvent('keydown', {
+      key: 'Enter',
+      which: 13,
+      keyCode: 13
+    }); // dispatch
+
+    input.dispatchEvent(event);
+  }, [emojiSearch]); // create body
 
   var renderBody = function renderBody(data) {
     // return jsx
@@ -7565,9 +7683,12 @@ var DashupUIChatInput = function DashupUIChatInput() {
       type: "fas",
       icon: "image",
       fixedWidth: true
-    })), /*#__PURE__*/React.createElement(ToggleButton, {
+    })), !props.disableEmoji && /*#__PURE__*/React.createElement(ToggleButton, {
       value: "smile",
-      selected: true
+      selected: true,
+      onClick: function onClick(e) {
+        return !setEmoji(true) && setEmojiRef(e.target);
+      }
     }, /*#__PURE__*/React.createElement(DashupUIIcon, {
       type: "fas",
       icon: "smile",
@@ -7613,7 +7734,46 @@ var DashupUIChatInput = function DashupUIChatInput() {
         type: "fas",
         icon: item.icon
       })), /*#__PURE__*/React.createElement(ListItemText, null, item.display));
-    })));
+    })), /*#__PURE__*/React.createElement(Popover, {
+      open: !!emojiRef,
+      onClose: function onClose() {
+        return setEmojiRef(null);
+      },
+      anchorEl: emojiRef,
+      transformOrigin: {
+        vertical: 'bottom',
+        horizontal: 'right'
+      },
+      anchorOrigin: {
+        vertical: 'top',
+        horizontal: 'right'
+      },
+      disableAutoFocus: true,
+      disableEnforceFocus: true
+    }, /*#__PURE__*/React.createElement(Box, {
+      sx: {
+        '& .emoji-mart': {
+          border: 0,
+          backgroundColor: theme.palette.background.paper
+        },
+        '& .emoji-mart-bar': {
+          borderColor: theme.palette.divider
+        },
+        '& .emoji-mart-search input': {
+          marginBottom: 1,
+          backgroundColor: 'transparent!important'
+        },
+        '& .emoji-mart-category-label span': {
+          backgroundColor: "".concat(theme.palette.background.paper, "!important")
+        }
+      }
+    }, /*#__PURE__*/React.createElement(Picker, {
+      ref: pickerRef,
+      title: "Dashup",
+      theme: theme.palette.mode,
+      color: theme.palette.primary.main,
+      onSelect: console.log
+    }))));
   }; // return jsx
 
 
@@ -9750,25 +9910,8 @@ var rules = {
   text: simpleMarkdown.defaultRules.text,
   strong: simpleMarkdown.defaultRules.strong,
   escape: simpleMarkdown.defaultRules.escape,
-  newline: simpleMarkdown.defaultRules.newline,
   inlineCode: simpleMarkdown.defaultRules.inlineCode,
   blockQuote: simpleMarkdown.defaultRules.blockQuote,
-  // fix code block
-  codeBlock: _objectSpread2(_objectSpread2({}, simpleMarkdown.defaultRules.codeBlock), {}, {
-    match: simpleMarkdown.inlineRegex(/^```(([a-z0-9-]+?)\n+)?\n*([^]+?)\n*```/i),
-    parse: function parse(capture, _parse, state) {
-      return {
-        lang: (capture[2] || '').trim(),
-        content: capture[3] || '',
-        inQuote: state.inQuote || false
-      };
-    },
-    react: function react(node, output, state) {
-      return /*#__PURE__*/React.createElement("code", {
-        key: state.key
-      }, node.content);
-    }
-  }),
   // fix link
   autolink: _objectSpread2(_objectSpread2({}, simpleMarkdown.defaultRules.autolink), {}, {
     parse: function parse(capture) {
@@ -9781,9 +9924,9 @@ var rules = {
       };
     },
     react: function react(node, output, state) {
-      return /*#__PURE__*/React.createElement("a", {
+      return /*#__PURE__*/React.createElement(Link$1, {
         href: simpleMarkdown.sanitizeUrl(node.target),
-        target: node.target.includes('//') && !node.target.includes('dashup.dev') ? '_BLANK' : null,
+        target: node.target.includes('//') && !node.target.includes('dashup.com') ? '_BLANK' : null,
         key: state.key
       }, output(node.content, state));
     }
@@ -9800,16 +9943,12 @@ var rules = {
       };
     },
     react: function react(node, output, state) {
-      return /*#__PURE__*/React.createElement("a", {
+      return /*#__PURE__*/React.createElement(Link$1, {
         href: simpleMarkdown.sanitizeUrl(node.target),
-        target: node.target.includes('//') && !node.target.includes('dashup.dev') ? '_BLANK' : null,
+        target: node.target.includes('//') && !node.target.includes('dashup.com') ? '_BLANK' : null,
         key: state.key
       }, output(node.content, state));
     }
-  }),
-  // fix line break
-  br: _objectSpread2(_objectSpread2({}, simpleMarkdown.defaultRules.br), {}, {
-    match: simpleMarkdown.anyScopeRegex(/^\n/)
   }),
   // fix strike
   strike: _objectSpread2(_objectSpread2({}, simpleMarkdown.defaultRules.del), {}, {
@@ -9821,6 +9960,8 @@ var Embed = null;
 var DashupUIContext$5 = null; // create dashup grid body
 
 var DashupUIChatMessage = function DashupUIChatMessage() {
+  var _props$message5, _props$message5$by, _ref, _ref$user;
+
   var props = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
   // theme
   var theme = useTheme(); // get embeds
@@ -9874,18 +10015,23 @@ var DashupUIChatMessage = function DashupUIChatMessage() {
       react: function react(node, output, state) {
         var _color, _color2, _color3, _color4;
 
-        // page
+        // check dashup
+        if (!dashup) return; // page
+
         var page = node.trigger === '#' ? dashup.page(node.id) : null; // let color
 
         var color = page === null || page === void 0 ? void 0 : page.get('color');
-        var parent = page && (page.get('parent') || 'root') !== 'root' && dashup.page(page.get('parent')); // get parentmost color
+        var parent = page && ((page === null || page === void 0 ? void 0 : page.get('parent')) || 'root') !== 'root' ? dashup.page(page === null || page === void 0 ? void 0 : page.get('parent')) : null; // check page
 
-        while (parent && !color) {
-          var _parent;
+        if (page) {
+          // get parentmost color
+          while (parent && !color) {
+            // get new parent
+            var newParent = (parent.get('parent') || 'root') !== 'root' ? dashup.page(parent.get('parent')) : null;
+            color = newParent === null || newParent === void 0 ? void 0 : newParent.get('color'); // set parent
 
-          // get new parent
-          parent = parent && (parent.get('parent') || 'root') !== 'root' && dashup.page(parent.get('parent'));
-          color = (_parent = parent) === null || _parent === void 0 ? void 0 : _parent.get('color');
+            parent = newParent;
+          }
         } // url
 
 
@@ -9905,44 +10051,138 @@ var DashupUIChatMessage = function DashupUIChatMessage() {
           avatar: /*#__PURE__*/React.createElement(DashupAvatar, {
             name: node.display,
             bgColor: (_color3 = color) === null || _color3 === void 0 ? void 0 : _color3.hex
-          }, !!(page !== null && page !== void 0 && page.get('icon')) && /*#__PURE__*/React.createElement(DashupUIIcon, {
+          }, page !== null && page !== void 0 && page.get('icon') ? /*#__PURE__*/React.createElement(DashupUIIcon, {
             icon: page.get('icon'),
             sx: {
               color: ((_color4 = color) === null || _color4 === void 0 ? void 0 : _color4.hex) && theme.palette.getContrastText(color.hex)
             }
-          })),
+          }) : null),
           onClick: function onClick() {
             return url && eden.router.go(url);
           },
           contentEditable: false
         });
       }
-    }; // parser
+    };
+    rules.codeBlock = _objectSpread2(_objectSpread2({}, simpleMarkdown.defaultRules.codeBlock), {}, {
+      match: simpleMarkdown.inlineRegex(/^```(([a-z0-9-]+?)\n+)?\n*([^]+?)\n*```/i),
+      parse: function parse(capture, _parse2, state) {
+        return {
+          lang: (capture[2] || '').trim(),
+          content: capture[3] || '',
+          inQuote: state.inQuote || false
+        };
+      },
+      react: function react(node, output, state) {
+        return /*#__PURE__*/React.createElement(Box, {
+          key: state.key,
+          sx: {
+            mt: 0.5,
+            mb: 0.5,
+            '& .CodeMirror.cm-s-one-dark': {
+              height: 'auto',
+              maxWidth: 480,
+              minWidth: 480
+            }
+          }
+        }, /*#__PURE__*/React.createElement(View$1, {
+          key: state.key,
+          view: "code",
+          type: "field",
+          struct: "code",
+          value: node.content,
+          dashup: dashup,
+          options: {
+            readOnly: 'nocursor'
+          }
+        }));
+      }
+    }); // parser
 
     var parser = simpleMarkdown.parserFor(_objectSpread2(_objectSpread2({}, rules), props.rules || {})); // output
 
     var reactOutput = simpleMarkdown.outputFor(_objectSpread2(_objectSpread2({}, rules), props.rules || {}), 'react'); // return
 
     return reactOutput(parser(text || '', state), state);
-  }; // render body
+  }; // button sx
 
+
+  var buttonSx = {
+    paddingLeft: 1,
+    paddingRight: 1
+  }; // is mine
+
+  var isMine = ((_props$message5 = props.message) === null || _props$message5 === void 0 ? void 0 : (_props$message5$by = _props$message5.by) === null || _props$message5$by === void 0 ? void 0 : _props$message5$by.id) === ((_ref = typeof eden !== 'undefined' ? eden : {}) === null || _ref === void 0 ? void 0 : (_ref$user = _ref.user) === null || _ref$user === void 0 ? void 0 : _ref$user.get('_id')); // render body
 
   var renderBody = function renderBody(data) {
-    var _props$message5, _props$message5$by, _props$message6, _props$message6$by;
+    var _data$dashup, _data$dashup2, _props$message6, _props$message6$by, _props$message7, _props$message7$by;
 
     // check removed
     if (props.message.removed) return /*#__PURE__*/React.createElement(Box, null); // return jsx
 
     return /*#__PURE__*/React.createElement(Box, {
-      mt: inThread() ? 0 : props.size === 'sm' ? 1 : 1.5
+      mt: inThread() ? 0 : props.size === 'sm' ? 1 : 1.5,
+      sx: {
+        position: 'relative',
+        '&:hover .updating': {
+          opacity: 1,
+          display: 'block'
+        }
+      }
+    }, /*#__PURE__*/React.createElement(Box, {
+      className: "updating",
+      sx: {
+        display: 'none',
+        opacity: 0,
+        position: 'absolute',
+        top: -5,
+        left: 0,
+        right: 0,
+        bottom: -5,
+        background: 'rgba(0, 0, 0, 0.15)',
+        borderRadius: 2
+      }
+    }), !!(data.page && (_data$dashup = data.dashup) !== null && _data$dashup !== void 0 && _data$dashup.can(data.page, 'manage') || (_data$dashup2 = data.dashup) !== null && _data$dashup2 !== void 0 && _data$dashup2.can('admin') || isMine) && /*#__PURE__*/React.createElement(Box, {
+      sx: {
+        right: 2,
+        zIndex: 1,
+        bottom: '100%',
+        padding: 1,
+        display: 'none',
+        position: 'absolute',
+        alignItems: 'center',
+        borderRadius: 2,
+        flexDirection: 'row',
+        justifyContent: 'end',
+        backgroundColor: theme.palette.mode === 'dark' ? 'darker.main' : 'lighter.main'
+      },
+      className: "updating"
     }, /*#__PURE__*/React.createElement(Stack, {
+      direction: "row",
+      spacing: 1
+    }, /*#__PURE__*/React.createElement(Tooltip, {
+      title: "Remove Message"
+    }, /*#__PURE__*/React.createElement(ToggleButton, {
+      value: "trash",
+      size: "small",
+      onClick: function onClick(e) {
+        return (props.onRemove || data.onRemove)(props.message);
+      },
+      selected: true,
+      color: "error",
+      sx: buttonSx
+    }, /*#__PURE__*/React.createElement(DashupUIIcon, {
+      type: "fas",
+      icon: "trash",
+      fontSize: "small"
+    }))))), /*#__PURE__*/React.createElement(Stack, {
       spacing: 2,
       direction: "row"
     }, inThread() ? /*#__PURE__*/React.createElement(Box, {
       minWidth: data.size === 'sm' ? 25 : 40
     }) : /*#__PURE__*/React.createElement(DashupAvatar, {
-      src: (_props$message5 = props.message) === null || _props$message5 === void 0 ? void 0 : (_props$message5$by = _props$message5.by) === null || _props$message5$by === void 0 ? void 0 : _props$message5$by.avatar,
-      name: (_props$message6 = props.message) === null || _props$message6 === void 0 ? void 0 : (_props$message6$by = _props$message6.by) === null || _props$message6$by === void 0 ? void 0 : _props$message6$by.name,
+      src: (_props$message6 = props.message) === null || _props$message6 === void 0 ? void 0 : (_props$message6$by = _props$message6.by) === null || _props$message6$by === void 0 ? void 0 : _props$message6$by.avatar,
+      name: (_props$message7 = props.message) === null || _props$message7 === void 0 ? void 0 : (_props$message7$by = _props$message7.by) === null || _props$message7$by === void 0 ? void 0 : _props$message7$by.name,
       sx: {
         width: data.size === 'sm' ? 25 : 40
       }
@@ -9961,12 +10201,9 @@ var DashupUIChatMessage = function DashupUIChatMessage() {
     }, /*#__PURE__*/React.createElement(Box, {
       fontSize: "small"
     }, moment(props.message.created_at).fromNow()))), /*#__PURE__*/React.createElement(Box, {
-      display: "flex",
-      flexDirection: "row",
-      alignItems: "center",
-      flexWrap: "wrap",
       sx: {
-        wordBreak: 'break-word'
+        wordBreak: 'break-word',
+        whiteSpace: 'pre-line'
       }
     }, parseContent(data.dashup, props.message.parsed || props.message.message)), !!getEmbeds().length && /*#__PURE__*/React.createElement(Stack, {
       spacing: 2,
@@ -10000,47 +10237,37 @@ var Message$1 = (function (ctx) {
 });
 
 var Message = null;
-var DashupUIContext$4 = null; // key
-
-var key = null; // create dashup grid body
+var DashupUIContext$4 = null; // create dashup grid body
 
 var DashupUIChatThread = function DashupUIChatThread() {
   var props = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-  // scroll ref
-  var scrollRef = useRef(null); // scroll down
 
-  var scrollDown = function scrollDown() {
-    var _scrollRef$current;
+  // use state
+  var _useState = useState(shortid()),
+      _useState2 = _slicedToArray(_useState, 1),
+      id = _useState2[0];
 
-    // scroll down
-    if (!scrollRef.current) return; // get element
-
-    var scrollElement = (_scrollRef$current = scrollRef.current) === null || _scrollRef$current === void 0 ? void 0 : _scrollRef$current.getScrollElement(); // check element
-
-    if (!scrollElement) return; // scroll down
-
-    scrollElement.scrollTop = scrollElement.scrollHeight;
-  }; // key
+  var _useState3 = useState(null),
+      _useState4 = _slicedToArray(_useState3, 2),
+      key = _useState4[0],
+      setKey = _useState4[1]; // scroll ref
 
 
-  var getKey = function getKey() {
-    var messages = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
-    // return key
-    return messages.map(function (m) {
-      return m.id || m.temp;
-    }).join(':');
-  }; // return jsx
-
+  var scrollRef = useRef(null); // return jsx
 
   return /*#__PURE__*/React.createElement(DashupUIContext$4.Consumer, null, function (data) {
+    var _messages$, _messages$2, _scrollRef$current2;
+
     // messages
-    var messages = props.messages || data.messages || []; // check messages
+    var messages = props.messages || data.messages || []; // check last message
 
-    if (getKey(messages) !== key) {
-      scrollDown();
-      setTimeout(scrollDown, 100); // key
+    if (key !== ((_messages$ = messages[0]) === null || _messages$ === void 0 ? void 0 : _messages$.temp) || (_messages$2 = messages[0]) !== null && _messages$2 !== void 0 && _messages$2.id) {
+      var _messages$3, _messages$4, _scrollRef$current;
 
-      key = getKey(messages);
+      // set key
+      setKey(((_messages$3 = messages[0]) === null || _messages$3 === void 0 ? void 0 : _messages$3.id) || ((_messages$4 = messages[0]) === null || _messages$4 === void 0 ? void 0 : _messages$4.temp)); // scroll down
+
+      if ((_scrollRef$current = scrollRef.current) !== null && _scrollRef$current !== void 0 && _scrollRef$current.getScrollElement()) scrollRef.current.getScrollElement().scrollTop = 0;
     } // return jsx
 
 
@@ -10052,22 +10279,57 @@ var DashupUIChatThread = function DashupUIChatThread() {
       top: 0,
       left: 0,
       right: 0,
-      bottom: 0
+      bottom: 0,
+      sx: {
+        '& .simplebar-scrollbar': {
+          bottom: 0
+        }
+      }
     }, /*#__PURE__*/React.createElement(SimpleBar, {
       ref: scrollRef,
       style: {
         width: '100%',
         height: '100%'
+      },
+      scrollableNodeProps: {
+        id: id,
+        style: {
+          display: 'flex',
+          flexDirection: 'column-reverse'
+        }
       }
+    }, !!((_scrollRef$current2 = scrollRef.current) !== null && _scrollRef$current2 !== void 0 && _scrollRef$current2.getScrollElement()) && /*#__PURE__*/React.createElement(InfiniteScroll, {
+      next: props.onNext || data.onNext,
+      style: {
+        display: 'flex',
+        flexDirection: 'column-reverse'
+      },
+      inverse: true,
+      hasMore: props.hasMore || data.hasMore,
+      dataLength: (messages || []).length,
+      loader: /*#__PURE__*/React.createElement(Box, {
+        display: "flex",
+        py: 3,
+        justifyContent: "center",
+        alignItems: "center"
+      }, /*#__PURE__*/React.createElement(CircularProgress, null)),
+      endMessage: /*#__PURE__*/React.createElement(Typography, {
+        variant: "h5",
+        sx: {
+          textAlign: 'center'
+        },
+        gutterBottom: true
+      }, !(messages || []).length ? 'Nothing here yet, say hi!' : 'Yay! You have seen it all.'),
+      scrollableTarget: id
     }, messages.map(function (m, i) {
       // return jsx
       return /*#__PURE__*/React.createElement(Message, {
         key: "message-".concat(m.temp || m.id),
-        prev: messages[i - 1],
-        next: messages[i + 1],
+        prev: messages[i + 1],
+        next: messages[i - 1],
         message: m
       });
-    }))));
+    })))));
   });
 }; // export default page menu
 
@@ -10091,37 +10353,103 @@ var DashupUIChat = function DashupUIChat() {
       messages = _useState2[0],
       setMessages = _useState2[1];
 
-  var _useState3 = useState(null),
+  var _useState3 = useState(0),
       _useState4 = _slicedToArray(_useState3, 2),
-      remove = _useState4[0],
-      setRemove = _useState4[1];
+      skip = _useState4[0],
+      setSkip = _useState4[1];
 
-  var _useState5 = useState(null),
-      _useState6 = _slicedToArray(_useState5, 2);
-      _useState6[0];
-      var setUpdate = _useState6[1];
+  var _useState5 = useState(0),
+      _useState6 = _slicedToArray(_useState5, 2),
+      total = _useState6[0],
+      setTotal = _useState6[1];
 
-  var _useState7 = useState(false),
+  var _useState7 = useState(null),
       _useState8 = _slicedToArray(_useState7, 2),
-      removing = _useState8[0],
-      setRemoving = _useState8[1];
+      remove = _useState8[0],
+      setRemove = _useState8[1];
 
   var _useState9 = useState(null),
-      _useState10 = _slicedToArray(_useState9, 2),
-      listening = _useState10[0],
-      setListening = _useState10[1]; // get messages
+      _useState10 = _slicedToArray(_useState9, 2);
+      _useState10[0];
+      var setUpdate = _useState10[1];
+
+  var _useState11 = useState(false),
+      _useState12 = _slicedToArray(_useState11, 2),
+      removing = _useState12[0],
+      setRemoving = _useState12[1];
+
+  var _useState13 = useState(null),
+      _useState14 = _slicedToArray(_useState13, 2),
+      listening = _useState14[0],
+      setListening = _useState14[1]; // get messages
 
 
   var getMessages = function getMessages() {
     // return messages
     return Array.from((props.messages || messages).values()).sort(function (a, b) {
       // sort
-      if (new Date(a.created_at) > new Date(b.created_at)) return 1;
-      if (new Date(a.created_at) < new Date(b.created_at)) return -1; // return 0
+      if (new Date(a.created_at) > new Date(b.created_at)) return -1;
+      if (new Date(a.created_at) < new Date(b.created_at)) return 1; // return 0
 
       return 0;
     });
-  }; // get ctx
+  }; // on next
+
+
+  var onNext = /*#__PURE__*/function () {
+    var _ref = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee() {
+      var newSkip, data;
+      return regeneratorRuntime.wrap(function _callee$(_context) {
+        while (1) {
+          switch (_context.prev = _context.next) {
+            case 0:
+              if (!props.onNext) {
+                _context.next = 4;
+                break;
+              }
+
+              _context.next = 3;
+              return props.onNext();
+
+            case 3:
+              return _context.abrupt("return", _context.sent);
+
+            case 4:
+              // update skip
+              newSkip = skip + 50; // set skip
+
+              setSkip(newSkip); // listen
+
+              _context.next = 8;
+              return props.dashup.action({
+                type: 'page',
+                page: props.page && props.page.get('_id'),
+                struct: 'channel'
+              }, 'listen', {
+                skip: newSkip,
+                limit: 50,
+                subject: props.thread
+              });
+
+            case 8:
+              data = _context.sent;
+              // set messages
+              onMessages(_objectSpread2(_objectSpread2({}, data), {}, {
+                scroll: false
+              }));
+
+            case 10:
+            case "end":
+              return _context.stop();
+          }
+        }
+      }, _callee);
+    }));
+
+    return function onNext() {
+      return _ref.apply(this, arguments);
+    };
+  }(); // get ctx
 
 
   var getCtx = function getCtx() {
@@ -10139,27 +10467,37 @@ var DashupUIChat = function DashupUIChat() {
       dashup: props.dashup,
       thread: props.thread,
       // chat
+      total: total,
       messages: getMessages(),
+      onNext: onNext,
       onUpdate: setUpdate,
       onRemove: setRemove,
       onMessage: function onMessage(m) {
-        return onMessages([m]);
+        return onMessages({
+          data: [m],
+          total: null
+        });
       },
+      hasMore: (getMessages() || []).length < total,
       canAdmin: props.canAdmin || props.page && ((_props$dashup = props.dashup) === null || _props$dashup === void 0 ? void 0 : _props$dashup.can(props.page, 'manage'))
     };
   }; // create context
 
 
-  var _useState11 = useState(getCtx()),
-      _useState12 = _slicedToArray(_useState11, 2),
-      ctx = _useState12[0],
-      setCtx = _useState12[1]; // on messages
+  var _useState15 = useState(getCtx()),
+      _useState16 = _slicedToArray(_useState15, 2),
+      ctx = _useState16[0],
+      setCtx = _useState16[1]; // on messages
 
 
-  var onMessages = function onMessages() {
-    var list = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
+  var onMessages = function onMessages(_ref2) {
+    var _ref2$data = _ref2.data,
+        data = _ref2$data === void 0 ? [] : _ref2$data,
+        _ref2$total = _ref2.total,
+        total = _ref2$total === void 0 ? null : _ref2$total;
+        _ref2.scroll;
     // loop
-    list.forEach(function (message) {
+    data.forEach(function (message) {
       // get found
       var found = messages.find(function (m) {
         return m.id === message.id || m.temp && m.temp === message.temp;
@@ -10177,19 +10515,20 @@ var DashupUIChat = function DashupUIChat() {
     }); // set messages
 
     setMessages(_toConsumableArray(messages));
+    if (total !== null) setTotal(total);
   }; // remove message
 
 
   var onRemove = /*#__PURE__*/function () {
-    var _ref = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee(e) {
-      return regeneratorRuntime.wrap(function _callee$(_context) {
+    var _ref3 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee2(e) {
+      return regeneratorRuntime.wrap(function _callee2$(_context2) {
         while (1) {
-          switch (_context.prev = _context.next) {
+          switch (_context2.prev = _context2.next) {
             case 0:
               // send remove
               setRemoving(true); // listen
 
-              _context.next = 3;
+              _context2.next = 3;
               return props.dashup.action({
                 type: 'page',
                 page: props.page && props.page.get('_id'),
@@ -10203,14 +10542,14 @@ var DashupUIChat = function DashupUIChat() {
 
             case 5:
             case "end":
-              return _context.stop();
+              return _context2.stop();
           }
         }
-      }, _callee);
+      }, _callee2);
     }));
 
     return function onRemove(_x) {
-      return _ref.apply(this, arguments);
+      return _ref3.apply(this, arguments);
     };
   }(); // on remove
 
@@ -10241,7 +10580,11 @@ var DashupUIChat = function DashupUIChat() {
         type: 'page',
         page: props.page && props.page.get('_id'),
         struct: 'channel'
-      }, 'listen', props.thread).then(onMessages); // set listening
+      }, 'listen', {
+        skip: 0,
+        limit: 50,
+        subject: props.thread
+      }).then(onMessages); // set listening
 
       setListening(true);
     } // return unlisten
@@ -10257,30 +10600,24 @@ var DashupUIChat = function DashupUIChat() {
   useEffect(function () {
     // get ctx
     setCtx(getCtx());
-  }, [typeof props.messages !== 'undefined' ? props.messages : messages]); // return jsx
+  }, [typeof props.messages !== 'undefined' ? props.messages : messages, total]); // return jsx
 
   return /*#__PURE__*/React.createElement(DashupUIContext$3.Provider, {
     value: ctx
-  }, props.children, !!remove && /*#__PURE__*/React.createElement(DashupUIModal, {
-    show: true,
-    onHide: function onHide(e) {
+  }, props.children, !!remove && /*#__PURE__*/React.createElement(Dialog, {
+    open: !!remove,
+    onClose: function onClose() {
       return setRemove(null);
     }
-  }, /*#__PURE__*/React.createElement(DashupUIModal.Header, {
-    closeButton: true
-  }, /*#__PURE__*/React.createElement(DashupUIModal.Title, null, "Removing Message")), /*#__PURE__*/React.createElement(DashupUIModal.Body, null, /*#__PURE__*/React.createElement("p", {
-    className: "lead"
-  }, "Are you sure you want to remove this message?")), /*#__PURE__*/React.createElement(DashupUIModal.Footer, null, /*#__PURE__*/React.createElement(Button, {
-    variant: "primary",
-    onClick: function onClick(e) {
-      return !setRemove(null) && e.preventDefault();
+  }, /*#__PURE__*/React.createElement(DialogTitle, null, "Removing Message"), /*#__PURE__*/React.createElement(DialogContent, null, /*#__PURE__*/React.createElement(DialogContentText, null, "Are you sure you want to remove this message?")), /*#__PURE__*/React.createElement(DialogActions, null, /*#__PURE__*/React.createElement(Button, {
+    onClick: function onClick() {
+      return setRemove(null);
     }
-  }, "Close"), /*#__PURE__*/React.createElement(Button, {
-    variant: "danger",
-    className: "ms-2",
-    disabled: removing,
+  }, "Cancel"), /*#__PURE__*/React.createElement(Button, {
+    variant: "contained",
+    color: "error",
     onClick: function onClick(e) {
-      return onRemove(e);
+      return onRemove(remove);
     }
   }, removing ? 'Removing...' : 'Confirm'))));
 }; // create field
@@ -12856,7 +13193,7 @@ var DashupUIItem = function DashupUIItem() {
   }; // return jsx
 
 
-  return !props.item || props.item.get('archived') ? null : /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement(Card$1, {
+  return !props.item || !props.item.toJSON || props.item.get('archived') ? null : /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement(Card$1, {
     className: "DuiItemCard",
     variant: props.variant,
     sx: {
@@ -14550,7 +14887,8 @@ View$1.setDefaults({
   '@dashup/core': dashupCore,
   'simplebar-react': SimpleBar,
   'react-sortablejs': ReactSortable$1,
-  'handlebars-helpers': HandlebarsHelpers
+  'handlebars-helpers': HandlebarsHelpers,
+  'react-infinite-scroll-component': InfiniteScroll
 }); // create library
 
 LicenseInfo.setLicenseKey('85d894fd9df3d68884c23e17ff9072d0T1JERVI6MzEwMjAsRVhQSVJZPTE2NjU5ODY1OTYwMDAsS0VZVkVSU0lPTj0x'); // export mui extra

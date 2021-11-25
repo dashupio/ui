@@ -80,8 +80,8 @@ const DashupUIPageFilter = (props = {}) => {
               { !!props.onSearch && (
                 <TextField
                   label="Search"
-                  onChange={ (e) => debounce(props.onSearch, 500)(e.target.value) }
-                  defaultValue={ page.get('data.search') || '' }
+                  onChange={ (e) => debounce(props.onSearch, 500)(e.target.value && e.target.value.length ? e.target.value : null) }
+                  defaultValue={ page.get('data.search') || page.get('user.search') || '' }
                   InputProps={ {
                     startAdornment : (
                       <InputAdornment position="start">

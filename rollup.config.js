@@ -4,6 +4,7 @@ import del from 'rollup-plugin-delete';
 import pkg from './package.json';
 import json from '@rollup/plugin-json';
 import babel from '@rollup/plugin-babel';
+import styles from 'rollup-plugin-styles';
 import resolve from 'rollup-plugin-node-resolve';
 import progress from 'rollup-plugin-progress';
 import commonjs from 'rollup-plugin-commonjs';
@@ -31,6 +32,9 @@ export default {
     resolve({
       browser : true,
       extensions,
+    }),
+    styles({
+      mode : 'inject',
     }),
     commonjs({
       include : [

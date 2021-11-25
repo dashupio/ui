@@ -1,11 +1,13 @@
+import './emoji.css';
 
 import uuid from 'shortid';
 import Prism from 'prismjs';
 import urlRegex from 'url-regex';
+import { Picker } from 'emoji-mart';
 import { Slate, Editable, withReact, ReactEditor } from 'slate-react';
 import { Text, Editor, Transforms, Range, createEditor } from 'slate';
-import React, { useMemo, useState, useCallback, useEffect } from 'react';
-import { Paper, Grid, Chip, Stack, Box, useTheme, ToggleButton, ToggleButtonGroup, Avatar, Icon, Popover, MenuItem, ListItemIcon, ListItemText } from '../';
+import React, { useMemo, useRef, useState, useCallback, useEffect } from 'react';
+import { Paper, Chip, Stack, Box, useTheme, ToggleButton, ToggleButtonGroup, Avatar, Icon, Popover, MenuItem, ListItemIcon, ListItemText } from '../';
 
 // prism
 ;Prism.languages.markdown=Prism.languages.extend("markup",{}),Prism.languages.insertBefore("markdown","prolog",{blockquote:{pattern:/^>(?:[\t ]*>)*/m,alias:"punctuation"},code:[{pattern:/^(?: {4}|\t).+/m,alias:"keyword"},{pattern:/``.+?``|`[^`\n]+`/,alias:"keyword"}],title:[{pattern:/\w+.*(?:\r?\n|\r)(?:==+|--+)/,alias:"important",inside:{punctuation:/==+$|--+$/}},{pattern:/(^\s*)#+.+/m,lookbehind:!0,alias:"important",inside:{punctuation:/^#+|#+$/}}],hr:{pattern:/(^\s*)([*-])([\t ]*\2){2,}(?=\s*$)/m,lookbehind:!0,alias:"punctuation"},list:{pattern:/(^\s*)(?:[*+-]|\d+\.)(?=[\t ].)/m,lookbehind:!0,alias:"punctuation"},"url-reference":{pattern:/!?\[[^\]]+\]:[\t ]+(?:\S+|<(?:\\.|[^>\\])+>)(?:[\t ]+(?:"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|\((?:\\.|[^)\\])*\)))?/,inside:{variable:{pattern:/^(!?\[)[^\]]+/,lookbehind:!0},string:/(?:"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|\((?:\\.|[^)\\])*\))$/,punctuation:/^[\[\]!:]|[<>]/},alias:"url"},bold:{pattern:/(^|[^\\])(\*\*|__)(?:(?:\r?\n|\r)(?!\r?\n|\r)|.)+?\2/,lookbehind:!0,inside:{punctuation:/^\*\*|^__|\*\*$|__$/}},italic:{pattern:/(^|[^\\])([*_])(?:(?:\r?\n|\r)(?!\r?\n|\r)|.)+?\2/,lookbehind:!0,inside:{punctuation:/^[*_]|[*_]$/}},url:{pattern:/!?\[[^\]]+\](?:\([^\s)]+(?:[\t ]+"(?:\\.|[^"\\])*")?\)| ?\[[^\]\n]*\])/,inside:{variable:{pattern:/(!?\[)[^\]]+(?=\]$)/,lookbehind:!0},string:{pattern:/"(?:\\.|[^"\\])*"(?=\)$)/}}}}),Prism.languages.markdown.bold.inside.url=Prism.util.clone(Prism.languages.markdown.url),Prism.languages.markdown.italic.inside.url=Prism.util.clone(Prism.languages.markdown.url),Prism.languages.markdown.bold.inside.italic=Prism.util.clone(Prism.languages.markdown.italic),Prism.languages.markdown.italic.inside.bold=Prism.util.clone(Prism.languages.markdown.bold); // prettier-ignore
@@ -58,6 +60,32 @@ const Mention = ({ attributes, children, element }) => {
   // theme
   const theme = useTheme();
 
+  // dashup
+  const dashup = (typeof eden === 'undefined' ? null : eden).dashup;
+
+  // page
+  const page = element.trigger === '#' ? dashup?.page(element.mention?.id) : null;
+  
+  // let color
+  let color = page?.get('color');
+  let parent = (page && (page?.get('parent') || 'root') !== 'root') ? dashup?.page(page?.get('parent')) : null;
+
+  // check page
+  if (page) {
+    // get parentmost color
+    while (parent && !color) {
+      // get new parent
+      const newParent = ((parent.get('parent') || 'root') !== 'root') ? dashup?.page(parent.get('parent')) : null;
+      color = newParent?.get('color');
+
+      // set parent
+      parent = newParent;
+    }
+  }
+
+  // set color
+  const actualColor = element.mention?.color || color;
+
   // return jsx
   return (
     <Chip
@@ -65,9 +93,9 @@ const Mention = ({ attributes, children, element }) => {
       contentEditable={ false }
 
       sx={ {
-        color           : element.mention.color?.hex && theme.palette.getContrastText(element.mention.color.hex),
+        color           : actualColor?.hex && theme.palette.getContrastText(actualColor.hex),
         fontWeight      : 'bold',
-        backgroundColor : element.mention.color?.hex,
+        backgroundColor : actualColor?.hex,
       } }
 
       size="small"
@@ -80,11 +108,11 @@ const Mention = ({ attributes, children, element }) => {
             <Avatar
               name={ element.mention.display } 
               sx={ {
-                backgroundColor : element.mention.color?.hex,
+                backgroundColor : actualColor?.hex,
               } }
             >
               <Icon type="fas" icon={ element.mention.icon } sx={ {
-                color : element.mention.color?.hex && theme.palette.getContrastText(element.mention.color.hex),
+                color : actualColor?.hex && theme.palette.getContrastText(actualColor.hex),
               } } />
             </Avatar>
           )
@@ -105,6 +133,9 @@ const allEmbeds = {};
 
 // chat input
 const DashupUIChatInput = (props = {}) => {
+  // theme
+  const theme = useTheme();
+
   // editor
   const editor = useMemo(() => withMentions(withReact(createEditor())), []);
 
@@ -122,13 +153,19 @@ const DashupUIChatInput = (props = {}) => {
 
   // set embeds
   const [long, setLong] = useState(false);
+  const [emoji, setEmoji] = useState(null);
   const [index, setIndex] = useState(0);
   const [value, setValue] = useState(emptyState);
   const [items, setItems] = useState([]);
   const [embeds, setEmbeds] = useState(allEmbeds[embedId]);
   const [mention, setMention] = useState(null);
   const [posting, setPosting] = useState(false);
+  const [emojiRef, setEmojiRef] = useState(null);
   const [mentionRef, setMentionRef] = useState(null);
+  const [emojiSearch, setEmojiSearch] = useState('');
+
+  // picker ref
+  const pickerRef = useRef(null);
 
   // render methods
   const renderLeaf = useCallback(props => <Leaf {...props} />, []);
@@ -156,7 +193,7 @@ const DashupUIChatInput = (props = {}) => {
     };
 
     // tokens
-    const tokens = Prism.tokenize(node.text, Prism.languages.markdown);
+    const tokens = Prism.tokenize(node?.text, Prism.languages.markdown);
 
     // start
     let start = 0;
@@ -187,13 +224,17 @@ const DashupUIChatInput = (props = {}) => {
   const toText = (children) => {
     // map children
     return children.map((child) => {
+      // empty child
+      if (!child) return;
+
       // if text
       if (child.text) return child.text;
       if (child.mention) return `${child.trigger}[${child.mention.display}](${child.mention.id})`;
+      if (child.type === 'paragraph') return `${toText(child.children)}\n`;
 
       // if children
-      if (child.children) return toText(child.children);
-    }).join('');
+      if (child.children) return `${toText(child.children)}`;
+    }).filter((i) => i).join('');
   };
   
   // on send
@@ -218,6 +259,9 @@ const DashupUIChatInput = (props = {}) => {
       embeds  : [],
       subject : data.thread,
       message : text,
+
+      created_at : new Date(),
+      updated_at : new Date(),
     };
     allEmbeds[embedId] = [];
     setEmbeds([...allEmbeds[embedId]]);
@@ -348,6 +392,16 @@ const DashupUIChatInput = (props = {}) => {
 
         // check before text
         if (beforeText) {
+          // emoji picker
+          if (beforeText.split('')[0] === ':') {
+            // set emoji picker
+            setMention(null);
+            setEmojiSearch(beforeText.split('').slice(1).join(''));
+
+            // set emoji
+            return setEmoji(beforeRange);
+          }
+
           // find match in text
           trigger = (typeof eden === 'undefined' ? [] : eden.chat?.triggers() || []).find((m) => {
             // find trigger
@@ -364,13 +418,17 @@ const DashupUIChatInput = (props = {}) => {
             });
 
             // mention
+            setEmoji(null);
+            setEmojiSearch('');
             return setMention(beforeRange);
           }
         }
       }
 
       // unset
+      setEmoji(null);
       setMention(null);
+      setEmojiSearch('');
     } catch (e) {}
 
     // load embeds
@@ -394,6 +452,30 @@ const DashupUIChatInput = (props = {}) => {
     
     // embeds
     setEmbeds([...allEmbeds[embedId]]);
+  };
+
+  // insert mention
+  const onEmoji = (data) => {
+    console.log(data); return;
+    // select target
+    Transforms.select(editor, mention);
+
+    // mention
+    const insertMention = {
+      type     : 'mention',
+      mention  : data,
+      trigger  : trigger?.trigger,
+      children : [{
+        text : ''
+      }],
+    };
+
+    // set mention
+    setMention(null);
+  
+    // insert nodes
+    Transforms.insertNodes(editor, insertMention);
+    Transforms.move(editor);
   };
 
   // insert mention
@@ -443,12 +525,56 @@ const DashupUIChatInput = (props = {}) => {
 
   // use effect
   useEffect(() => {
+    // try/catch
+    try {
+      // check mention
+      if (!emoji) {
+        // set index
+        setIndex(0);
+        setEmojiRef(null);
+
+        // check index
+        return;
+      }
+
+      // dom range
+      const domRange = ReactEditor.toDOMRange(editor, emoji);
+
+      // set ref
+      setEmojiRef(domRange?.endContainer?.parentNode);
+    } catch (e) {}
+  }, [emoji]);
+
+  // use effect
+  useEffect(() => {
 
     // done
     return () => {
       delete allEmbeds[embedId];
     };
   }, [embedId]);
+
+  // set search
+  useEffect(() => {
+    // input
+    const input = document.querySelector('.emoji-mart-search > input');
+
+    // check view
+    if (!input) return;
+
+    // set value
+    input.value = emojiSearch;
+
+    // trigger enter
+    const event = new KeyboardEvent('keydown', {
+      key     : 'Enter',
+      which   : 13,
+      keyCode : 13,
+    });
+
+    // dispatch
+    input.dispatchEvent(event);
+  }, [emojiSearch]);
 
   // create body
   const renderBody = (data) => {
@@ -491,9 +617,11 @@ const DashupUIChatInput = (props = {}) => {
               <ToggleButton value="image" selected>
                 <Icon type="fas" icon="image" fixedWidth />
               </ToggleButton>
-              <ToggleButton value="smile" selected>
-                <Icon type="fas" icon="smile" fixedWidth />
-              </ToggleButton>
+              { !props.disableEmoji && (
+                <ToggleButton value="smile" selected onClick={ (e) => !setEmoji(true) && setEmojiRef(e.target) }>
+                  <Icon type="fas" icon="smile" fixedWidth />
+                </ToggleButton>
+              ) }
             </ToggleButtonGroup>
             <ToggleButton size="small" value="send" selected color="primary" onClick={ (e) => onSend(e, data) }>
               <Icon type="fas" icon="play" fixedWidth />
@@ -532,6 +660,47 @@ const DashupUIChatInput = (props = {}) => {
               </MenuItem>
             );
           }) }
+        </Popover>
+
+        <Popover
+          open={ !!emojiRef }
+          onClose={ () => setEmojiRef(null) }
+          anchorEl={ emojiRef }
+          transformOrigin={ {
+            vertical   : 'bottom',
+            horizontal : 'right',
+          } }
+          anchorOrigin={ {
+            vertical   : 'top',
+            horizontal : 'right',
+          } }
+          disableAutoFocus
+          disableEnforceFocus
+        >
+          <Box sx={ {
+            '& .emoji-mart' : {
+              border          : 0,
+              backgroundColor : theme.palette.background.paper,
+            },
+            '& .emoji-mart-bar' : {
+              borderColor : theme.palette.divider,
+            },
+            '& .emoji-mart-search input' : {
+              marginBottom    : 1,
+              backgroundColor : 'transparent!important',
+            },
+            '& .emoji-mart-category-label span' : {
+              backgroundColor : `${theme.palette.background.paper}!important`,
+            },
+          } }>
+            <Picker
+              ref={ pickerRef }
+              title="Dashup"
+              theme={ theme.palette.mode }
+              color={ theme.palette.primary.main }
+              onSelect={ console.log }
+            />
+          </Box>
         </Popover>
       </>
     );

@@ -1,6 +1,7 @@
 
 // import simple markdown
 import React from 'react';
+import { Box, Link } from '../';
 import markdown from 'simple-markdown';
 
 // rules
@@ -11,30 +12,8 @@ const rules = {
   text       : markdown.defaultRules.text,
   strong     : markdown.defaultRules.strong,
   escape     : markdown.defaultRules.escape,
-  newline    : markdown.defaultRules.newline,
   inlineCode : markdown.defaultRules.inlineCode,
   blockQuote : markdown.defaultRules.blockQuote,
-
-  // fix code block
-  codeBlock : {
-    ...markdown.defaultRules.codeBlock,
-
-    match : markdown.inlineRegex(/^```(([a-z0-9-]+?)\n+)?\n*([^]+?)\n*```/i),
-    parse : function (capture, parse, state) {
-      return {
-        lang : (capture[2] || '').trim(),
-        content : capture[3] || '',
-        inQuote : state.inQuote || false
-      };
-    },
-    react : (node, output, state) => {
-      return (
-        <code key={ state.key }>
-          { node.content }
-        </code>
-      );
-    }
-  },
 
   // fix link
   autolink : {
@@ -51,9 +30,9 @@ const rules = {
     },
     react : (node, output, state) => {
       return (
-        <a href={ markdown.sanitizeUrl(node.target) } target={ node.target.includes('//') && !node.target.includes('dashup.dev') ? '_BLANK' : null } key={ state.key }>
+        <Link href={ markdown.sanitizeUrl(node.target) } target={ node.target.includes('//') && !node.target.includes('dashup.com') ? '_BLANK' : null } key={ state.key }>
           { output(node.content, state) }
-        </a>
+        </Link>
       );
     }
   },
@@ -73,18 +52,11 @@ const rules = {
     },
     react : (node, output, state) => {
       return (
-        <a href={ markdown.sanitizeUrl(node.target) } target={ node.target.includes('//') && !node.target.includes('dashup.dev') ? '_BLANK' : null } key={ state.key }>
+        <Link href={ markdown.sanitizeUrl(node.target) } target={ node.target.includes('//') && !node.target.includes('dashup.com') ? '_BLANK' : null } key={ state.key }>
           { output(node.content, state) }
-        </a>
+        </Link>
       );
     }
-  },
-  
-  // fix line break
-  br : {
-    ...markdown.defaultRules.br,
-
-    match : markdown.anyScopeRegex(/^\n/)
   },
 
   // fix strike

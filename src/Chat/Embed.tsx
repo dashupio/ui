@@ -59,6 +59,22 @@ const DashupUIChatEmbed = (props = {}) => {
     );
 
     // check type
+    if (props.embed.type === 'phone') return (
+      <Card variant="outlined">
+        <CardHeader
+          title={ props.embed.data?.title }
+          avatar={ (
+            <Avatar bgColor={ colors[props.embed.color] }>
+              <Icon type="fas" icon="phone" />
+            </Avatar>
+          ) }
+          subheader={ `From: ${props.embed.data?.from?.number}` }
+        />
+        <Box />
+      </Card>
+    );
+
+    // check type
     if (props.embed.type === 'email') return (
       <Card variant="outlined">
         <CardHeader
