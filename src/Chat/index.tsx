@@ -101,7 +101,13 @@ const DashupUIChat = (props = {}) => {
   const [ctx, setCtx] = useState(getCtx());
 
   // on messages
-  const onMessages = ({ data = [], total = null, scroll = true }) => {
+  const onMessages = (res) => {
+    // check res
+    if (!res) return;
+
+    // expand
+    const { data = [], total = null, scroll = true } = res;
+
     // loop
     data.forEach((message) => {
       // get found

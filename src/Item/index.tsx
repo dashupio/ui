@@ -156,13 +156,16 @@ const DashupUIItem = (props = {}) => {
     <>
       <Card className="DuiItemCard" variant={ props.variant } sx={ {
         color           : props.color && theme.palette.getContrastText(dotProp.get(theme.palette, props.color)),
+        display         : 'flex',
         borderColor     : !props.variant && (getColor() || {}).backgroundColor,
+        flexDirection   : 'column',
         borderLeftWidth : (getColor() || {}).backgroundColor && !props.variant ? 3 : undefined,
         borderLeftStyle : 'solid',
         backgroundColor : props.color,
       } }>
         { !!hasTags() && (
           <CardContent sx={ {
+            pt    : props.size === 'sm' ? 1 : undefined,
             pb    : 0,
             color : props.color && theme.palette.getContrastText(dotProp.get(theme.palette, props.color)),
           } }>
@@ -205,9 +208,12 @@ const DashupUIItem = (props = {}) => {
             </Stack>
           </CardContent>
         ) }
-        <CardContent onClick={ (e) => props.onClick(props.item) } sx={ {
+        <CardContent { ...props.BodyProps } onClick={ (e) => props.onClick(props.item) } sx={ {
+          py     : props.size === 'sm' ? 1 : undefined,
           color  : props.color && theme.palette.getContrastText(dotProp.get(theme.palette, props.color)),
           cursor : 'pointer',
+
+          ...(props.BodyProps?.sx),
         } }>
           { !!props.repeat && (
             <Tooltip title={ props.repeat }>
@@ -218,6 +224,7 @@ const DashupUIItem = (props = {}) => {
         </CardContent>
         <CardContent sx={ {
           pt            : 0,
+          pb            : props.size === 'sm' ? 1 : undefined,
           color         : props.color && theme.palette.getContrastText(dotProp.get(theme.palette, props.color)),
           display       : 'flex',
           flexWrap      : 'wrap',

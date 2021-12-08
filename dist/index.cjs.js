@@ -16,13 +16,14 @@ var HandlebarsHelpers = require('handlebars-helpers');
 var View = require('@dashup/view');
 var React = require('react');
 var material = require('@mui/material');
+var InstantReplace = require('slate-instant-replace');
 var emojiMart = require('emoji-mart');
 var slateReact = require('slate-react');
 var slate = require('slate');
 var styles$1 = require('@mui/material/styles');
-var reactBootstrap = require('react-bootstrap');
 var lab = require('@mui/lab');
 var reactColor = require('react-color');
+var Masonry = require('@mui/lab/Masonry');
 var fontAwesomeIconChars = require('font-awesome-icon-chars');
 var AdapterMoment = require('@mui/lab/AdapterMoment');
 var xDataGridPro = require('@mui/x-data-grid-pro');
@@ -62,6 +63,8 @@ var InfiniteScroll__default = /*#__PURE__*/_interopDefaultLegacy(InfiniteScroll)
 var HandlebarsHelpers__default = /*#__PURE__*/_interopDefaultLegacy(HandlebarsHelpers);
 var View__default = /*#__PURE__*/_interopDefaultLegacy(View);
 var React__default = /*#__PURE__*/_interopDefaultLegacy(React);
+var InstantReplace__default = /*#__PURE__*/_interopDefaultLegacy(InstantReplace);
+var Masonry__default = /*#__PURE__*/_interopDefaultLegacy(Masonry);
 var AdapterMoment__default = /*#__PURE__*/_interopDefaultLegacy(AdapterMoment);
 
 function ownKeys(object, enumerableOnly) {
@@ -401,16 +404,40 @@ var DashupUIHbs = function DashupUIHbs() {
 
 DashupUIHbs.Handlebars = Handlebars__default['default']; // return logic
 
-// let context
+// import react
+
+var DashupContext$7 = null; // create menu component
 
 var DashupUIPageBody = function DashupUIPageBody() {
   var props = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
   // return JSX
-  return props.children;
+  return /*#__PURE__*/React__default['default'].createElement(DashupContext$7.Consumer, null, function (data) {
+    // check render body
+    return !data.missingRequire.length ? props.children : data.missingRequire.map(function (_ref) {
+      var key = _ref.key,
+          label = _ref.label,
+          _ref$variant = _ref.variant,
+          variant = _ref$variant === void 0 ? 'info' : _ref$variant;
+      // return jsx
+      return /*#__PURE__*/React__default['default'].createElement(material.Alert, {
+        severity: variant,
+        onClick: function onClick() {
+          return data.onConfig();
+        },
+        key: "missing-".concat(key),
+        sx: {
+          mb: 2,
+          cursor: 'pointer'
+        }
+      }, "Click here to configure the ", /*#__PURE__*/React__default['default'].createElement("b", null, label), " for this page.");
+    });
+  });
 }; // export default page menu
 
 
 var Body = (function (ctx) {
+  // use context
+  DashupContext$7 = ctx; // return actual component
 
   return DashupUIPageBody;
 });
@@ -418,6 +445,8 @@ var Body = (function (ctx) {
 var DashupContext$6 = null; // create menu component
 
 var DashupUIPageMenu = function DashupUIPageMenu() {
+  var _state, _state$share;
+
   var props = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
 
   // get active
@@ -426,16 +455,23 @@ var DashupUIPageMenu = function DashupUIPageMenu() {
     return _toConsumableArray(dashup.get('active') || []).filter(function (a) {
       return a.page === (page === null || page === void 0 ? void 0 : page.get('_id'));
     });
-  }; // return JSX
+  }; // disable menu
 
 
-  return /*#__PURE__*/React__default['default'].createElement(DashupContext$6.Consumer, null, function (_ref) {
+  var disableMenu = !!((_state = (typeof eden !== 'undefined' ? eden : {}).state) !== null && _state !== void 0 && (_state$share = _state.share) !== null && _state$share !== void 0 && _state$share.disableMenu); // return JSX
+
+  return disableMenu ? null : /*#__PURE__*/React__default['default'].createElement(DashupContext$6.Consumer, null, function (_ref) {
     var page = _ref.page,
         dashup = _ref.dashup,
         color = _ref.color,
         icon = _ref.icon,
-        title = _ref.title;
-    // page fab
+        title = _ref.title,
+        onShare = _ref.onShare,
+        onConfig = _ref.onConfig;
+    // set values
+    onShare = props.onShare || onShare;
+    onConfig = props.onConfig || onConfig; // page fab
+
     var PageFab = styles$1.styled(material.Fab)(function (_ref2) {
       var theme = _ref2.theme;
       // return theme
@@ -495,21 +531,21 @@ var DashupUIPageMenu = function DashupUIPageMenu() {
           height: 30
         }
       })));
-    })), props.children, props.onShare && page && dashup.can(page, 'manage') && /*#__PURE__*/React__default['default'].createElement(material.Tooltip, {
+    })), props.children, onShare && page && dashup.can(page, 'manage') && /*#__PURE__*/React__default['default'].createElement(material.Tooltip, {
       title: "Share Page"
     }, /*#__PURE__*/React__default['default'].createElement(material.IconButton, {
       onClick: function onClick(e) {
-        return props.onShare(e);
+        return onShare(e);
       }
     }, /*#__PURE__*/React__default['default'].createElement(DashupUIIcon, {
       type: "fas",
       icon: "share-alt",
       fixedWidth: true
-    }))), props.onConfig && page && dashup.can(page, 'manage') && /*#__PURE__*/React__default['default'].createElement(material.Tooltip, {
+    }))), onConfig && page && dashup.can(page, 'manage') && /*#__PURE__*/React__default['default'].createElement(material.Tooltip, {
       title: "Page Settings"
     }, /*#__PURE__*/React__default['default'].createElement(material.IconButton, {
       onClick: function onClick(e) {
-        return props.onConfig(e);
+        return onConfig(e);
       }
     }, /*#__PURE__*/React__default['default'].createElement(DashupUIIcon, {
       type: "fas",
@@ -757,6 +793,8 @@ var DashupUIPageAudit = function DashupUIPageAudit() {
 var DashupContext$5 = null; // create menu component
 
 var DashupUIPageItem = function DashupUIPageItem() {
+  var _props$item2;
+
   var props = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
 
   // copying
@@ -818,8 +856,15 @@ var DashupUIPageItem = function DashupUIPageItem() {
   var _useState23 = React.useState(props.item && props.item.get() || {}),
       _useState24 = _slicedToArray(_useState23, 2),
       actualData = _useState24[0],
-      setActualData = _useState24[1]; // use effect
+      setActualData = _useState24[1]; // destruct
 
+
+  var page = props.page,
+      dashup = props.dashup,
+      getField = props.getField,
+      getFieldStruct = props.getFieldStruct,
+      getForms = props.getForms,
+      getFields = props.getFields; // use effect
 
   React.useEffect(function () {
     // set loading
@@ -847,30 +892,30 @@ var DashupUIPageItem = function DashupUIPageItem() {
   }; // get tag types
 
 
-  var getTagFields = function getTagFields(data) {
+  var getTagFields = function getTagFields() {
     // check get field
-    if (!props.getField && !data.getField) return []; // set types
+    if (!getField) return []; // set types
 
-    var types = typeof props.tag !== 'undefined' ? props.tag : data.page.get('data.tag') || [];
+    var types = typeof props.tag !== 'undefined' ? props.tag : props.page.get('data.tag') || [];
     if (!Array.isArray(types)) types = [types]; // return fields
 
     return types.map(function (f) {
-      return (props.getField || data.getField)(f);
+      return getField(f);
     }).filter(function (f) {
       return f;
     });
   }; // get user types
 
 
-  var getUserFields = function getUserFields(data) {
+  var getUserFields = function getUserFields() {
     // check get field
-    if (!props.getField && !data.getField) return []; // set types
+    if (!getField) return []; // set types
 
-    var types = typeof props.user !== 'undefined' ? props.user : data.page.get('data.user') || [];
+    var types = typeof props.user !== 'undefined' ? props.user : props.page.get('data.user') || [];
     if (!Array.isArray(types)) types = [types]; // return fields
 
     return types.map(function (f) {
-      return (props.getField || data.getField)(f);
+      return getField(f);
     }).filter(function (f) {
       return f;
     });
@@ -930,19 +975,19 @@ var DashupUIPageItem = function DashupUIPageItem() {
   }; // has tags
 
 
-  var hasTags = function hasTags(data) {
+  var hasTags = function hasTags() {
     // check page
-    if (!data.page) return; // tag uuid
+    if (!props.page) return; // tag uuid
 
-    return !!(props.tag || data.page.get('data.tag') || []).length;
+    return !!(props.tag || props.page.get('data.tag') || []).length;
   }; // has user
 
 
-  var hasUser = function hasUser(data) {
+  var hasUser = function hasUser() {
     // check page
-    if (!data.page) return; // tag uuid
+    if (!props.page) return; // tag uuid
 
-    return !!(props.user || data.page.get('data.user') || []).length;
+    return !!(props.user || props.page.get('data.user') || []).length;
   }; // set data
 
 
@@ -1058,7 +1103,7 @@ var DashupUIPageItem = function DashupUIPageItem() {
 
 
   var _onSubmit = /*#__PURE__*/function () {
-    var _ref2 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee2(e, form, data) {
+    var _ref2 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee2(e, form) {
       var _props$item;
 
       var creating, result, url, state;
@@ -1084,9 +1129,9 @@ var DashupUIPageItem = function DashupUIPageItem() {
               creating = !((_props$item = props.item) !== null && _props$item !== void 0 && _props$item.get('_id')); // submit form
 
               _context2.next = 8;
-              return data.dashup.action({
+              return props.dashup.action({
                 type: 'page',
-                page: data.page.get('_id'),
+                page: props.page.get('_id'),
                 form: form.get('_id'),
                 model: props.item && props.item.get('_meta.model') || form.get('data.model'),
                 struct: 'form'
@@ -1102,7 +1147,7 @@ var DashupUIPageItem = function DashupUIPageItem() {
 
               if (creating && result._id && typeof eden !== 'undefined') {
                 // url
-                url = "/app/".concat(data.page.get('_id'), "/").concat(result._id); // check state
+                url = "/app/".concat(props.page.get('_id'), "/").concat(result._id); // check state
 
                 state = Object.assign({}, {
                   prevent: true
@@ -1125,7 +1170,7 @@ var DashupUIPageItem = function DashupUIPageItem() {
       }, _callee2);
     }));
 
-    return function onSubmit(_x2, _x3, _x4) {
+    return function onSubmit(_x2, _x3) {
       return _ref2.apply(this, arguments);
     };
   }(); // audits
@@ -1166,317 +1211,327 @@ var DashupUIPageItem = function DashupUIPageItem() {
       eden.dashup.rpc({}, 'audit.unsubscribe', props.item.get('_id'));
       eden.dashup.socket.off("audit.".concat(props.item.get('_id')), onAudits);
     };
-  }, [props.item && props.item.get('_id')]); // return JSX
+  }, [props.item && props.item.get('_id')]); // get forms
 
-  return /*#__PURE__*/React__default['default'].createElement(DashupContext$5.Consumer, null, function (data) {
-    var _props$item2;
+  var forms = getForms();
+  var chosenForm = getForm(forms); // return jsx
 
-    // destruct
-    var page = data.page,
-        dashup = data.dashup,
-        getFieldStruct = data.getFieldStruct,
-        getForms = data.getForms,
-        getFields = data.getFields; // get forms
-
-    var forms = (props.getForms || getForms)();
-    var chosenForm = getForm(forms); // return jsx
-
-    return /*#__PURE__*/React__default['default'].createElement(React__default['default'].Fragment, null, /*#__PURE__*/React__default['default'].createElement(DashupUIModal, {
-      open: !!props.show,
-      thread: (_props$item2 = props.item) === null || _props$item2 === void 0 ? void 0 : _props$item2.get('_id'),
-      dashup: dashup,
-      onClose: onHide,
-      sidebar: /*#__PURE__*/React__default['default'].createElement(material.Box, {
-        flex: 1,
-        sx: {
-          maxHeight: '40%'
-        }
-      }, /*#__PURE__*/React__default['default'].createElement(SimpleBar__default['default'], {
-        className: "p-relative",
-        style: {
-          height: '100%'
-        }
-      }, /*#__PURE__*/React__default['default'].createElement(material.Stack, {
-        spacing: 1
-      }, audits.map(function (audit, i) {
-        var _audit$changes;
-
-        // changes
-        if (!(audit !== null && audit !== void 0 && (_audit$changes = audit.changes) !== null && _audit$changes !== void 0 && _audit$changes.length)) return null; // return jsx
-
-        return /*#__PURE__*/React__default['default'].createElement(DashupUIPageAudit, {
-          key: "audit-".concat(audit.id),
-          page: page,
-          item: props.item,
-          forms: forms,
-          audit: audit,
-          dashup: dashup,
-          getFields: getFields,
-          getFieldStruct: getFieldStruct
-        });
-      }))))
-    }, /*#__PURE__*/React__default['default'].createElement(material.DialogTitle, {
+  return /*#__PURE__*/React__default['default'].createElement(React__default['default'].Fragment, null, /*#__PURE__*/React__default['default'].createElement(DashupUIModal, {
+    open: !!props.show,
+    thread: (_props$item2 = props.item) === null || _props$item2 === void 0 ? void 0 : _props$item2.get('_id'),
+    dashup: dashup,
+    onClose: onHide,
+    sidebar: /*#__PURE__*/React__default['default'].createElement(material.Box, {
+      flex: 1,
       sx: {
-        padding: 0
+        maxHeight: '40%'
+      }
+    }, /*#__PURE__*/React__default['default'].createElement(SimpleBar__default['default'], {
+      className: "p-relative",
+      style: {
+        height: '100%'
       }
     }, /*#__PURE__*/React__default['default'].createElement(material.Stack, {
+      spacing: 1
+    }, audits.map(function (audit, i) {
+      var _audit$changes;
+
+      // changes
+      if (!(audit !== null && audit !== void 0 && (_audit$changes = audit.changes) !== null && _audit$changes !== void 0 && _audit$changes.length)) return null; // return jsx
+
+      return /*#__PURE__*/React__default['default'].createElement(DashupUIPageAudit, {
+        key: "audit-".concat(audit.id),
+        page: page,
+        item: props.item,
+        forms: forms,
+        audit: audit,
+        dashup: dashup,
+        getFields: getFields,
+        getFieldStruct: getFieldStruct
+      });
+    }))))
+  }, /*#__PURE__*/React__default['default'].createElement(material.DialogTitle, {
+    sx: {
+      padding: 0
+    }
+  }, /*#__PURE__*/React__default['default'].createElement(material.Stack, {
+    spacing: 1,
+    direction: "row",
+    flexWrap: "wrap"
+  }, !!props.item.get('_id') && /*#__PURE__*/React__default['default'].createElement(material.Tooltip, {
+    title: "Copy URL"
+  }, /*#__PURE__*/React__default['default'].createElement(material.IconButton, {
+    color: copying ? 'primary' : undefined,
+    onClick: function onClick(e) {
+      return onCopy(e, page, props.item);
+    }
+  }, copying ? /*#__PURE__*/React__default['default'].createElement(DashupUIIcon, {
+    type: "fas",
+    icon: "clipboard-check",
+    fontSize: "small"
+  }) : /*#__PURE__*/React__default['default'].createElement(DashupUIIcon, {
+    type: "fas",
+    icon: "clipboard",
+    fontSize: "small"
+  }))), !!hasTags() && getTagFields().map(function (type, i) {
+    // return jsx
+    return /*#__PURE__*/React__default['default'].createElement(material.Stack, {
       spacing: 1,
       direction: "row",
-      flexWrap: "wrap"
-    }, !!props.item.get('_id') && /*#__PURE__*/React__default['default'].createElement(material.Tooltip, {
-      title: "Copy URL"
-    }, /*#__PURE__*/React__default['default'].createElement(material.IconButton, {
-      color: copying ? 'primary' : undefined,
-      onClick: function onClick(e) {
-        return onCopy(e, page, props.item);
-      }
-    }, copying ? /*#__PURE__*/React__default['default'].createElement(DashupUIIcon, {
-      type: "fas",
-      icon: "clipboard-check",
-      fontSize: "small"
-    }) : /*#__PURE__*/React__default['default'].createElement(DashupUIIcon, {
-      type: "fas",
-      icon: "clipboard",
-      fontSize: "small"
-    }))), !!hasTags(data) && getTagFields(data).map(function (type, i) {
-      // return jsx
-      return /*#__PURE__*/React__default['default'].createElement(material.Stack, {
-        spacing: 1,
-        direction: "row",
-        key: "tag-".concat(type.uuid),
-        alignItems: "center"
-      }, getTags(type).map(function (tag, a) {
-        var _tag$color, _window$theme, _window$theme$palette;
+      key: "tag-".concat(type.uuid),
+      alignItems: "center"
+    }, getTags(type).map(function (tag, a) {
+      var _tag$color, _window$theme, _window$theme$palette;
 
-        // get color
-        var color = (_tag$color = tag.color) === null || _tag$color === void 0 ? void 0 : _tag$color.hex; // return jsx
+      // get color
+      var color = (_tag$color = tag.color) === null || _tag$color === void 0 ? void 0 : _tag$color.hex; // return jsx
 
-        return /*#__PURE__*/React__default['default'].createElement(material.Tooltip, {
-          title: "".concat(type.label, ": ").concat(tag.value),
-          key: "tag-".concat(type.uuid, "-").concat(tag.value)
-        }, /*#__PURE__*/React__default['default'].createElement(material.Chip, {
-          sx: {
-            color: color && ((_window$theme = window.theme) === null || _window$theme === void 0 ? void 0 : (_window$theme$palette = _window$theme.palette) === null || _window$theme$palette === void 0 ? void 0 : _window$theme$palette.getContrastText(color)),
-            backgroundColor: color
-          },
-          label: tag.label,
-          onClick: function onClick(e) {
-            return setTagOpen({
-              type: type.uuid,
-              el: e.target
-            });
-          },
-          onDelete: function onDelete() {}
-        }));
-      }), /*#__PURE__*/React__default['default'].createElement(material.Tooltip, {
-        title: "Add ".concat(type.label)
-      }, /*#__PURE__*/React__default['default'].createElement(material.IconButton, {
+      return /*#__PURE__*/React__default['default'].createElement(material.Tooltip, {
+        title: "".concat(type.label, ": ").concat(tag.value),
+        key: "tag-".concat(type.uuid, "-").concat(tag.value)
+      }, /*#__PURE__*/React__default['default'].createElement(material.Chip, {
+        sx: {
+          color: color && ((_window$theme = window.theme) === null || _window$theme === void 0 ? void 0 : (_window$theme$palette = _window$theme.palette) === null || _window$theme$palette === void 0 ? void 0 : _window$theme$palette.getContrastText(color)),
+          backgroundColor: color
+        },
+        label: tag.label,
         onClick: function onClick(e) {
           return setTagOpen({
             type: type.uuid,
             el: e.target
           });
-        }
-      }, /*#__PURE__*/React__default['default'].createElement(DashupUIIcon, {
-        type: "fas",
-        icon: "tag",
-        fontSize: "small"
-      }))), /*#__PURE__*/React__default['default'].createElement(material.Menu, {
-        open: (tagOpen === null || tagOpen === void 0 ? void 0 : tagOpen.type) === type.uuid,
-        onClose: function onClose() {
-          return setTagOpen(null);
         },
-        anchorEl: tagOpen === null || tagOpen === void 0 ? void 0 : tagOpen.el,
-        MenuListProps: {
-          sx: {
-            width: 240
-          }
+        onDelete: function onDelete() {}
+      }));
+    }), /*#__PURE__*/React__default['default'].createElement(material.Tooltip, {
+      title: "Add ".concat(type.label)
+    }, /*#__PURE__*/React__default['default'].createElement(material.IconButton, {
+      onClick: function onClick(e) {
+        return setTagOpen({
+          type: type.uuid,
+          el: e.target
+        });
+      }
+    }, /*#__PURE__*/React__default['default'].createElement(DashupUIIcon, {
+      type: "fas",
+      icon: "tag",
+      fontSize: "small"
+    }))), /*#__PURE__*/React__default['default'].createElement(material.Menu, {
+      open: (tagOpen === null || tagOpen === void 0 ? void 0 : tagOpen.type) === type.uuid,
+      onClose: function onClose() {
+        return setTagOpen(null);
+      },
+      anchorEl: tagOpen === null || tagOpen === void 0 ? void 0 : tagOpen.el,
+      MenuListProps: {
+        sx: {
+          width: 240
         }
-      }, /*#__PURE__*/React__default['default'].createElement(View__default['default'], {
-        view: "input",
-        type: "field",
-        struct: type.type,
-        dashup: data.dashup,
-        field: type,
-        value: props.item && props.item.get(type.name || type.uuid),
-        onChange: onTag,
-        isInline: true,
-        autoFocus: true
-      })));
-    }), !!hasUser(data) && getUserFields(data).map(function (type, i) {
+      }
+    }, /*#__PURE__*/React__default['default'].createElement(View__default['default'], {
+      view: "input",
+      type: "field",
+      struct: type.type,
+      dashup: props.dashup,
+      field: type,
+      value: props.item && props.item.get(type.name || type.uuid),
+      onChange: onTag,
+      isInline: true,
+      autoFocus: true
+    })));
+  }), !!hasUser() && getUserFields().map(function (type, i) {
+    // return jsx
+    return /*#__PURE__*/React__default['default'].createElement(material.Stack, {
+      spacing: 1,
+      direction: "row",
+      key: "tag-".concat(type.uuid),
+      flexWrap: "wrap",
+      alignItems: "center"
+    }, getUsers(type).map(function (user, a) {
       // return jsx
-      return /*#__PURE__*/React__default['default'].createElement(material.Stack, {
-        spacing: 1,
-        direction: "row",
-        key: "tag-".concat(type.uuid),
-        flexWrap: "wrap",
-        alignItems: "center"
-      }, getUsers(type).map(function (user, a) {
-        // return jsx
-        return /*#__PURE__*/React__default['default'].createElement(material.Tooltip, {
-          title: "".concat(type.label, ": ").concat(user.name),
-          key: "tag-".concat(type.uuid, "-").concat(user._id || user.id)
-        }, /*#__PURE__*/React__default['default'].createElement(material.Chip, {
-          label: user.name,
-          avatar: /*#__PURE__*/React__default['default'].createElement(DashupAvatar, {
-            image: user.image || user.avatar,
-            name: user.name
-          }),
-          onClick: function onClick(e) {
-            return setUserOpen({
-              type: type.uuid,
-              el: e.target
-            });
-          },
-          onDelete: function onDelete() {}
-        }));
-      }), /*#__PURE__*/React__default['default'].createElement(material.Tooltip, {
-        title: "Add ".concat(type.label)
-      }, /*#__PURE__*/React__default['default'].createElement(material.IconButton, {
+      return /*#__PURE__*/React__default['default'].createElement(material.Tooltip, {
+        title: "".concat(type.label, ": ").concat(user.name),
+        key: "tag-".concat(type.uuid, "-").concat(user._id || user.id)
+      }, /*#__PURE__*/React__default['default'].createElement(material.Chip, {
+        label: user.name,
+        avatar: /*#__PURE__*/React__default['default'].createElement(DashupAvatar, {
+          image: user.image || user.avatar,
+          name: user.name
+        }),
         onClick: function onClick(e) {
           return setUserOpen({
             type: type.uuid,
             el: e.target
           });
-        }
-      }, /*#__PURE__*/React__default['default'].createElement(DashupUIIcon, {
-        type: "fas",
-        icon: "user-plus",
-        fontSize: "small"
-      }))), /*#__PURE__*/React__default['default'].createElement(material.Menu, {
-        open: (userOpen === null || userOpen === void 0 ? void 0 : userOpen.type) === type.uuid,
-        onClose: function onClose() {
-          return setUserOpen(null);
         },
-        anchorEl: userOpen === null || userOpen === void 0 ? void 0 : userOpen.el,
-        MenuListProps: {
-          sx: {
-            width: 240
-          }
-        }
-      }, /*#__PURE__*/React__default['default'].createElement(View__default['default'], {
-        view: "input",
-        type: "field",
-        struct: "user",
-        dashup: data.dashup,
-        field: type,
-        value: props.item && props.item.get(type.name || type.uuid),
-        onChange: onUser,
-        isInline: true,
-        autoFocus: true
-      })));
-    }))), /*#__PURE__*/React__default['default'].createElement(material.Box, {
-      flex: 1
-    }, !!creating && /*#__PURE__*/React__default['default'].createElement(material.Box, {
-      py: 2
-    }, /*#__PURE__*/React__default['default'].createElement(lab.TabContext, {
-      value: chosenForm.get('_id')
-    }, /*#__PURE__*/React__default['default'].createElement(material.Box, {
-      sx: {
-        borderBottom: 1,
-        borderColor: 'divider'
+        onDelete: function onDelete() {}
+      }));
+    }), /*#__PURE__*/React__default['default'].createElement(material.Tooltip, {
+      title: "Add ".concat(type.label)
+    }, /*#__PURE__*/React__default['default'].createElement(material.IconButton, {
+      onClick: function onClick(e) {
+        return setUserOpen({
+          type: type.uuid,
+          el: e.target
+        });
       }
-    }, /*#__PURE__*/React__default['default'].createElement(lab.TabList, {
-      onChange: function onChange(e, v) {
-        return setForm(v);
-      }
-    }, forms.map(function (t, i) {
-      // return jsx
-      return /*#__PURE__*/React__default['default'].createElement(material.Tab, {
-        key: "tab-".concat(t.get('_id')),
-        value: t.get('_id'),
-        label: t.get('name')
-      });
-    }))), forms.map(function (t, i) {
-      // return jsx
-      return /*#__PURE__*/React__default['default'].createElement(lab.TabPanel, {
-        key: "tab-".concat(t.get('_id')),
-        value: t.get('_id').toLowerCase(),
+    }, /*#__PURE__*/React__default['default'].createElement(DashupUIIcon, {
+      type: "fas",
+      icon: "user-plus",
+      fontSize: "small"
+    }))), /*#__PURE__*/React__default['default'].createElement(material.Menu, {
+      open: (userOpen === null || userOpen === void 0 ? void 0 : userOpen.type) === type.uuid,
+      onClose: function onClose() {
+        return setUserOpen(null);
+      },
+      anchorEl: userOpen === null || userOpen === void 0 ? void 0 : userOpen.el,
+      MenuListProps: {
         sx: {
-          paddingLeft: 0,
-          paddingRight: 0
+          width: 240
         }
-      }, /*#__PURE__*/React__default['default'].createElement(DashupUIForm, _extends({}, data, {
-        id: page.get('_id'),
-        data: actualData,
-        fields: t.get('data.fields') || [],
-        setData: onData,
-        onSubmit: function onSubmit(e) {
-          return _onSubmit(e, t, data);
-        },
-        setPrevent: setPrevent
-      })));
-    })))), /*#__PURE__*/React__default['default'].createElement(material.Box, {
-      pt: 2,
-      flex: 0
-    }, /*#__PURE__*/React__default['default'].createElement(material.Stack, {
-      spacing: 1,
-      direction: "row",
+      }
+    }, /*#__PURE__*/React__default['default'].createElement(View__default['default'], {
+      view: "input",
+      type: "field",
+      struct: "user",
+      dashup: props.dashup,
+      field: type,
+      value: props.item && props.item.get(type.name || type.uuid),
+      onChange: onUser,
+      isInline: true,
+      autoFocus: true
+    })));
+  }))), /*#__PURE__*/React__default['default'].createElement(material.Box, {
+    flex: 1
+  }, !!creating && /*#__PURE__*/React__default['default'].createElement(material.Box, {
+    py: 2
+  }, /*#__PURE__*/React__default['default'].createElement(lab.TabContext, {
+    value: chosenForm.get('_id')
+  }, /*#__PURE__*/React__default['default'].createElement(material.Box, {
+    sx: {
+      borderBottom: 1,
+      borderColor: 'divider'
+    }
+  }, /*#__PURE__*/React__default['default'].createElement(material.Box, {
+    component: SimpleBar__default['default'],
+    width: "100%",
+    sx: {
+      '& .MuiTabs-root': {
+        overflow: 'visible!important'
+      },
+      '& .MuiTabs-scroller': {
+        overflow: 'visible!important'
+      }
+    }
+  }, /*#__PURE__*/React__default['default'].createElement(lab.TabList, {
+    onChange: function onChange(e, v) {
+      return setForm(v);
+    }
+  }, forms.map(function (t, i) {
+    // return jsx
+    return /*#__PURE__*/React__default['default'].createElement(material.Tab, {
+      key: "tab-".concat(t.get('_id')),
+      value: t.get('_id'),
+      label: t.get('name')
+    });
+  })))), forms.map(function (t, i) {
+    // return jsx
+    return /*#__PURE__*/React__default['default'].createElement(lab.TabPanel, {
+      key: "tab-".concat(t.get('_id')),
+      value: t.get('_id').toLowerCase(),
       sx: {
-        width: '100%'
+        paddingLeft: 0,
+        paddingRight: 0
+      }
+    }, /*#__PURE__*/React__default['default'].createElement(DashupUIForm, _extends({}, props, {
+      id: page.get('_id'),
+      data: actualData,
+      fields: t.get('data.fields') || [],
+      setData: onData,
+      onSubmit: function onSubmit(e) {
+        return _onSubmit(e, t);
       },
-      alignItems: "center"
-    }, !!props.item.get('_id') && /*#__PURE__*/React__default['default'].createElement(material.Tooltip, {
-      title: "Remove Item"
-    }, /*#__PURE__*/React__default['default'].createElement(material.IconButton, {
-      onClick: function onClick(e) {
-        return setRemoving(true);
-      }
-    }, /*#__PURE__*/React__default['default'].createElement(DashupUIIcon, {
-      type: "fas",
-      icon: "trash",
-      fontSize: "small"
-    }))), !!props.item.get('_id') && /*#__PURE__*/React__default['default'].createElement(material.Tooltip, {
-      title: "Create New"
-    }, /*#__PURE__*/React__default['default'].createElement(material.IconButton, {
-      onClick: function onClick(e) {
-        return onCreate(dashup);
-      }
-    }, /*#__PURE__*/React__default['default'].createElement(DashupUIIcon, {
-      type: "fas",
-      icon: "plus",
-      fontSize: "small"
-    }))), /*#__PURE__*/React__default['default'].createElement(material.Box, {
-      flex: 1,
-      textAlign: "right"
-    }, /*#__PURE__*/React__default['default'].createElement(lab.LoadingButton, {
-      color: "success",
-      variant: "contained",
-      onClick: function onClick(e) {
-        return _onSubmit(e, chosenForm, data);
-      },
-      disabled: !updated || prevent || submitting,
-      loading: submitting
-    }, submitting ? 'Submitting...' : 'Submit'))))), /*#__PURE__*/React__default['default'].createElement(material.Dialog, {
-      open: !!removing,
-      onClose: function onClose() {
-        return setRemoving(false);
-      }
-    }, /*#__PURE__*/React__default['default'].createElement(material.DialogTitle, null, "Confirm Remove"), /*#__PURE__*/React__default['default'].createElement(material.DialogContent, null, /*#__PURE__*/React__default['default'].createElement(material.DialogContentText, null, "Are you sure you want to remove this item?")), /*#__PURE__*/React__default['default'].createElement(material.DialogActions, null, /*#__PURE__*/React__default['default'].createElement(material.Button, {
-      onClick: function onClick() {
-        return setRemoving(false);
-      }
-    }, "Cancel"), /*#__PURE__*/React__default['default'].createElement(lab.LoadingButton, {
-      color: "error",
-      onClick: function onClick(e) {
-        return onRemove(e);
-      },
-      loading: submitting
-    }, "Remove"))), /*#__PURE__*/React__default['default'].createElement(material.Dialog, {
-      open: !!confirming,
-      onClose: function onClose() {
-        return setConfirming(false);
-      }
-    }, /*#__PURE__*/React__default['default'].createElement(material.DialogTitle, null, "Unsaved Changes"), /*#__PURE__*/React__default['default'].createElement(material.DialogContent, null, /*#__PURE__*/React__default['default'].createElement(material.DialogContentText, null, "You have unsaved changes, closing the modal will clear them.")), /*#__PURE__*/React__default['default'].createElement(material.DialogActions, null, /*#__PURE__*/React__default['default'].createElement(material.Button, {
-      onClick: function onClick() {
-        return setConfirming(false);
-      }
-    }, "Cancel"), /*#__PURE__*/React__default['default'].createElement(material.Button, {
-      color: "error",
-      onClick: function onClick(e) {
-        return onHide();
-      }
-    }, "Continue"))));
+      setPrevent: setPrevent
+    })));
+  })))), /*#__PURE__*/React__default['default'].createElement(material.Box, {
+    pt: 2,
+    flex: 0
+  }, /*#__PURE__*/React__default['default'].createElement(material.Stack, {
+    spacing: 1,
+    direction: "row",
+    sx: {
+      width: '100%'
+    },
+    alignItems: "center"
+  }, !!props.item.get('_id') && /*#__PURE__*/React__default['default'].createElement(material.Tooltip, {
+    title: "Remove Item"
+  }, /*#__PURE__*/React__default['default'].createElement(material.IconButton, {
+    onClick: function onClick(e) {
+      return setRemoving(true);
+    }
+  }, /*#__PURE__*/React__default['default'].createElement(DashupUIIcon, {
+    type: "fas",
+    icon: "trash",
+    fontSize: "small"
+  }))), !!props.item.get('_id') && /*#__PURE__*/React__default['default'].createElement(material.Tooltip, {
+    title: "Create New"
+  }, /*#__PURE__*/React__default['default'].createElement(material.IconButton, {
+    onClick: function onClick(e) {
+      return onCreate(dashup);
+    }
+  }, /*#__PURE__*/React__default['default'].createElement(DashupUIIcon, {
+    type: "fas",
+    icon: "plus",
+    fontSize: "small"
+  }))), /*#__PURE__*/React__default['default'].createElement(material.Box, {
+    flex: 1,
+    textAlign: "right"
+  }, /*#__PURE__*/React__default['default'].createElement(lab.LoadingButton, {
+    color: "success",
+    variant: "contained",
+    onClick: function onClick(e) {
+      return _onSubmit(e, chosenForm);
+    },
+    disabled: !props.saveEmpty && !updated || prevent || submitting,
+    loading: submitting
+  }, submitting ? 'Submitting...' : 'Submit'))))), /*#__PURE__*/React__default['default'].createElement(material.Dialog, {
+    open: !!removing,
+    onClose: function onClose() {
+      return setRemoving(false);
+    }
+  }, /*#__PURE__*/React__default['default'].createElement(material.DialogTitle, null, "Confirm Remove"), /*#__PURE__*/React__default['default'].createElement(material.DialogContent, null, /*#__PURE__*/React__default['default'].createElement(material.DialogContentText, null, "Are you sure you want to remove this item?")), /*#__PURE__*/React__default['default'].createElement(material.DialogActions, null, /*#__PURE__*/React__default['default'].createElement(material.Button, {
+    onClick: function onClick() {
+      return setRemoving(false);
+    }
+  }, "Cancel"), /*#__PURE__*/React__default['default'].createElement(lab.LoadingButton, {
+    color: "error",
+    onClick: function onClick(e) {
+      return onRemove(e);
+    },
+    loading: submitting
+  }, "Remove"))), /*#__PURE__*/React__default['default'].createElement(material.Dialog, {
+    open: !!confirming,
+    onClose: function onClose() {
+      return setConfirming(false);
+    }
+  }, /*#__PURE__*/React__default['default'].createElement(material.DialogTitle, null, "Unsaved Changes"), /*#__PURE__*/React__default['default'].createElement(material.DialogContent, null, /*#__PURE__*/React__default['default'].createElement(material.DialogContentText, null, "You have unsaved changes, closing the modal will clear them.")), /*#__PURE__*/React__default['default'].createElement(material.DialogActions, null, /*#__PURE__*/React__default['default'].createElement(material.Button, {
+    onClick: function onClick() {
+      return setConfirming(false);
+    }
+  }, "Cancel"), /*#__PURE__*/React__default['default'].createElement(material.Button, {
+    color: "error",
+    onClick: function onClick(e) {
+      return onHide();
+    }
+  }, "Continue"))));
+}; // wrapper
+
+
+var DashupUIPageItemWrapper = function DashupUIPageItemWrapper() {
+  var props = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+  // return jsx
+  return /*#__PURE__*/React__default['default'].createElement(DashupContext$5.Consumer, null, function (data) {
+    // return jsx
+    return /*#__PURE__*/React__default['default'].createElement(DashupUIPageItem, _extends({}, props, data));
   });
 }; // export default page menu
 
@@ -1485,13 +1540,24 @@ var Item = (function (ctx) {
   // use context
   DashupContext$5 = ctx; // return actual component
 
-  return DashupUIPageItem;
+  return DashupUIPageItemWrapper;
 });
 
 var loading = false;
-var DashupContext$4 = null; // create menu component
+var DashupContext$4 = null; // debounce
+
+var timeout;
+
+var debounce$5 = function debounce(fn) {
+  var to = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 500;
+  clearTimeout(timeout);
+  timeout = setTimeout(fn, to);
+}; // create menu component
+
 
 var DashupUIPageShare = function DashupUIPageShare() {
+  var _state;
+
   var props = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
 
   // use state
@@ -1523,12 +1589,14 @@ var DashupUIPageShare = function DashupUIPageShare() {
   var _useState11 = React.useState(null),
       _useState12 = _slicedToArray(_useState11, 2),
       removing = _useState12[0],
-      setRemoving = _useState12[1]; // get type
+      setRemoving = _useState12[1]; // set ref
 
+
+  var structRef = React.useRef(null); // get type
 
   var getType = function getType(struct, page) {
     // map
-    return ['Link', 'Marketplace'].filter(function (item) {
+    return ['Link', 'Embed', 'Marketplace'].filter(function (item) {
       var _struct$data;
 
       // check item
@@ -1562,45 +1630,48 @@ var DashupUIPageShare = function DashupUIPageShare() {
 
   var onSubmit = /*#__PURE__*/function () {
     var _ref = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee(page, dashup) {
-      var result, found;
+      var revert,
+          result,
+          _args = arguments;
       return regeneratorRuntime.wrap(function _callee$(_context) {
         while (1) {
           switch (_context.prev = _context.next) {
             case 0:
+              revert = _args.length > 2 && _args[2] !== undefined ? _args[2] : true;
               // loading
               setSaving(true); // get result
 
-              _context.next = 3;
+              _context.next = 4;
               return eden.router.post("/app/".concat(dashup.get('_id'), "/share/").concat(page.get('_id'), "/").concat(share.id ? "".concat(share.id, "/update") : 'create'), share);
 
-            case 3:
+            case 4:
               result = _context.sent;
 
               // push result
               if (result.success) {
-                // find
-                found = shares.find(function (s) {
-                  return s.id === result.data.id;
-                }); // check found
+                // set id
+                if (!share.id) {
+                  shares.push(share);
+                } // set to found
 
-                if (found) {
-                  // set to found
-                  Object.keys(result.data).forEach(function (key) {
-                    // update values
-                    found[key] = result.data[key];
-                  });
-                } else {
-                  // push
-                  shares.push(result.data);
-                }
+
+                Object.keys(result.data).forEach(function (key) {
+                  // update values
+                  share[key] = result.data[key];
+                });
               } // loading
 
 
               setShares(_toConsumableArray(shares));
               setSaving(false);
-              setSharing(null);
 
-            case 8:
+              if (revert) {
+                setSharing(null);
+              } else {
+                setSharing(_objectSpread2({}, share));
+              }
+
+            case 9:
             case "end":
               return _context.stop();
           }
@@ -1652,11 +1723,15 @@ var DashupUIPageShare = function DashupUIPageShare() {
   }(); // set share
 
 
-  var setShare = function setShare(key, value) {
+  var setShare = function setShare(key, value, page, dashup) {
     // set value
     share[key] = value; // set share
 
-    setSharing(_objectSpread2({}, share));
+    setSharing(_objectSpread2({}, share)); // debounce
+
+    debounce$5(function () {
+      return onSubmit(page, dashup, false);
+    });
   }; // get shares
 
 
@@ -1695,8 +1770,12 @@ var DashupUIPageShare = function DashupUIPageShare() {
 
       loading = false;
     });
-  }; // return JSX
+  }; // check is share
 
+
+  var isShare = !!((_state = (typeof eden === 'undefined' ? {} : eden).state) !== null && _state !== void 0 && _state.share); // check share
+
+  if (isShare) return null; // return JSX
 
   return /*#__PURE__*/React__default['default'].createElement(DashupContext$4.Consumer, null, function (_ref4) {
     var _struct$data2, _struct$data2$share;
@@ -1717,11 +1796,13 @@ var DashupUIPageShare = function DashupUIPageShare() {
       return f.name === 'categories';
     }); // get struct
 
-    var struct = page.get('type') && getPageStruct(page.get('type')); // return jsx
+    var struct = page.get('type') && getPageStruct(page.get('type')); // add to ref
+
+    structRef.current = struct; // return jsx
 
     return /*#__PURE__*/React__default['default'].createElement(React__default['default'].Fragment, null, /*#__PURE__*/React__default['default'].createElement(DashupUIModal, {
       open: !!props.show,
-      icon: page.get('icon') || struct.icon,
+      icon: page.get('icon') || (struct === null || struct === void 0 ? void 0 : struct.icon),
       page: page,
       title: page.get('name') || page.get('_id'),
       dashup: dashup,
@@ -1733,7 +1814,10 @@ var DashupUIPageShare = function DashupUIPageShare() {
     }, /*#__PURE__*/React__default['default'].createElement(material.Stack, {
       spacing: 1
     }, !!(struct !== null && struct !== void 0 && (_struct$data2 = struct.data) !== null && _struct$data2 !== void 0 && (_struct$data2$share = _struct$data2.share) !== null && _struct$data2$share !== void 0 && _struct$data2$share.pages) && /*#__PURE__*/React__default['default'].createElement(React__default['default'].Fragment, null, /*#__PURE__*/React__default['default'].createElement(material.Alert, {
-      severity: "info"
+      severity: "info",
+      sx: {
+        mb: 1
+      }
     }, "The following pages will also be shared."), getShares(dashup, page, struct.data.share.pages).map(function (sPage) {
       // get color
       var color = sPage.get('color'); // return jsx
@@ -1755,7 +1839,7 @@ var DashupUIPageShare = function DashupUIPageShare() {
             }
           }, /*#__PURE__*/React__default['default'].createElement(DashupUIIcon, {
             type: "fas",
-            icon: "plus",
+            icon: sPage.get('icon') || 'plus',
             fixedWidth: true
           })))
         }
@@ -1764,12 +1848,12 @@ var DashupUIPageShare = function DashupUIPageShare() {
       py: 2
     }, /*#__PURE__*/React__default['default'].createElement(material.Divider, null))), /*#__PURE__*/React__default['default'].createElement(material.TextField, {
       label: "Share Type",
-      value: share.type,
+      value: share.type || '',
       select: true,
       onChange: function onChange(e) {
         var _e$target;
 
-        return setShare('type', (_e$target = e.target) === null || _e$target === void 0 ? void 0 : _e$target.value);
+        return setShare('type', (_e$target = e.target) === null || _e$target === void 0 ? void 0 : _e$target.value, page, dashup);
       },
       fullWidth: true
     }, getType(struct, page).map(function (option) {
@@ -1779,11 +1863,22 @@ var DashupUIPageShare = function DashupUIPageShare() {
       }, option.label);
     })), /*#__PURE__*/React__default['default'].createElement(material.TextField, {
       label: "Share Name",
-      value: share.name,
+      value: share.name || '',
       onChange: function onChange(e) {
         var _e$target2;
 
-        return setShare('name', (_e$target2 = e.target) === null || _e$target2 === void 0 ? void 0 : _e$target2.value);
+        return setShare('name', (_e$target2 = e.target) === null || _e$target2 === void 0 ? void 0 : _e$target2.value, page, dashup);
+      },
+      fullWidth: true
+    }), /*#__PURE__*/React__default['default'].createElement(material.TextField, {
+      rows: 4,
+      label: "Share Description",
+      value: share.description || '',
+      multiline: true,
+      onChange: function onChange(e) {
+        var _e$target3;
+
+        return setShare('description', (_e$target3 = e.target) === null || _e$target3 === void 0 ? void 0 : _e$target3.value, page, dashup);
       },
       fullWidth: true
     }), share.type === 'marketplace' && /*#__PURE__*/React__default['default'].createElement(React__default['default'].Fragment, null, /*#__PURE__*/React__default['default'].createElement(material.Box, {
@@ -1803,7 +1898,7 @@ var DashupUIPageShare = function DashupUIPageShare() {
       value: share.image,
       dashup: dashup,
       onChange: function onChange(f, val) {
-        return setShare('image', val);
+        return setShare('image', val, page, dashup);
       },
       setPrevent: setPrevent
     }), !!categories && /*#__PURE__*/React__default['default'].createElement(View__default['default'], {
@@ -1815,23 +1910,44 @@ var DashupUIPageShare = function DashupUIPageShare() {
       value: share.categories,
       dashup: dashup,
       onChange: function onChange(f, val) {
-        return setShare('categories', val);
+        return setShare('categories', val, page, dashup);
       }
-    }), /*#__PURE__*/React__default['default'].createElement(View__default['default'], {
-      type: "field",
-      view: "input",
-      struct: "textarea",
-      field: {
-        uuid: 'description',
-        label: 'Description'
-      },
-      item: new dashup.Model(),
-      value: share.description,
-      dashup: dashup,
-      onChange: function onChange(f, val) {
-        return setShare('description', val);
+    })), !!['embed', 'link'].includes(share.type) && /*#__PURE__*/React__default['default'].createElement(React__default['default'].Fragment, null, !!share.slug && /*#__PURE__*/React__default['default'].createElement(React__default['default'].Fragment, null, /*#__PURE__*/React__default['default'].createElement(material.Box, {
+      py: 2
+    }, /*#__PURE__*/React__default['default'].createElement(material.Divider, null)), /*#__PURE__*/React__default['default'].createElement(material.TextField, {
+      label: "Share URL",
+      value: "https://".concat(eden.get('config.domain'), "/share/").concat(share.slug),
+      fullWidth: true,
+      InputProps: {
+        readOnly: true
       }
-    })))) : /*#__PURE__*/React__default['default'].createElement(material.Box, {
+    })), /*#__PURE__*/React__default['default'].createElement(material.Box, {
+      py: 2
+    }, /*#__PURE__*/React__default['default'].createElement(material.Divider, null)), /*#__PURE__*/React__default['default'].createElement(material.FormGroup, null, /*#__PURE__*/React__default['default'].createElement(material.FormControlLabel, {
+      control: /*#__PURE__*/React__default['default'].createElement(material.Switch, {
+        checked: !!share.disableMenu,
+        onChange: function onChange(e) {
+          return setShare('disableMenu', !!e.target.checked, page, dashup);
+        }
+      }),
+      label: "Disable Menu"
+    }), /*#__PURE__*/React__default['default'].createElement(material.FormControlLabel, {
+      control: /*#__PURE__*/React__default['default'].createElement(material.Switch, {
+        checked: !!share.disableFilter,
+        onChange: function onChange(e) {
+          return setShare('disableFilter', !!e.target.checked, page, dashup);
+        }
+      }),
+      label: "Disable Filter"
+    }), /*#__PURE__*/React__default['default'].createElement(material.FormControlLabel, {
+      control: /*#__PURE__*/React__default['default'].createElement(material.Switch, {
+        checked: !!share.disablePadding,
+        onChange: function onChange(e) {
+          return setShare('disablePadding', !!e.target.checked, page, dashup);
+        }
+      }),
+      label: "Disable Padding"
+    }))))) : /*#__PURE__*/React__default['default'].createElement(material.Box, {
       flex: 1,
       py: 2
     }, (shares || []).length ? (shares || []).map(function (share, i) {
@@ -1865,6 +1981,8 @@ var DashupUIPageShare = function DashupUIPageShare() {
           }))),
           endAdornment: /*#__PURE__*/React__default['default'].createElement(React__default['default'].Fragment, null, /*#__PURE__*/React__default['default'].createElement(material.InputAdornment, {
             position: "end"
+          }, /*#__PURE__*/React__default['default'].createElement(material.Tooltip, {
+            title: "Remove Share"
           }, /*#__PURE__*/React__default['default'].createElement(material.IconButton, {
             color: "error",
             onClick: function onClick(e) {
@@ -1874,8 +1992,10 @@ var DashupUIPageShare = function DashupUIPageShare() {
             type: "fas",
             icon: "trash",
             fixedWidth: true
-          }))), /*#__PURE__*/React__default['default'].createElement(material.InputAdornment, {
+          })))), /*#__PURE__*/React__default['default'].createElement(material.InputAdornment, {
             position: "end"
+          }, /*#__PURE__*/React__default['default'].createElement(material.Tooltip, {
+            title: "Share Config"
           }, /*#__PURE__*/React__default['default'].createElement(material.IconButton, {
             onClick: function onClick(e) {
               return setSharing(share);
@@ -1884,7 +2004,7 @@ var DashupUIPageShare = function DashupUIPageShare() {
             type: "fas",
             icon: "ellipsis-h",
             fixedWidth: true
-          }))))
+          })))))
         }
       });
     }) : /*#__PURE__*/React__default['default'].createElement(material.Box, {
@@ -1921,7 +2041,7 @@ var DashupUIPageShare = function DashupUIPageShare() {
       onClick: function onClick() {
         return setSharing(null);
       }
-    }, "Cancel"), share ? /*#__PURE__*/React__default['default'].createElement(lab.LoadingButton, {
+    }, "Back"), share ? /*#__PURE__*/React__default['default'].createElement(lab.LoadingButton, {
       color: "success",
       variant: "contained",
       disabled: prevent || saving,
@@ -1987,6 +2107,8 @@ var debounce$4 = function debounce(func) {
 
 
 var DashupUIPageFilter = function DashupUIPageFilter() {
+  var _state, _state$share;
+
   var props = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
 
   // state
@@ -2027,10 +2149,12 @@ var DashupUIPageFilter = function DashupUIPageFilter() {
     return fields.filter(function (f) {
       return (props.tags || page.get('data.tag') || []).includes(f.uuid);
     });
-  }; // return JSX
+  }; // disable menu
 
 
-  return /*#__PURE__*/React__default['default'].createElement(DashupContext$3.Consumer, null, function (_ref) {
+  var disableFilter = !!((_state = (typeof eden !== 'undefined' ? eden : {}).state) !== null && _state !== void 0 && (_state$share = _state.share) !== null && _state$share !== void 0 && _state$share.disableFilter); // return JSX
+
+  return disableFilter ? null : /*#__PURE__*/React__default['default'].createElement(DashupContext$3.Consumer, null, function (_ref) {
     var _eden, _eden$user;
 
     var page = _ref.page,
@@ -2262,9 +2386,18 @@ var Filter = (function (ctx) {
 var DashupContext$2 = null; // create menu component
 
 var DashupUIPageConfig = function DashupUIPageConfig() {
-  var props = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+  var _props$page, _props$missingRequire, _struct$data, _struct$data2, _struct$data3, _struct$data3$default, _struct$data4, _struct$data4$default, _struct$data5;
 
-  // tabs
+  var props = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+  // destruct
+  var type = props.type,
+      page = props.page,
+      dashup = props.dashup,
+      setPage = props.setPage,
+      getPageStruct = props.getPageStruct; // get struct
+
+  var struct = getPageStruct(); // tabs
+
   var _useState = React.useState(null),
       _useState2 = _slicedToArray(_useState, 2),
       tab = _useState2[0],
@@ -2283,157 +2416,264 @@ var DashupUIPageConfig = function DashupUIPageConfig() {
   var _useState7 = React.useState(false),
       _useState8 = _slicedToArray(_useState7, 2),
       colorMenu = _useState8[0],
-      setColorMenu = _useState8[1]; // ref
+      setColorMenu = _useState8[1];
+
+  var _useState9 = React.useState(false),
+      _useState10 = _slicedToArray(_useState9, 2),
+      importing = _useState10[0],
+      setImporting = _useState10[1];
+
+  var _useState11 = React.useState(!!(!Object.keys((_props$page = props.page) === null || _props$page === void 0 ? void 0 : _props$page.get('data')).length && (_props$missingRequire = props.missingRequire) !== null && _props$missingRequire !== void 0 && _props$missingRequire.length && struct !== null && struct !== void 0 && (_struct$data = struct.data) !== null && _struct$data !== void 0 && _struct$data["default"])),
+      _useState12 = _slicedToArray(_useState11, 2),
+      defaulting = _useState12[0],
+      setDefaulting = _useState12[1]; // ref
 
 
-  var colorRef = React.useRef(null); // return JSX
+  var colorRef = React.useRef(null); // on import
 
-  return /*#__PURE__*/React__default['default'].createElement(DashupContext$2.Consumer, null, function (data) {
-    var _struct$data;
+  var onImport = /*#__PURE__*/function () {
+    var _ref = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee(e) {
+      var _yield$eden$router$po, data;
 
-    // destruct
-    var type = data.type,
-        page = data.page,
-        dashup = data.dashup,
-        setPage = data.setPage,
-        getPageStruct = data.getPageStruct; // get struct
+      return regeneratorRuntime.wrap(function _callee$(_context) {
+        while (1) {
+          switch (_context.prev = _context.next) {
+            case 0:
+              // prevent default
+              e.preventDefault();
+              e.stopPropagation(); // loading
 
-    var struct = getPageStruct(); // check struct
+              setImporting(true); // load from url
 
-    if (!struct) return null; // tabs
+              _context.next = 5;
+              return eden.router.post("/api/".concat(dashup.get('_id'), "/page/").concat(page.get('_id'), "/default"), {
+                "default": struct.data["default"],
+                section: dashup.get('section') ? dashup.get('section').get('_id') : null
+              });
 
-    var tabs = ((_struct$data = struct.data) === null || _struct$data === void 0 ? void 0 : _struct$data.tabs) || ['Config', 'Connects']; // check tab
+            case 5:
+              _yield$eden$router$po = _context.sent;
+              data = _yield$eden$router$po.data;
+              // replace info
+              props.dashup.set('pages', data.pages); // exported
 
-    if (!tab) tab = "".concat(tabs[0]).toLowerCase(); // return jsx
+              setImporting(false);
+              setDefaulting(false); // hide
 
-    return /*#__PURE__*/React__default['default'].createElement(React__default['default'].Fragment, null, /*#__PURE__*/React__default['default'].createElement(DashupUIModal, {
-      open: !!props.show,
-      icon: page.get('icon') || (struct === null || struct === void 0 ? void 0 : struct.icon),
-      page: page,
-      title: page.get('name') || page.get('_id'),
-      dashup: dashup,
-      thread: "".concat(page.get('_id')),
-      onClose: props.onHide || props.onClose
-    }, /*#__PURE__*/React__default['default'].createElement(material.Box, {
-      pt: 4,
-      pb: 2
-    }, /*#__PURE__*/React__default['default'].createElement(material.Stack, {
-      spacing: 2
-    }, /*#__PURE__*/React__default['default'].createElement(material.Stack, {
-      direction: "row",
-      spacing: 2
-    }, /*#__PURE__*/React__default['default'].createElement(material.Button, {
-      ref: colorRef,
-      variant: "contained",
-      onClick: function onClick() {
-        return setColorMenu(true);
-      },
-      sx: {
-        color: page.get('color.hex') && theme.palette.getContrastText(page.get('color.hex')),
-        backgroundColor: page.get('color.hex')
-      }
-    }, /*#__PURE__*/React__default['default'].createElement(DashupUIIcon, {
-      icon: page.get('icon') || 'pencil',
-      fixedWidth: true
-    })), /*#__PURE__*/React__default['default'].createElement(material.TextField, {
-      label: "Name",
-      onChange: function onChange(e) {
-        return setPage('name', e.target.value);
-      },
-      defaultValue: page.get('name'),
-      fullWidth: true
-    })), /*#__PURE__*/React__default['default'].createElement(material.TextField, {
-      rows: 4,
-      label: "Description",
-      onChange: function onChange(e) {
-        return setPage('description', e.target.value);
-      },
-      defaultValue: page.get('description'),
-      fullWidth: true,
-      multiline: true
-    }))), /*#__PURE__*/React__default['default'].createElement(material.Box, {
-      pt: 2,
-      flex: 1,
-      display: "flex",
-      flexDirection: "column"
-    }, /*#__PURE__*/React__default['default'].createElement(lab.TabContext, {
-      value: tab
-    }, /*#__PURE__*/React__default['default'].createElement(material.Box, {
-      sx: {
-        borderBottom: 1,
-        borderColor: 'divider'
-      }
-    }, /*#__PURE__*/React__default['default'].createElement(lab.TabList, {
-      onChange: function onChange(e, v) {
-        return setTab(v.toLowerCase());
-      }
-    }, tabs.map(function (t, i) {
-      // return jsx
-      return /*#__PURE__*/React__default['default'].createElement(material.Tab, {
-        key: "tab-".concat(t),
-        value: t.toLowerCase(),
-        label: t
-      });
-    }))), tabs.map(function (t, i) {
-      // return jsx
-      return /*#__PURE__*/React__default['default'].createElement(lab.TabPanel, {
-        key: "tab-".concat(t),
-        value: t.toLowerCase(),
-        sx: {
-          flex: 1,
-          paddingLeft: 0,
-          paddingRight: 0,
-          paddingBottom: 0
+              (props.onClose || props.onHide)(); // refresh
+
+              props.onRefresh();
+
+            case 12:
+            case "end":
+              return _context.stop();
+          }
         }
-      }, "".concat(tab).toLowerCase() === 'connects' ? /*#__PURE__*/React__default['default'].createElement(DashupUIPage.Connect, {
-        page: page,
-        dashup: dashup
-      }) : props[tab] || /*#__PURE__*/React__default['default'].createElement(View__default['default'], _objectSpread2(_objectSpread2({}, data), {}, {
-        type: 'page',
-        view: "".concat(tab).toLowerCase(),
-        struct: type
-      })));
-    })))), /*#__PURE__*/React__default['default'].createElement(material.Menu, {
-      open: !!colorMenu,
-      onClose: function onClose() {
-        return setColorMenu(null);
-      },
-      anchorEl: colorRef === null || colorRef === void 0 ? void 0 : colorRef.current
-    }, /*#__PURE__*/React__default['default'].createElement(material.MenuItem, {
-      onClick: function onClick(e) {
-        return !setIcon(true) && setColorMenu(false);
-      }
-    }, /*#__PURE__*/React__default['default'].createElement(material.ListItemIcon, null, /*#__PURE__*/React__default['default'].createElement(DashupUIIcon, {
-      icon: page.get('icon') || 'pencil'
-    })), /*#__PURE__*/React__default['default'].createElement(material.ListItemText, null, "Change Icon")), /*#__PURE__*/React__default['default'].createElement(material.MenuItem, {
-      onClick: function onClick(e) {
-        return !setColor(true) && setColorMenu(false);
-      }
-    }, /*#__PURE__*/React__default['default'].createElement(material.ListItemIcon, null, /*#__PURE__*/React__default['default'].createElement(DashupUIIcon, {
-      type: "fas",
-      icon: "tint"
-    })), /*#__PURE__*/React__default['default'].createElement(material.ListItemText, null, "Change Color"))), !!icon && /*#__PURE__*/React__default['default'].createElement(DashupUIIconPicker, {
-      target: colorRef,
-      show: true,
-      icon: page.get('icon'),
-      onClose: function onClose() {
-        return setIcon(false);
-      },
-      onChange: function onChange(icon) {
-        return setPage('icon', icon);
-      }
-    }), !!color && /*#__PURE__*/React__default['default'].createElement(DashupUIColor, {
-      target: colorRef,
-      show: true,
-      color: page.get('color.hex') || 'transparent',
-      colors: Object.values(colors),
-      onClose: function onClose() {
-        return setColor(false);
-      },
-      onChange: function onChange(hex) {
-        return setPage('color', hex.hex === 'transparent' ? null : hex);
-      }
+      }, _callee);
     }));
+
+    return function onImport(_x) {
+      return _ref.apply(this, arguments);
+    };
+  }(); // check struct
+
+
+  if (!struct) return null; // tabs
+
+  var tabs = ((_struct$data2 = struct.data) === null || _struct$data2 === void 0 ? void 0 : _struct$data2.tabs) || ['Config', 'Connects']; // check tab
+
+  if (!tab) tab = "".concat(tabs[0]).toLowerCase(); // return jsx
+
+  return /*#__PURE__*/React__default['default'].createElement(React__default['default'].Fragment, null, /*#__PURE__*/React__default['default'].createElement(DashupUIModal, {
+    open: !!props.show,
+    icon: page.get('icon') || (struct === null || struct === void 0 ? void 0 : struct.icon),
+    page: page,
+    title: page.get('name') || page.get('_id'),
+    dashup: dashup,
+    thread: "".concat(page.get('_id')),
+    onClose: props.onHide || props.onClose
+  }, /*#__PURE__*/React__default['default'].createElement(material.Box, {
+    pt: 4,
+    pb: 2
+  }, /*#__PURE__*/React__default['default'].createElement(material.Stack, {
+    spacing: 2
+  }, /*#__PURE__*/React__default['default'].createElement(material.Stack, {
+    direction: "row",
+    spacing: 2
+  }, /*#__PURE__*/React__default['default'].createElement(material.Button, {
+    ref: colorRef,
+    variant: "contained",
+    onClick: function onClick() {
+      return setColorMenu(true);
+    },
+    sx: {
+      color: page.get('color.hex') && theme.palette.getContrastText(page.get('color.hex')),
+      backgroundColor: page.get('color.hex')
+    }
+  }, /*#__PURE__*/React__default['default'].createElement(DashupUIIcon, {
+    icon: page.get('icon') || 'pencil',
+    fixedWidth: true
+  })), /*#__PURE__*/React__default['default'].createElement(material.TextField, {
+    label: "Name",
+    onChange: function onChange(e) {
+      return setPage('name', e.target.value);
+    },
+    defaultValue: page.get('name'),
+    fullWidth: true
+  })), /*#__PURE__*/React__default['default'].createElement(material.TextField, {
+    rows: 4,
+    label: "Description",
+    onChange: function onChange(e) {
+      return setPage('description', e.target.value);
+    },
+    defaultValue: page.get('description'),
+    fullWidth: true,
+    multiline: true
+  }))), defaulting ? /*#__PURE__*/React__default['default'].createElement(material.Box, {
+    display: "flex",
+    flex: 1,
+    flexDirection: "column",
+    pt: 2
+  }, /*#__PURE__*/React__default['default'].createElement(material.Typography, {
+    variant: "h5",
+    gutterBottom: true
+  }, (_struct$data3 = struct.data) === null || _struct$data3 === void 0 ? void 0 : (_struct$data3$default = _struct$data3["default"]) === null || _struct$data3$default === void 0 ? void 0 : _struct$data3$default.title), /*#__PURE__*/React__default['default'].createElement(material.Box, {
+    my: 2
+  }, /*#__PURE__*/React__default['default'].createElement(material.Divider, null)), (_struct$data4 = struct.data) === null || _struct$data4 === void 0 ? void 0 : (_struct$data4$default = _struct$data4["default"]) === null || _struct$data4$default === void 0 ? void 0 : _struct$data4$default.pages.map(function (sPage) {
+    // return jsx
+    return /*#__PURE__*/React__default['default'].createElement(material.TextField, {
+      key: sPage._id,
+      label: sPage.type,
+      value: sPage.name,
+      readOnly: true,
+      fullWidth: true,
+      InputProps: {
+        startAdornment: /*#__PURE__*/React__default['default'].createElement(material.InputAdornment, {
+          position: "start"
+        }, /*#__PURE__*/React__default['default'].createElement(material.IconButton, null, /*#__PURE__*/React__default['default'].createElement(DashupUIIcon, {
+          icon: sPage.icon,
+          fixedWidth: true
+        })))
+      }
+    });
+  })) : /*#__PURE__*/React__default['default'].createElement(material.Box, {
+    pt: 2,
+    flex: 1,
+    display: "flex",
+    flexDirection: "column"
+  }, /*#__PURE__*/React__default['default'].createElement(lab.TabContext, {
+    value: tab
+  }, /*#__PURE__*/React__default['default'].createElement(material.Box, {
+    sx: {
+      borderBottom: 1,
+      borderColor: 'divider'
+    }
+  }, /*#__PURE__*/React__default['default'].createElement(lab.TabList, {
+    onChange: function onChange(e, v) {
+      return setTab(v.toLowerCase());
+    }
+  }, tabs.map(function (t, i) {
+    // return jsx
+    return /*#__PURE__*/React__default['default'].createElement(material.Tab, {
+      key: "tab-".concat(t),
+      value: t.toLowerCase(),
+      label: t
+    });
+  }))), tabs.map(function (t, i) {
+    // return jsx
+    return /*#__PURE__*/React__default['default'].createElement(lab.TabPanel, {
+      key: "tab-".concat(t),
+      value: t.toLowerCase(),
+      sx: {
+        flex: 1,
+        paddingLeft: 0,
+        paddingRight: 0,
+        paddingBottom: 0
+      }
+    }, "".concat(tab).toLowerCase() === 'connects' ? /*#__PURE__*/React__default['default'].createElement(DashupUIPage.Connect, {
+      page: page,
+      dashup: dashup
+    }) : props[tab] || /*#__PURE__*/React__default['default'].createElement(View__default['default'], _objectSpread2(_objectSpread2({}, props), {}, {
+      type: 'page',
+      view: "".concat(tab).toLowerCase(),
+      struct: type
+    })));
+  }))), !!(props.missingRequire || []).length && (struct === null || struct === void 0 ? void 0 : (_struct$data5 = struct.data) === null || _struct$data5 === void 0 ? void 0 : _struct$data5["default"]) && /*#__PURE__*/React__default['default'].createElement(material.Box, {
+    display: "flex",
+    flex: 0,
+    justifyContent: "flex-end",
+    pt: 2
+  }, defaulting ? /*#__PURE__*/React__default['default'].createElement(material.Button, {
+    onClick: function onClick(e) {
+      return setDefaulting(false);
+    }
+  }, "Cancel") : /*#__PURE__*/React__default['default'].createElement(material.Button, {
+    variant: "contained",
+    color: "info",
+    onClick: function onClick(e) {
+      return setDefaulting(true);
+    }
+  }, "Use Default Pages"), !!defaulting && /*#__PURE__*/React__default['default'].createElement(lab.LoadingButton, {
+    sx: {
+      ml: 2
+    },
+    onClick: function onClick(e) {
+      return onImport(e);
+    },
+    disabled: !!importing,
+    loading: !!importing,
+    variant: "contained",
+    color: "primary"
+  }, importing ? 'Importing...' : 'Use Default Pages'))), /*#__PURE__*/React__default['default'].createElement(material.Menu, {
+    open: !!colorMenu,
+    onClose: function onClose() {
+      return setColorMenu(null);
+    },
+    anchorEl: colorRef === null || colorRef === void 0 ? void 0 : colorRef.current
+  }, /*#__PURE__*/React__default['default'].createElement(material.MenuItem, {
+    onClick: function onClick(e) {
+      return !setIcon(true) && setColorMenu(false);
+    }
+  }, /*#__PURE__*/React__default['default'].createElement(material.ListItemIcon, null, /*#__PURE__*/React__default['default'].createElement(DashupUIIcon, {
+    icon: page.get('icon') || 'pencil'
+  })), /*#__PURE__*/React__default['default'].createElement(material.ListItemText, null, "Change Icon")), /*#__PURE__*/React__default['default'].createElement(material.MenuItem, {
+    onClick: function onClick(e) {
+      return !setColor(true) && setColorMenu(false);
+    }
+  }, /*#__PURE__*/React__default['default'].createElement(material.ListItemIcon, null, /*#__PURE__*/React__default['default'].createElement(DashupUIIcon, {
+    type: "fas",
+    icon: "tint"
+  })), /*#__PURE__*/React__default['default'].createElement(material.ListItemText, null, "Change Color"))), !!icon && /*#__PURE__*/React__default['default'].createElement(DashupUIIconPicker, {
+    target: colorRef,
+    show: true,
+    icon: page.get('icon'),
+    onClose: function onClose() {
+      return setIcon(false);
+    },
+    onChange: function onChange(icon) {
+      return setPage('icon', icon);
+    }
+  }), !!color && /*#__PURE__*/React__default['default'].createElement(DashupUIColor, {
+    target: colorRef,
+    show: true,
+    color: page.get('color.hex') || 'transparent',
+    colors: Object.values(colors),
+    onClose: function onClose() {
+      return setColor(false);
+    },
+    onChange: function onChange(hex) {
+      return setPage('color', hex.hex === 'transparent' ? null : hex);
+    }
+  }));
+}; // return wrap
+
+
+var DashupUIPageConfigWrap = function DashupUIPageConfigWrap() {
+  var props = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+  // return jsx
+  return /*#__PURE__*/React__default['default'].createElement(DashupContext$2.Consumer, null, function (data) {
+    // return jsx
+    return /*#__PURE__*/React__default['default'].createElement(DashupUIPageConfig, _extends({}, data, props));
   });
 }; // export default page menu
 
@@ -2442,7 +2682,7 @@ var Config$1 = (function (ctx) {
   // use context
   DashupContext$2 = ctx; // return actual component
 
-  return DashupUIPageConfig;
+  return DashupUIPageConfigWrap;
 });
 
 var commonjsGlobal = typeof globalThis !== 'undefined' ? globalThis : typeof window !== 'undefined' ? window : typeof global !== 'undefined' ? global : typeof self !== 'undefined' ? self : {};
@@ -3153,26 +3393,16 @@ var Connect = (function (ctx) {
 var DashupUIContext$8 = /*#__PURE__*/React.createContext({}); // create page base
 
 var DashupUIPage = function DashupUIPage() {
-  var _struct$data;
-
   var props = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
 
-  // set config
+  // state
   var _useState = React.useState(false),
       _useState2 = _slicedToArray(_useState, 2),
-      config = _useState2[0],
-      setConfig = _useState2[1];
+      refreshing = _useState2[0],
+      setRefreshing = _useState2[1]; // state
 
-  var _useState3 = React.useState(false),
-      _useState4 = _slicedToArray(_useState3, 2),
-      importing = _useState4[0],
-      setImporting = _useState4[1];
 
-  var _useState5 = React.useState(false),
-      _useState6 = _slicedToArray(_useState5, 2),
-      defaulted = _useState6[0],
-      setDefaulted = _useState6[1]; // get color
-
+  var shownConfig = React.useRef(false); // get color
 
   var getColor = function getColor() {
     // return light
@@ -3188,6 +3418,33 @@ var DashupUIPage = function DashupUIPage() {
 
 
     return color;
+  }; // has all default values
+
+
+  var missingRequire = function missingRequire() {
+    // check required
+    var _props$require = props.require,
+        require = _props$require === void 0 ? [] : _props$require; // get require
+
+
+    var filtered = require.filter(function (r) {
+      return !props.page.get(r.key);
+    }); // missing require
+
+
+    return filtered;
+  }; // on refresh
+
+
+  var onRefresh = function onRefresh() {
+    var to = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 200;
+    // set refreshing
+    setRefreshing(true); // done
+
+    setTimeout(function () {
+      setRefreshing(false);
+      updateCtx();
+    }, to);
   }; // get ctx
 
 
@@ -3207,11 +3464,16 @@ var DashupUIPage = function DashupUIPage() {
       centered: props.centered,
       available: props.available,
       // on logic
+      onShare: props.onShare,
+      onConfig: props.onConfig,
       onSearch: props.onSearch,
+      onRefresh: props.onRefresh || onRefresh,
       // set methods
       setData: props.setData,
       setUser: props.setUser,
       setPage: props.setPage,
+      // render body
+      missingRequire: missingRequire(),
       // get logic
       getField: props.getField,
       getForms: props.getForms,
@@ -3234,10 +3496,10 @@ var DashupUIPage = function DashupUIPage() {
   }; // create context
 
 
-  var _useState7 = React.useState(getCtx()),
-      _useState8 = _slicedToArray(_useState7, 2),
-      ctx = _useState8[0],
-      setCtx = _useState8[1]; // add listeners
+  var _useState3 = React.useState(getCtx()),
+      _useState4 = _slicedToArray(_useState3, 2),
+      ctx = _useState4[0],
+      setCtx = _useState4[1]; // add listeners
 
 
   React.useEffect(function () {
@@ -3264,140 +3526,24 @@ var DashupUIPage = function DashupUIPage() {
       props.page.removeListener('color', updateCtx);
       props.dashup.removeListener('active', updateCtx);
     };
-  }, [props.page && props.page.get('_id')]); // has all default values
+  }, [props.page && props.page.get('_id')]); // missing require
 
-  var missingRequire = function missingRequire() {
-    // check required
-    var _props$require = props.require,
-        require = _props$require === void 0 ? [] : _props$require; // get require
+  React.useEffect(function () {
+    // shown config
+    if (shownConfig.current) return; // check missing require
 
+    if (!ctx.onConfig) return; // if missing require
 
-    var filtered = require.filter(function (r) {
-      return !props.page.get(r.key);
-    }); // missing require
+    if (!missingRequire().length) return; // show config
 
+    ctx.onConfig(); // set true
 
-    return filtered.length ? filtered : false;
-  }; // struct
-
-
-  var struct = props.getPageStruct && props.getPageStruct(); // on import
-
-  var onImport = /*#__PURE__*/function () {
-    var _ref = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee(e) {
-      var _yield$eden$router$po, data;
-
-      return regeneratorRuntime.wrap(function _callee$(_context) {
-        while (1) {
-          switch (_context.prev = _context.next) {
-            case 0:
-              // prevent default
-              e.preventDefault();
-              e.stopPropagation(); // loading
-
-              setImporting(true); // load from url
-
-              _context.next = 5;
-              return eden.router.post("/api/".concat(props.dashup.get('_id'), "/page/").concat(props.page.get('_id'), "/default"), {
-                "default": struct.data["default"],
-                section: props.dashup.get('section') ? props.dashup.get('section').get('_id') : null
-              });
-
-            case 5:
-              _yield$eden$router$po = _context.sent;
-              data = _yield$eden$router$po.data;
-              // replace info
-              props.dashup.set('pages', data.pages); // exported
-
-              setConfig(false);
-              setDefaulted(false);
-              setImporting(false);
-
-            case 11:
-            case "end":
-              return _context.stop();
-          }
-        }
-      }, _callee);
-    }));
-
-    return function onImport(_x) {
-      return _ref.apply(this, arguments);
-    };
-  }(); // return page
-
+    shownConfig.current = true;
+  }, [ctx.onConfig, missingRequire()]); // return page
 
   return /*#__PURE__*/React__default['default'].createElement(DashupUIContext$8.Provider, {
     value: ctx
-  }, missingRequire() ? /*#__PURE__*/React__default['default'].createElement(material.Box, {
-    flex: 1,
-    display: "flex",
-    flexDirection: "column",
-    sx: ctx.centered ? {
-      height: '100vh'
-    } : {}
-  }, /*#__PURE__*/React__default['default'].createElement(DashupUIPage.Menu, {
-    onConfig: function onConfig(e) {
-      return setConfig(true);
-    }
-  }), struct !== null && struct !== void 0 && (_struct$data = struct.data) !== null && _struct$data !== void 0 && _struct$data["default"] && !defaulted ? /*#__PURE__*/React__default['default'].createElement(DashupUIPage.Config, {
-    show: !!(config || missingRequire()),
-    onHide: function onHide(e) {
-      return !setConfig(false) && setDefaulted(true);
-    }
-  }, /*#__PURE__*/React__default['default'].createElement("div", {
-    className: "card-body flex-0"
-  }, struct.data["default"].title), /*#__PURE__*/React__default['default'].createElement("div", {
-    className: "card-body flex-1"
-  }, (struct.data["default"].pages || []).map(function (page, i) {
-    // return jsx
-    return /*#__PURE__*/React__default['default'].createElement("div", {
-      key: "page-".concat(i),
-      className: "card card-permission mb-2"
-    }, /*#__PURE__*/React__default['default'].createElement("div", {
-      className: "card-body d-flex align-items-center "
-    }, /*#__PURE__*/React__default['default'].createElement("span", {
-      className: "btn p-2 btn-sm btn-primary me-2"
-    }, /*#__PURE__*/React__default['default'].createElement("i", {
-      className: "fa fa-fw fa-".concat(page.icon || props.getPageStruct(page.type).icon)
-    })), /*#__PURE__*/React__default['default'].createElement("span", {
-      className: "flex-1"
-    }, props.getPageStruct(page.type).title)));
-  })), /*#__PURE__*/React__default['default'].createElement("div", {
-    className: "card-footer d-flex border-top border-secondary py-3"
-  }, /*#__PURE__*/React__default['default'].createElement(material.Button, {
-    variant: "danger",
-    onClick: function onClick(e) {
-      return !setConfig(false) && setDefaulted(true);
-    }
-  }, "Close"), /*#__PURE__*/React__default['default'].createElement(material.Button, {
-    variant: "success",
-    className: "ms-auto",
-    disabled: importing,
-    onClick: function onClick(e) {
-      return onImport(e);
-    }
-  }, importing ? 'Importing Default Pages...' : 'Import Default Pages'))) : /*#__PURE__*/React__default['default'].createElement(DashupUIPage.Config, {
-    show: config,
-    onHide: function onHide(e) {
-      return setConfig(false);
-    }
-  }), missingRequire().map(function (_ref2) {
-    var key = _ref2.key,
-        label = _ref2.label;
-        _ref2.variant;
-    // return jsx
-    return /*#__PURE__*/React__default['default'].createElement(material.Alert, {
-      severity: "info",
-      onClick: function onClick() {
-        return setConfig(true);
-      },
-      key: "missing-".concat(key),
-      sx: {
-        cursor: 'pointer'
-      }
-    }, "Click here to configure the ", /*#__PURE__*/React__default['default'].createElement("b", null, label), " for this page.");
-  })) : props.loading ? /*#__PURE__*/React__default['default'].createElement(material.Box, {
+  }, props.loading || refreshing ? /*#__PURE__*/React__default['default'].createElement(material.Box, {
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
@@ -3410,7 +3556,7 @@ var DashupUIPage = function DashupUIPage() {
 }; // set menu
 
 
-DashupUIPage.Body = Body();
+DashupUIPage.Body = Body(DashupUIContext$8);
 DashupUIPage.Menu = Menu$1(DashupUIContext$8);
 DashupUIPage.Item = Item(DashupUIContext$8);
 DashupUIPage.Share = Share(DashupUIContext$8);
@@ -3663,7 +3809,7 @@ var Prism = (function (_self) {
 					//    at _.util.currentScript (http://localhost/components/prism-core.js:119:5)
 					//    at Global code (http://localhost/components/prism-core.js:606:1)
 
-					var src = (/at [^(\r\n]*\((.*):.+:.+\)$/i.exec(err.stack) || [])[1];
+					var src = (/at [^(\r\n]*\((.*):[^:]+:[^:]+\)$/i.exec(err.stack) || [])[1];
 					if (src) {
 						var scripts = document.getElementsByTagName('script');
 						for (var i in scripts) {
@@ -4688,8 +4834,14 @@ if (typeof commonjsGlobal !== 'undefined') {
 ********************************************** */
 
 Prism.languages.markup = {
-	'comment': /<!--[\s\S]*?-->/,
-	'prolog': /<\?[\s\S]+?\?>/,
+	'comment': {
+		pattern: /<!--(?:(?!<!--)[\s\S])*?-->/,
+		greedy: true
+	},
+	'prolog': {
+		pattern: /<\?[\s\S]+?\?>/,
+		greedy: true
+	},
 	'doctype': {
 		// https://www.w3.org/TR/xml/#NT-doctypedecl
 		pattern: /<!DOCTYPE(?:[^>"'[\]]|"[^"]*"|'[^']*')+(?:\[(?:[^<"'\]]|"[^"]*"|'[^']*'|<(?!!--)|<!--(?:[^-]|-(?!->))*-->)*\]\s*)?>/i,
@@ -4706,11 +4858,14 @@ Prism.languages.markup = {
 				greedy: true
 			},
 			'punctuation': /^<!|>$|[[\]]/,
-			'doctype-tag': /^DOCTYPE/,
+			'doctype-tag': /^DOCTYPE/i,
 			'name': /[^\s<>'"]+/
 		}
 	},
-	'cdata': /<!\[CDATA\[[\s\S]*?\]\]>/i,
+	'cdata': {
+		pattern: /<!\[CDATA\[[\s\S]*?\]\]>/i,
+		greedy: true
+	},
 	'tag': {
 		pattern: /<\/?(?!\d)[^\s>\/=$<%]+(?:\s(?:\s*[^\s>\/=]+(?:\s*=\s*(?:"[^"]*"|'[^']*'|[^\s'">=]+(?=[\s>]))|(?=[\s/>])))+)?\s*\/?>/,
 		greedy: true,
@@ -7044,12 +7199,12 @@ var withMentions = function withMentions(editor) {
       isVoid = editor.isVoid; // add is inline
 
   editor.isInline = function (element) {
-    return element.type === 'mention' ? true : isInline(element);
+    return ['mention', 'emoji'].includes(element.type) ? true : isInline(element);
   }; // add is void
 
 
   editor.isVoid = function (element) {
-    return element.type === 'mention' ? true : isVoid(element);
+    return ['mention', 'emoji'].includes(element.type) ? true : isVoid(element);
   }; // return editor
 
 
@@ -7069,15 +7224,32 @@ var Leaf = function Leaf(_ref) {
     },
     className: leaf.code ? 'pre' : null
   }), children);
+}; // create emoji
+
+
+var Emoji = function Emoji(_ref2) {
+  var attributes = _ref2.attributes,
+      children = _ref2.children,
+      element = _ref2.element;
+  // theme
+  var theme = styles$1.useTheme(); // return chip
+
+  return /*#__PURE__*/React__default['default'].createElement(material.Box, _extends({}, attributes, {
+    component: "span",
+    contentEditable: false
+  }), /*#__PURE__*/React__default['default'].createElement(emojiMart.Emoji, {
+    emoji: element.emoji,
+    size: theme.typography.fontSize
+  }), children);
 }; // create mention
 
 
-var Mention = function Mention(_ref2) {
+var Mention = function Mention(_ref3) {
   var _element$mention, _element$mention2;
 
-  var attributes = _ref2.attributes;
-      _ref2.children;
-      var element = _ref2.element;
+  var attributes = _ref3.attributes;
+      _ref3.children;
+      var element = _ref3.element;
   // theme
   var theme = styles$1.useTheme(); // dashup
 
@@ -7133,7 +7305,7 @@ var Mention = function Mention(_ref2) {
 var Element$1 = function Element() {
   var props = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
   // return type
-  return props.element.type === 'mention' ? /*#__PURE__*/React__default['default'].createElement(Mention, props) : /*#__PURE__*/React__default['default'].createElement("p", props.attributes, props.children);
+  return props.element.type === 'mention' ? /*#__PURE__*/React__default['default'].createElement(Mention, props) : props.element.type === 'emoji' ? /*#__PURE__*/React__default['default'].createElement(Emoji, props) : /*#__PURE__*/React__default['default'].createElement("p", props.attributes, props.children);
 }; // create embeds
 
 
@@ -7146,7 +7318,23 @@ var DashupUIChatInput = function DashupUIChatInput() {
 
   var editor = React.useMemo(function () {
     return withMentions(slateReact.withReact(slate.createEditor()));
-  }, []); // empty state
+  }, []); // Transformation function
+
+  var AddEmojis = function AddEmojis(editor, lastWord) {
+    // add emojis
+    editor.moveFocusBackward(lastWord.length); // select last word
+
+    editor.insertText({
+      type: 'emoji',
+      emoji: lastWord.split(':').join(''),
+      children: [{
+        text: ''
+      }]
+    }); // replace it
+  }; // plugins
+
+
+  [InstantReplace__default['default'](AddEmojis)]; // empty state
 
   var emptyState = [{
     type: 'paragraph',
@@ -7218,7 +7406,7 @@ var DashupUIChatInput = function DashupUIChatInput() {
       setEmojiSearch = _useState24[1]; // picker ref
 
 
-  var pickerRef = React.useRef(null); // render methods
+  React.useRef(null); // render methods
 
   var renderLeaf = React.useCallback(function (props) {
     return /*#__PURE__*/React__default['default'].createElement(Leaf, props);
@@ -7227,10 +7415,10 @@ var DashupUIChatInput = function DashupUIChatInput() {
     return /*#__PURE__*/React__default['default'].createElement(Element$1, props);
   }, []); // decorate
 
-  var decorate = React.useCallback(function (_ref3) {
-    var _ref4 = _slicedToArray(_ref3, 2),
-        node = _ref4[0],
-        path = _ref4[1];
+  var decorate = React.useCallback(function (_ref4) {
+    var _ref5 = _slicedToArray(_ref4, 2),
+        node = _ref5[0],
+        path = _ref5[1];
 
     // ranges
     var ranges = []; // is text
@@ -7298,6 +7486,7 @@ var DashupUIChatInput = function DashupUIChatInput() {
       if (!child) return; // if text
 
       if (child.text) return child.text;
+      if (child.emoji) return child.emoji;
       if (child.mention) return "".concat(child.trigger, "[").concat(child.mention.display, "](").concat(child.mention.id, ")");
       if (child.type === 'paragraph') return "".concat(toText(child.children), "\n"); // if children
 
@@ -7309,7 +7498,7 @@ var DashupUIChatInput = function DashupUIChatInput() {
 
 
   var onSend = /*#__PURE__*/function () {
-    var _ref5 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee(e, data) {
+    var _ref6 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee(e, data) {
       var text, newMessage, message;
       return regeneratorRuntime.wrap(function _callee$(_context) {
         while (1) {
@@ -7392,13 +7581,13 @@ var DashupUIChatInput = function DashupUIChatInput() {
     }));
 
     return function onSend(_x, _x2) {
-      return _ref5.apply(this, arguments);
+      return _ref6.apply(this, arguments);
     };
   }(); // load embed
 
 
   var loadEmbed = /*#__PURE__*/function () {
-    var _ref6 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee2(d, url) {
+    var _ref7 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee2(d, url) {
       var data, embed;
       return regeneratorRuntime.wrap(function _callee2$(_context2) {
         while (1) {
@@ -7454,30 +7643,37 @@ var DashupUIChatInput = function DashupUIChatInput() {
     }));
 
     return function loadEmbed(_x3, _x4) {
-      return _ref6.apply(this, arguments);
+      return _ref7.apply(this, arguments);
     };
   }(); // on key down
 
 
   var _onKeyDown = function onKeyDown(e, data) {
     // check mention ref
-    if (mention && mentionRef) {
-      // check mention ref
-      if (e.key === 'ArrowUp') {
+    if (mention && mentionRef || emoji && emojiRef) {
+      // actual items
+      var actualItems = items; // emoji
+
+      if (emoji) {
+        actualItems = emojiMart.emojiIndex.search(emojiSearch);
+      } // check mention ref
+
+
+      if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') {
         // prevent default
         e.preventDefault(); // set index
 
         setIndex(index === 0 ? 0 : index - 1);
-      } else if (e.key === 'ArrowDown') {
+      } else if (e.key === 'ArrowDown' || e.key === 'ArrowRight') {
         // prevent default
         e.preventDefault(); // set index
 
-        setIndex(index >= items.length - 1 ? index : index + 1);
+        setIndex(index >= actualItems.length - 1 ? index : index + 1);
       } else if (['Tab', 'Enter'].includes(e.key)) {
         // prevent default
         e.preventDefault(); // set index
 
-        onMention(items[index]);
+        (mention ? onMention : onEmoji)(actualItems[index]);
       } else if (e.key === 'Escape') {
         setMention(null);
       }
@@ -7579,8 +7775,29 @@ var DashupUIChatInput = function DashupUIChatInput() {
   }; // insert mention
 
 
+  var onEmoji = function onEmoji(data) {
+    // select target
+    if (emoji) slate.Transforms.select(editor, emoji); // mention
+
+    var insertEmoji = {
+      type: 'emoji',
+      emoji: data.colons,
+      children: [{
+        text: ''
+      }]
+    }; // set mention
+
+    setEmoji(null); // insert nodes
+
+    slate.Transforms.insertNodes(editor, insertEmoji);
+    slate.Transforms.move(editor); // set emoji ref
+
+    setEmojiRef(null);
+  }; // insert mention
+
+
   var onMention = function onMention(data) {
-    var _trigger2;
+    var _trigger;
 
     // select target
     slate.Transforms.select(editor, mention); // mention
@@ -7588,7 +7805,7 @@ var DashupUIChatInput = function DashupUIChatInput() {
     var insertMention = {
       type: 'mention',
       mention: data,
-      trigger: (_trigger2 = trigger) === null || _trigger2 === void 0 ? void 0 : _trigger2.trigger,
+      trigger: (_trigger = trigger) === null || _trigger === void 0 ? void 0 : _trigger.trigger,
       children: [{
         text: ''
       }]
@@ -7648,24 +7865,7 @@ var DashupUIChatInput = function DashupUIChatInput() {
     return function () {
       delete allEmbeds[embedId];
     };
-  }, [embedId]); // set search
-
-  React.useEffect(function () {
-    // input
-    var input = document.querySelector('.emoji-mart-search > input'); // check view
-
-    if (!input) return; // set value
-
-    input.value = emojiSearch; // trigger enter
-
-    var event = new KeyboardEvent('keydown', {
-      key: 'Enter',
-      which: 13,
-      keyCode: 13
-    }); // dispatch
-
-    input.dispatchEvent(event);
-  }, [emojiSearch]); // create body
+  }, [embedId]); // create body
 
   var renderBody = function renderBody(data) {
     // return jsx
@@ -7717,16 +7917,6 @@ var DashupUIChatInput = function DashupUIChatInput() {
       type: "fas",
       icon: "image",
       fixedWidth: true
-    })), !props.disableEmoji && /*#__PURE__*/React__default['default'].createElement(material.ToggleButton, {
-      value: "smile",
-      selected: true,
-      onClick: function onClick(e) {
-        return !setEmoji(true) && setEmojiRef(e.target);
-      }
-    }, /*#__PURE__*/React__default['default'].createElement(DashupUIIcon, {
-      type: "fas",
-      icon: "smile",
-      fixedWidth: true
     }))), /*#__PURE__*/React__default['default'].createElement(material.ToggleButton, {
       size: "small",
       value: "send",
@@ -7747,7 +7937,7 @@ var DashupUIChatInput = function DashupUIChatInput() {
       anchorEl: mentionRef,
       transformOrigin: {
         vertical: 'bottom',
-        horizontal: 'right'
+        horizontal: 'center'
       },
       anchorOrigin: {
         vertical: 'top',
@@ -7776,37 +7966,33 @@ var DashupUIChatInput = function DashupUIChatInput() {
       anchorEl: emojiRef,
       transformOrigin: {
         vertical: 'bottom',
-        horizontal: 'right'
+        horizontal: 'center'
       },
       anchorOrigin: {
         vertical: 'top',
         horizontal: 'right'
       },
+      hideBackdrop: true,
       disableAutoFocus: true,
       disableEnforceFocus: true
     }, /*#__PURE__*/React__default['default'].createElement(material.Box, {
-      sx: {
-        '& .emoji-mart': {
-          border: 0,
-          backgroundColor: theme.palette.background.paper
+      p: 1,
+      maxWidth: 220,
+      textAlign: "center"
+    }, !!(emojiSearch || '').length && emojiMart.emojiIndex.search(emojiSearch).map(function (item, i) {
+      // return jsx
+      return /*#__PURE__*/React__default['default'].createElement(material.IconButton, {
+        key: "item-".concat(item.id),
+        onClick: function onClick(e) {
+          return onEmoji(item);
         },
-        '& .emoji-mart-bar': {
-          borderColor: theme.palette.divider
-        },
-        '& .emoji-mart-search input': {
-          marginBottom: 1,
-          backgroundColor: 'transparent!important'
-        },
-        '& .emoji-mart-category-label span': {
-          backgroundColor: "".concat(theme.palette.background.paper, "!important")
+        sx: {
+          backgroundColor: index === i ? 'primary.main' : undefined
         }
-      }
-    }, /*#__PURE__*/React__default['default'].createElement(emojiMart.Picker, {
-      ref: pickerRef,
-      title: "Dashup",
-      theme: theme.palette.mode,
-      color: theme.palette.primary.main,
-      onSelect: console.log
+      }, /*#__PURE__*/React__default['default'].createElement(emojiMart.Emoji, {
+        emoji: item.colons,
+        size: theme.typography.htmlFontSize
+      }));
     }))));
   }; // return jsx
 
@@ -9965,6 +10151,29 @@ var rules = {
       }, output(node.content, state));
     }
   }),
+  emoji: _objectSpread2(_objectSpread2({}, simpleMarkdown.defaultRules.em), {}, {
+    parse: function parse(capture) {
+      return {
+        emoji: capture[0]
+      };
+    },
+    match: simpleMarkdown.anyScopeRegex(/^:(?:[^:\s]|::)*:/),
+    react: function react(node, output, state) {
+      // set size
+      var size = 16; // check theme
+
+      if (typeof theme !== 'undefined') {
+        size = theme.typography.htmlFontSize;
+      } // return jsx
+
+
+      return /*#__PURE__*/React__default['default'].createElement(emojiMart.Emoji, {
+        emoji: node.emoji,
+        key: state.key,
+        size: size
+      });
+    }
+  }),
   // fix url
   url: _objectSpread2(_objectSpread2({}, simpleMarkdown.defaultRules.url), {}, {
     parse: function parse(capture) {
@@ -10173,6 +10382,7 @@ var DashupUIChatMessage = function DashupUIChatMessage() {
         left: 0,
         right: 0,
         bottom: -5,
+        zIndex: -1,
         background: 'rgba(0, 0, 0, 0.15)',
         borderRadius: 2
       }
@@ -10237,7 +10447,10 @@ var DashupUIChatMessage = function DashupUIChatMessage() {
     }, moment__default['default'](props.message.created_at).fromNow()))), /*#__PURE__*/React__default['default'].createElement(material.Box, {
       sx: {
         wordBreak: 'break-word',
-        whiteSpace: 'pre-line'
+        whiteSpace: 'pre-line',
+        '& .emoji-mart-emoji': {
+          verticalAlign: 'middle'
+        }
       }
     }, parseContent(data.dashup, props.message.parsed || props.message.message)), !!getEmbeds().length && /*#__PURE__*/React__default['default'].createElement(material.Stack, {
       spacing: 2,
@@ -10274,9 +10487,12 @@ var Message = null;
 var DashupUIContext$4 = null; // create dashup grid body
 
 var DashupUIChatThread = function DashupUIChatThread() {
-  var props = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+  var _messages$5, _messages$6, _scrollRef$current2;
 
-  // use state
+  var props = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+  // messages
+  var messages = props.messages || []; // use state
+
   var _useState = React.useState(shortid()),
       _useState2 = _slicedToArray(_useState, 1),
       id = _useState2[0];
@@ -10287,83 +10503,87 @@ var DashupUIChatThread = function DashupUIChatThread() {
       setKey = _useState4[1]; // scroll ref
 
 
-  var scrollRef = React.useRef(null); // return jsx
+  var scrollRef = React.useRef(null); // use effect
 
-  return /*#__PURE__*/React__default['default'].createElement(DashupUIContext$4.Consumer, null, function (data) {
-    var _messages$, _messages$2, _scrollRef$current2;
+  React.useEffect(function () {
+    var _messages$, _messages$2, _messages$3, _messages$4, _scrollRef$current;
 
-    // messages
-    var messages = props.messages || data.messages || []; // check last message
+    // check key
+    if (key === (((_messages$ = messages[0]) === null || _messages$ === void 0 ? void 0 : _messages$.id) || ((_messages$2 = messages[0]) === null || _messages$2 === void 0 ? void 0 : _messages$2.temp))) return; // set key
 
-    if (key !== ((_messages$ = messages[0]) === null || _messages$ === void 0 ? void 0 : _messages$.temp) || (_messages$2 = messages[0]) !== null && _messages$2 !== void 0 && _messages$2.id) {
-      var _messages$3, _messages$4, _scrollRef$current;
+    setKey(((_messages$3 = messages[0]) === null || _messages$3 === void 0 ? void 0 : _messages$3.id) || ((_messages$4 = messages[0]) === null || _messages$4 === void 0 ? void 0 : _messages$4.temp)); // scroll down
 
-      // set key
-      setKey(((_messages$3 = messages[0]) === null || _messages$3 === void 0 ? void 0 : _messages$3.id) || ((_messages$4 = messages[0]) === null || _messages$4 === void 0 ? void 0 : _messages$4.temp)); // scroll down
+    if ((_scrollRef$current = scrollRef.current) !== null && _scrollRef$current !== void 0 && _scrollRef$current.getScrollElement()) scrollRef.current.getScrollElement().scrollTop = 0;
+  }, [((_messages$5 = messages[0]) === null || _messages$5 === void 0 ? void 0 : _messages$5.id) || ((_messages$6 = messages[0]) === null || _messages$6 === void 0 ? void 0 : _messages$6.temp)]); // return jsx
 
-      if ((_scrollRef$current = scrollRef.current) !== null && _scrollRef$current !== void 0 && _scrollRef$current.getScrollElement()) scrollRef.current.getScrollElement().scrollTop = 0;
-    } // return jsx
-
-
-    return /*#__PURE__*/React__default['default'].createElement(material.Box, {
-      flex: 1,
-      position: "relative"
-    }, /*#__PURE__*/React__default['default'].createElement(material.Box, {
-      position: "absolute",
-      top: 0,
-      left: 0,
-      right: 0,
-      bottom: 0,
-      sx: {
-        '& .simplebar-scrollbar': {
-          bottom: 0
-        }
+  return /*#__PURE__*/React__default['default'].createElement(material.Box, {
+    flex: 1,
+    position: "relative"
+  }, /*#__PURE__*/React__default['default'].createElement(material.Box, {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    sx: {
+      '& .simplebar-scrollbar': {
+        bottom: 0
       }
-    }, /*#__PURE__*/React__default['default'].createElement(SimpleBar__default['default'], {
-      ref: scrollRef,
-      style: {
-        width: '100%',
-        height: '100%'
-      },
-      scrollableNodeProps: {
-        id: id,
-        style: {
-          display: 'flex',
-          flexDirection: 'column-reverse'
-        }
-      }
-    }, !!((_scrollRef$current2 = scrollRef.current) !== null && _scrollRef$current2 !== void 0 && _scrollRef$current2.getScrollElement()) && /*#__PURE__*/React__default['default'].createElement(InfiniteScroll__default['default'], {
-      next: props.onNext || data.onNext,
+    }
+  }, /*#__PURE__*/React__default['default'].createElement(SimpleBar__default['default'], {
+    ref: scrollRef,
+    style: {
+      width: '100%',
+      height: '100%'
+    },
+    scrollableNodeProps: {
+      id: id,
       style: {
         display: 'flex',
         flexDirection: 'column-reverse'
+      }
+    }
+  }, !!((_scrollRef$current2 = scrollRef.current) !== null && _scrollRef$current2 !== void 0 && _scrollRef$current2.getScrollElement()) && /*#__PURE__*/React__default['default'].createElement(InfiniteScroll__default['default'], {
+    next: props.onNext,
+    style: {
+      display: 'flex',
+      flexDirection: 'column-reverse'
+    },
+    inverse: true,
+    hasMore: props.hasMore,
+    dataLength: (messages || []).length,
+    loader: /*#__PURE__*/React__default['default'].createElement(material.Box, {
+      display: "flex",
+      py: 3,
+      justifyContent: "center",
+      alignItems: "center"
+    }, /*#__PURE__*/React__default['default'].createElement(material.CircularProgress, null)),
+    endMessage: /*#__PURE__*/React__default['default'].createElement(material.Typography, {
+      variant: "h5",
+      sx: {
+        textAlign: 'center'
       },
-      inverse: true,
-      hasMore: props.hasMore || data.hasMore,
-      dataLength: (messages || []).length,
-      loader: /*#__PURE__*/React__default['default'].createElement(material.Box, {
-        display: "flex",
-        py: 3,
-        justifyContent: "center",
-        alignItems: "center"
-      }, /*#__PURE__*/React__default['default'].createElement(material.CircularProgress, null)),
-      endMessage: /*#__PURE__*/React__default['default'].createElement(material.Typography, {
-        variant: "h5",
-        sx: {
-          textAlign: 'center'
-        },
-        gutterBottom: true
-      }, !(messages || []).length ? 'Nothing here yet, say hi!' : 'Yay! You have seen it all.'),
-      scrollableTarget: id
-    }, messages.map(function (m, i) {
-      // return jsx
-      return /*#__PURE__*/React__default['default'].createElement(Message, {
-        key: "message-".concat(m.temp || m.id),
-        prev: messages[i + 1],
-        next: messages[i - 1],
-        message: m
-      });
-    })))));
+      gutterBottom: true
+    }, !(messages || []).length ? 'Nothing here yet, say hi!' : 'Yay! You have seen it all.'),
+    scrollableTarget: id
+  }, messages.map(function (m, i) {
+    // return jsx
+    return /*#__PURE__*/React__default['default'].createElement(Message, {
+      key: "message-".concat(m.temp || m.id),
+      prev: messages[i + 1],
+      next: messages[i - 1],
+      message: m
+    });
+  })))));
+}; // wrapper
+
+
+var DashupUIChatWrapper = function DashupUIChatWrapper() {
+  var props = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+  // return jsx
+  return /*#__PURE__*/React__default['default'].createElement(DashupUIContext$4.Consumer, null, function (data) {
+    // return jsx
+    return /*#__PURE__*/React__default['default'].createElement(DashupUIChatThread, _extends({}, data, props));
   });
 }; // export default page menu
 
@@ -10373,7 +10593,7 @@ var Thread = (function (ctx) {
   Message = Message$1(ctx);
   DashupUIContext$4 = ctx; // return actual component
 
-  return DashupUIChatThread;
+  return DashupUIChatWrapper;
 });
 
 var DashupUIContext$3 = /*#__PURE__*/React.createContext(); // create menu component
@@ -10524,13 +10744,17 @@ var DashupUIChat = function DashupUIChat() {
       setCtx = _useState16[1]; // on messages
 
 
-  var onMessages = function onMessages(_ref2) {
-    var _ref2$data = _ref2.data,
-        data = _ref2$data === void 0 ? [] : _ref2$data,
-        _ref2$total = _ref2.total,
-        total = _ref2$total === void 0 ? null : _ref2$total;
-        _ref2.scroll;
-    // loop
+  var onMessages = function onMessages(res) {
+    // check res
+    if (!res) return; // expand
+
+    var _res$data = res.data,
+        data = _res$data === void 0 ? [] : _res$data,
+        _res$total = res.total,
+        total = _res$total === void 0 ? null : _res$total;
+        res.scroll;
+ // loop
+
     data.forEach(function (message) {
       // get found
       var found = messages.find(function (m) {
@@ -10554,7 +10778,7 @@ var DashupUIChat = function DashupUIChat() {
 
 
   var onRemove = /*#__PURE__*/function () {
-    var _ref3 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee2(e) {
+    var _ref2 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee2(e) {
       return regeneratorRuntime.wrap(function _callee2$(_context2) {
         while (1) {
           switch (_context2.prev = _context2.next) {
@@ -10583,7 +10807,7 @@ var DashupUIChat = function DashupUIChat() {
     }));
 
     return function onRemove(_x) {
-      return _ref3.apply(this, arguments);
+      return _ref2.apply(this, arguments);
     };
   }(); // on remove
 
@@ -12261,9 +12485,6 @@ var DashupUIFormField = function DashupUIFormField() {
     title: "Move Field"
   }, /*#__PURE__*/React__default['default'].createElement(material.ToggleButton, {
     value: "move",
-    onClick: function onClick(e) {
-      return onBreak();
-    },
     className: "moves",
     sx: buttonSx
   }, /*#__PURE__*/React__default['default'].createElement(DashupUIIcon, {
@@ -12753,7 +12974,8 @@ var DashupUIForm = function DashupUIForm() {
       if (val && typeof val.get === 'function') val = val.get('_id');
       if (Array.isArray(val)) val = val.map(function (v) {
         return typeof (v === null || v === void 0 ? void 0 : v.get) === 'function' ? v.get('_id') : (v === null || v === void 0 ? void 0 : v.id) || v;
-      }); // set value
+      });
+      if (Array.isArray(val) && !val.length) return delete cleanedObj[key]; // set value
 
       cleanedObj[key] = val; // check obj
 
@@ -12805,7 +13027,7 @@ var DashupUIForm = function DashupUIForm() {
 
   React.useEffect(function () {
     setCtx(getCtx());
-  }, [props.updating, props.fields, props.data, JSON.stringify(props.clean)]); // set page
+  }, [props.updating, props.fields, JSON.stringify(props.data), JSON.stringify(props.clean)]); // set page
 
   var setField = /*#__PURE__*/function () {
     var _ref = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee(field, key, value, prevent) {
@@ -13059,18 +13281,16 @@ var DashupUIForm = function DashupUIForm() {
     type: "fas",
     icon: "plus"
   }))));
-}; // export bootstrap form
+}; // create field
 
-
-Object.keys(reactBootstrap.Form).forEach(function (key) {
-  DashupUIForm[key] = reactBootstrap.Form[key];
-}); // create field
 
 DashupUIForm.Menu = Menu(DashupUIContext);
 DashupUIForm.Field = Field(DashupUIContext);
 DashupUIForm.Config = Config(DashupUIContext); // export default
 
 var DashupUIItem = function DashupUIItem() {
+  var _props$BodyProps;
+
   var props = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
   // theme
   var theme = styles$1.useTheme(); // use state
@@ -13232,13 +13452,16 @@ var DashupUIItem = function DashupUIItem() {
     variant: props.variant,
     sx: {
       color: props.color && theme.palette.getContrastText(dotProp.get(theme.palette, props.color)),
+      display: 'flex',
       borderColor: !props.variant && (getColor() || {}).backgroundColor,
+      flexDirection: 'column',
       borderLeftWidth: (getColor() || {}).backgroundColor && !props.variant ? 3 : undefined,
       borderLeftStyle: 'solid',
       backgroundColor: props.color
     }
   }, !!hasTags() && /*#__PURE__*/React__default['default'].createElement(material.CardContent, {
     sx: {
+      pt: props.size === 'sm' ? 1 : undefined,
       pb: 0,
       color: props.color && theme.palette.getContrastText(dotProp.get(theme.palette, props.color))
     }
@@ -13295,15 +13518,16 @@ var DashupUIItem = function DashupUIItem() {
       icon: "tag",
       fontSize: "small"
     }))));
-  }))), /*#__PURE__*/React__default['default'].createElement(material.CardContent, {
+  }))), /*#__PURE__*/React__default['default'].createElement(material.CardContent, _extends({}, props.BodyProps, {
     onClick: function onClick(e) {
       return props.onClick(props.item);
     },
-    sx: {
+    sx: _objectSpread2({
+      py: props.size === 'sm' ? 1 : undefined,
       color: props.color && theme.palette.getContrastText(dotProp.get(theme.palette, props.color)),
       cursor: 'pointer'
-    }
-  }, !!props.repeat && /*#__PURE__*/React__default['default'].createElement(material.Tooltip, {
+    }, (_props$BodyProps = props.BodyProps) === null || _props$BodyProps === void 0 ? void 0 : _props$BodyProps.sx)
+  }), !!props.repeat && /*#__PURE__*/React__default['default'].createElement(material.Tooltip, {
     title: props.repeat
   }, /*#__PURE__*/React__default['default'].createElement(DashupUIIcon, {
     type: "fas",
@@ -13315,6 +13539,7 @@ var DashupUIItem = function DashupUIItem() {
   })), /*#__PURE__*/React__default['default'].createElement(material.CardContent, {
     sx: {
       pt: 0,
+      pb: props.size === 'sm' ? 1 : undefined,
       color: props.color && theme.palette.getContrastText(dotProp.get(theme.palette, props.color)),
       display: 'flex',
       flexWrap: 'wrap',
@@ -14550,10 +14775,12 @@ var DashupAvatar = function DashupAvatar() {
 
   var props = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
   // theme
-  var theme = styles$1.useTheme(); // get image thumb
+  var theme = styles$1.useTheme(); // key
+
+  var thumbKey = props.thumb !== 'original' ? "thumbs.".concat(props.thumb || '2x-sq', ".url") : "url"; // get image thumb
 
   var name = props.name || '';
-  var thumb = !props.image ? props.src : dotProp.get(props, 'image.thumbs.2x-sq.url') || dotProp.get(props, 'image.0.thumbs.2x-sq.url'); // string to color
+  var thumb = !props.image ? props.src : dotProp.get(props, "image.".concat(thumbKey)) || dotProp.get(props, "image.0.".concat(thumbKey)); // string to color
 
   var stringToColor = function stringToColor(string) {
     var hash = 0;
@@ -14997,6 +15224,12 @@ Object.defineProperty(exports, 'TimePicker', {
   enumerable: true,
   get: function () {
     return lab.TimePicker;
+  }
+});
+Object.defineProperty(exports, 'Masonry', {
+  enumerable: true,
+  get: function () {
+    return Masonry__default['default'];
   }
 });
 Object.defineProperty(exports, 'AdapterMoment', {

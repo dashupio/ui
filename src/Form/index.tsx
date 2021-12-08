@@ -1,7 +1,6 @@
 
 // import dependencies
 import clone from 'clone-deep';
-import { Form } from 'react-bootstrap';
 import { ReactSortable } from 'react-sortablejs';
 import React, { useState, useEffect, createContext } from 'react';
 import { Icon, Box, Fab, Button, Tooltip, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions } from '../';
@@ -51,6 +50,7 @@ const DashupUIForm = (props = {}) => {
       if (val && val.id) val = val.id;
       if (val && typeof val.get === 'function') val = val.get('_id');
       if (Array.isArray(val)) val = val.map((v) => typeof v?.get === 'function' ? v.get('_id') : (v?.id || v));
+      if (Array.isArray(val) && !val.length) return delete cleanedObj[key];
 
       // set value
       cleanedObj[key] = val;
@@ -96,7 +96,7 @@ const DashupUIForm = (props = {}) => {
   // use effect
   useEffect(() => {
     setCtx(getCtx());
-  }, [props.updating, props.fields, props.data, JSON.stringify(props.clean)]);
+  }, [props.updating, props.fields, JSON.stringify(props.data), JSON.stringify(props.clean)]);
 
   // set page
   const setField = async (field, key, value, prevent) => {
@@ -217,7 +217,7 @@ const DashupUIForm = (props = {}) => {
           getForms={ props.getForms }
           getField={ props.getField }
           getFields={ props.getFields }
-          />
+        />
         { field.break && <Box sx={ { width : '100%' } } /> }
       </React.Fragment>
     );
@@ -300,11 +300,6 @@ const DashupUIForm = (props = {}) => {
     </DashupUIContext.Provider>
   );
 };
-
-// export bootstrap form
-Object.keys(Form).forEach((key) => {
-  DashupUIForm[key] = Form[key];
-});
 
 // create field
 DashupUIForm.Menu = Menu(DashupUIContext);

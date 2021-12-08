@@ -246,7 +246,7 @@ const DashupUIFormField = (props = {}) => {
                   </ToggleButton>
                 </Tooltip>
                 <Tooltip title="Move Field">
-                  <ToggleButton value="move" onClick={ (e) => onBreak(e) } className="moves" sx={ buttonSx }>
+                  <ToggleButton value="move" className="moves" sx={ buttonSx }>
                     <Icon type="fas" icon="grip-vertical" fontSize="small" />
                   </ToggleButton>
                 </Tooltip>

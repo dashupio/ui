@@ -10,9 +10,12 @@ const DashupAvatar = (props = {}) => {
   // theme
   const theme = useTheme();
 
+  // key
+  const thumbKey = props.thumb !== 'original' ? `thumbs.${props.thumb || '2x-sq'}.url` : `url`;
+
   // get image thumb
   const name = props.name || '';
-  const thumb = !props.image ? props.src : dotProp.get(props, 'image.thumbs.2x-sq.url') || dotProp.get(props, 'image.0.thumbs.2x-sq.url');
+  const thumb = !props.image ? props.src : dotProp.get(props, `image.${thumbKey}`) || dotProp.get(props, `image.0.${thumbKey}`);
 
   // string to color
   const stringToColor = (string) => {

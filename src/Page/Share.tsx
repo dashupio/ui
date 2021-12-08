@@ -2,12 +2,19 @@
 // import dependencies
 import copy from 'copy-to-clipboard';
 import { Alert } from '@mui/material';
-import React, { useState } from 'react';
-import { Icon, View, Modal, DialogActions, DialogContentText, Box, TextField, Dialog, DialogTitle, Stack, Button, DialogContent, MenuItem, Divider, Tooltip, IconButton, LoadingButton, InputAdornment } from '../';
+import React, { useRef, useState } from 'react';
+import { Icon, View, Modal, DialogActions, FormControlLabel, FormGroup, Switch, DialogContentText, Box, TextField, Dialog, DialogTitle, Stack, Button, DialogContent, MenuItem, Divider, Tooltip, IconButton, LoadingButton, InputAdornment } from '../';
 
 // let context
 let loading = false;
 let DashupContext = null;
+
+// debounce
+let timeout;
+const debounce = (fn, to = 500) => {
+  clearTimeout(timeout);
+  timeout = setTimeout(fn, to);
+};
 
 // create menu component
 const DashupUIPageShare = (props = {}) => {
@@ -19,10 +26,13 @@ const DashupUIPageShare = (props = {}) => {
   const [copying, setCopying] = useState(null);
   const [removing, setRemoving] = useState(null);
 
+  // set ref
+  const structRef = useRef(null);
+
   // get type
   const getType = (struct, page) => {
     // map
-    return ['Link', 'Marketplace'].filter((item) => {
+    return ['Link', 'Embed', 'Marketplace'].filter((item) => {
       // check item
       if (item === 'Marketplace' && (!struct?.data?.share || page.get('link'))) return false;
 
@@ -55,7 +65,7 @@ const DashupUIPageShare = (props = {}) => {
   };
 
   // on share
-  const onSubmit = async (page, dashup) => {
+  const onSubmit = async (page, dashup, revert = true) => {
     // loading
     setSaving(true);
 
@@ -64,26 +74,26 @@ const DashupUIPageShare = (props = {}) => {
 
     // push result
     if (result.success) {
-      // find
-      const found = shares.find((s) => s.id === result.data.id);
-
-      // check found
-      if (found) {
-        // set to found
-        Object.keys(result.data).forEach((key) => {
-          // update values
-          found[key] = result.data[key];
-        });
-      } else {
-        // push
-        shares.push(result.data);
+      // set id
+      if (!share.id) {
+        shares.push(share);
       }
+      
+      // set to found
+      Object.keys(result.data).forEach((key) => {
+        // update values
+        share[key] = result.data[key];
+      });
     }
 
     // loading
     setShares([...shares]);
     setSaving(false);
-    setSharing(null);
+    if (revert) {
+      setSharing(null);
+    } else {
+      setSharing({ ...share });
+    }
   };
   
   // on remove
@@ -105,12 +115,15 @@ const DashupUIPageShare = (props = {}) => {
   };
 
   // set share
-  const setShare = (key, value) => {
+  const setShare = (key, value, page, dashup) => {
     // set value
     share[key] = value;
 
     // set share
     setSharing({ ...share });
+
+    // debounce
+    debounce(() => onSubmit(page, dashup, false));
   };
 
   // get shares
@@ -153,6 +166,12 @@ const DashupUIPageShare = (props = {}) => {
     });
   }
 
+  // check is share
+  const isShare = !!(typeof eden === 'undefined' ? {} : eden).state?.share;
+
+  // check share
+  if (isShare) return null;
+
   // return JSX
   return (
     <DashupContext.Consumer>
@@ -169,12 +188,15 @@ const DashupUIPageShare = (props = {}) => {
         // get struct
         const struct = page.get('type') && getPageStruct(page.get('type'));
 
+        // add to ref
+        structRef.current = struct;
+
         // return jsx
         return (
           <>
             <Modal
               open={ !!props.show }
-              icon={ page.get('icon') || struct.icon }
+              icon={ page.get('icon') || struct?.icon }
               page={ page }
               title={ page.get('name') || page.get('_id') }
               dashup={ dashup }
@@ -186,7 +208,7 @@ const DashupUIPageShare = (props = {}) => {
                   <Stack spacing={ 1 }>
                     { !!struct?.data?.share?.pages && (
                       <>
-                        <Alert severity="info">
+                        <Alert severity="info" sx={ { mb : 1 } }>
                           The following pages will also be shared.
                         </Alert>
                         { getShares(dashup, page, struct.data.share.pages).map((sPage) => {
@@ -209,7 +231,7 @@ const DashupUIPageShare = (props = {}) => {
                                     color      : color?.hex && theme.palette.getContrastText(color.hex),
                                     background : color?.hex,
                                     } }>
-                                      <Icon type="fas" icon="plus" fixedWidth />
+                                      <Icon type="fas" icon={ sPage.get('icon') || 'plus' } fixedWidth />
                                     </IconButton>
                                   </InputAdornment>
                                 ),
@@ -225,9 +247,9 @@ const DashupUIPageShare = (props = {}) => {
 
                     <TextField
                       label="Share Type"
-                      value={ share.type }
+                      value={ share.type || '' }
                       select
-                      onChange={ (e) => setShare('type', e.target?.value) }
+                      onChange={ (e) => setShare('type', e.target?.value, page, dashup) }
                       fullWidth
                     >
                       { getType(struct, page).map((option) => (
@@ -239,8 +261,17 @@ const DashupUIPageShare = (props = {}) => {
 
                     <TextField
                       label="Share Name"
-                      value={ share.name }
-                      onChange={ (e) => setShare('name', e.target?.value) }
+                      value={ share.name || '' }
+                      onChange={ (e) => setShare('name', e.target?.value, page, dashup) }
+                      fullWidth
+                    />
+
+                    <TextField
+                      rows={ 4 }
+                      label="Share Description"
+                      value={ share.description || '' }
+                      multiline
+                      onChange={ (e) => setShare('description', e.target?.value, page, dashup) }
                       fullWidth
                     />
 
@@ -262,7 +293,7 @@ const DashupUIPageShare = (props = {}) => {
                           item={ new dashup.Model() }
                           value={ share.image }
                           dashup={ dashup }
-                          onChange={ (f, val) => setShare('image', val) }
+                          onChange={ (f, val) => setShare('image', val, page, dashup) }
                           setPrevent={ setPrevent }
                           />
                         { !!categories && (
@@ -274,22 +305,9 @@ const DashupUIPageShare = (props = {}) => {
                             item={ new dashup.Model() }
                             value={ share.categories }
                             dashup={ dashup }
-                            onChange={ (f, val) => setShare('categories', val) }
+                            onChange={ (f, val) => setShare('categories', val, page, dashup) }
                             />
                         ) }
-                        <View
-                          type="field"
-                          view="input"
-                          struct="textarea"
-                          field={ {
-                            uuid  : 'description',
-                            label : 'Description',
-                          } }
-                          item={ new dashup.Model() }
-                          value={ share.description }
-                          dashup={ dashup }
-                          onChange={ (f, val) => setShare('description', val) }
-                          />
                         { /*
                         <View
                           type="field"
@@ -305,6 +323,45 @@ const DashupUIPageShare = (props = {}) => {
                           onChange={ (f, val) => setShare('price', val) }
                           />
                         */ }
+                      </>
+                    ) }
+
+                    { !!['embed', 'link'].includes(share.type) && (
+                      <>
+
+                        { !!share.slug && (
+                          <>
+                            <Box py={ 2 }>
+                              <Divider />
+                            </Box>
+
+                            <TextField
+                              label="Share URL"
+                              value={ `https://${eden.get('config.domain')}/share/${share.slug}` }
+                              fullWidth
+
+                              InputProps={ {
+                                readOnly : true,
+                              } }
+                            />
+                          </>
+                        ) }
+
+                        <Box py={ 2 }>
+                          <Divider />
+                        </Box>
+
+                        <FormGroup>
+                          <FormControlLabel control={ (
+                            <Switch checked={ !!share.disableMenu } onChange={ (e) => setShare('disableMenu', !!e.target.checked, page, dashup) } />
+                          ) } label="Disable Menu" />
+                          <FormControlLabel control={ (
+                            <Switch checked={ !!share.disableFilter } onChange={ (e) => setShare('disableFilter', !!e.target.checked, page, dashup) } />
+                          ) } label="Disable Filter" />
+                          <FormControlLabel control={ (
+                            <Switch checked={ !!share.disablePadding } onChange={ (e) => setShare('disablePadding', !!e.target.checked, page, dashup) } />
+                          ) } label="Disable Padding" />
+                        </FormGroup>
                       </>
                     ) }
                   </Stack>
@@ -339,14 +396,18 @@ const DashupUIPageShare = (props = {}) => {
                           endAdornment : (
                             <>
                               <InputAdornment position="end">
-                                <IconButton color="error" onClick={ (e) => setRemoving(share) }>
-                                  <Icon type="fas" icon="trash" fixedWidth />
-                                </IconButton>
+                                <Tooltip title="Remove Share">
+                                  <IconButton color="error" onClick={ (e) => setRemoving(share) }>
+                                    <Icon type="fas" icon="trash" fixedWidth />
+                                  </IconButton>
+                                </Tooltip>
                               </InputAdornment>
                               <InputAdornment position="end">
-                                <IconButton onClick={ (e) => setSharing(share) }>
-                                  <Icon type="fas" icon="ellipsis-h" fixedWidth />
-                                </IconButton>
+                                <Tooltip title="Share Config">
+                                  <IconButton onClick={ (e) => setSharing(share) }>
+                                    <Icon type="fas" icon="ellipsis-h" fixedWidth />
+                                  </IconButton>
+                                </Tooltip>
                               </InputAdornment>
                             </>
                           )
@@ -374,7 +435,7 @@ const DashupUIPageShare = (props = {}) => {
                   <Stack direction="row" spacing={ 1 } flex={ 1 } justifyContent="end">
                     { !!share && (
                       <Button onClick={ () => setSharing(null) }>
-                        Cancel
+                        Back
                       </Button>
                     ) }
                     { share ? (

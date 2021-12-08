@@ -15,10 +15,17 @@ const DashupUIPageMenu = (props = {}) => {
     return [...(dashup.get('active') || [])].filter((a) => a.page === page?.get('_id'));
   };
 
+  // disable menu
+  const disableMenu = !!(typeof eden !== 'undefined' ? eden : {}).state?.share?.disableMenu;
+
   // return JSX
-  return (
+  return disableMenu ? null : (
     <DashupContext.Consumer>
-      { ({ page, dashup, color, icon, title }) => {
+      { ({ page, dashup, color, icon, title, onShare, onConfig }) => {
+
+        // set values
+        onShare = props.onShare || onShare;
+        onConfig = props.onConfig || onConfig;
 
         // page fab
         const PageFab = styled(Fab)(({ theme }) => {
@@ -72,16 +79,17 @@ const DashupUIPageMenu = (props = {}) => {
                 </AvatarGroup>
                 
                 { props.children }
-                { props.onShare && page && dashup.can(page, 'manage') && (
+                
+                { onShare && page && dashup.can(page, 'manage') && (
                   <Tooltip title="Share Page">
-                    <IconButton onClick={ (e) => props.onShare(e) }>
+                    <IconButton onClick={ (e) => onShare(e) }>
                       <Icon type="fas" icon="share-alt" fixedWidth />
                     </IconButton>
                   </Tooltip>
                 ) }
-                { props.onConfig && page && dashup.can(page, 'manage') && (
+                { onConfig && page && dashup.can(page, 'manage') && (
                   <Tooltip title="Page Settings">
-                    <IconButton onClick={ (e) => props.onConfig(e) }>
+                    <IconButton onClick={ (e) => onConfig(e) }>
                       <Icon type="fas" icon="ellipsis-h" fixedWidth />
                     </IconButton>
                   </Tooltip>

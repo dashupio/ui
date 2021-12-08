@@ -3,11 +3,12 @@ import './emoji.css';
 import uuid from 'shortid';
 import Prism from 'prismjs';
 import urlRegex from 'url-regex';
-import { Picker } from 'emoji-mart';
+import InstantReplace from 'slate-instant-replace';
+import { Emoji as EMEmoji, emojiIndex } from 'emoji-mart';
 import { Slate, Editable, withReact, ReactEditor } from 'slate-react';
 import { Text, Editor, Transforms, Range, createEditor } from 'slate';
 import React, { useMemo, useRef, useState, useCallback, useEffect } from 'react';
-import { Paper, Chip, Stack, Box, useTheme, ToggleButton, ToggleButtonGroup, Avatar, Icon, Popover, MenuItem, ListItemIcon, ListItemText } from '../';
+import { Paper, Chip, Stack, Box, useTheme, ToggleButton, ToggleButtonGroup, Avatar, Icon, Popover, MenuItem, ListItemIcon, ListItemText, IconButton } from '../';
 
 // prism
 ;Prism.languages.markdown=Prism.languages.extend("markup",{}),Prism.languages.insertBefore("markdown","prolog",{blockquote:{pattern:/^>(?:[\t ]*>)*/m,alias:"punctuation"},code:[{pattern:/^(?: {4}|\t).+/m,alias:"keyword"},{pattern:/``.+?``|`[^`\n]+`/,alias:"keyword"}],title:[{pattern:/\w+.*(?:\r?\n|\r)(?:==+|--+)/,alias:"important",inside:{punctuation:/==+$|--+$/}},{pattern:/(^\s*)#+.+/m,lookbehind:!0,alias:"important",inside:{punctuation:/^#+|#+$/}}],hr:{pattern:/(^\s*)([*-])([\t ]*\2){2,}(?=\s*$)/m,lookbehind:!0,alias:"punctuation"},list:{pattern:/(^\s*)(?:[*+-]|\d+\.)(?=[\t ].)/m,lookbehind:!0,alias:"punctuation"},"url-reference":{pattern:/!?\[[^\]]+\]:[\t ]+(?:\S+|<(?:\\.|[^>\\])+>)(?:[\t ]+(?:"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|\((?:\\.|[^)\\])*\)))?/,inside:{variable:{pattern:/^(!?\[)[^\]]+/,lookbehind:!0},string:/(?:"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|\((?:\\.|[^)\\])*\))$/,punctuation:/^[\[\]!:]|[<>]/},alias:"url"},bold:{pattern:/(^|[^\\])(\*\*|__)(?:(?:\r?\n|\r)(?!\r?\n|\r)|.)+?\2/,lookbehind:!0,inside:{punctuation:/^\*\*|^__|\*\*$|__$/}},italic:{pattern:/(^|[^\\])([*_])(?:(?:\r?\n|\r)(?!\r?\n|\r)|.)+?\2/,lookbehind:!0,inside:{punctuation:/^[*_]|[*_]$/}},url:{pattern:/!?\[[^\]]+\](?:\([^\s)]+(?:[\t ]+"(?:\\.|[^"\\])*")?\)| ?\[[^\]\n]*\])/,inside:{variable:{pattern:/(!?\[)[^\]]+(?=\]$)/,lookbehind:!0},string:{pattern:/"(?:\\.|[^"\\])*"(?=\)$)/}}}}),Prism.languages.markdown.bold.inside.url=Prism.util.clone(Prism.languages.markdown.url),Prism.languages.markdown.italic.inside.url=Prism.util.clone(Prism.languages.markdown.url),Prism.languages.markdown.bold.inside.italic=Prism.util.clone(Prism.languages.markdown.italic),Prism.languages.markdown.italic.inside.bold=Prism.util.clone(Prism.languages.markdown.bold); // prettier-ignore
@@ -27,12 +28,12 @@ const withMentions = (editor) => {
 
   // add is inline
   editor.isInline = element => {
-    return element.type === 'mention' ? true : isInline(element);
+    return ['mention', 'emoji'].includes(element.type) ? true : isInline(element);
   };
 
   // add is void
   editor.isVoid = element => {
-    return element.type === 'mention' ? true : isVoid(element);
+    return ['mention', 'emoji'].includes(element.type) ? true : isVoid(element);
   };
 
   // return editor
@@ -52,6 +53,24 @@ const Leaf = ({ attributes, children, leaf }) => {
       className={ leaf.code ? 'pre' : null }>
       { children }
     </span>
+  );
+};
+
+// create emoji
+const Emoji = ({ attributes, children, element }) => {
+  // theme
+  const theme = useTheme();
+
+  // return chip
+  return (
+    <Box
+      { ...attributes }
+      component="span"
+      contentEditable={ false }
+    >
+      <EMEmoji emoji={ element.emoji } size={ theme.typography.fontSize } />
+      { children }
+    </Box>
   );
 };
 
@@ -125,7 +144,11 @@ const Mention = ({ attributes, children, element }) => {
 // create element
 const Element = (props = {}) => {
   // return type
-  return props.element.type === 'mention' ? <Mention { ...props } /> : <p { ...props.attributes }>{ props.children }</p>;
+  return (
+    props.element.type === 'mention' ? <Mention { ...props } /> : 
+    props.element.type === 'emoji' ? <Emoji { ...props } /> :
+    <p { ...props.attributes }>{ props.children }</p>
+  );
 };
 
 // create embeds
@@ -138,6 +161,22 @@ const DashupUIChatInput = (props = {}) => {
 
   // editor
   const editor = useMemo(() => withMentions(withReact(createEditor())), []);
+
+  // Transformation function
+  const AddEmojis = (editor, lastWord) => {
+    // add emojis
+    editor.moveFocusBackward(lastWord.length); // select last word
+    editor.insertText({
+      type     : 'emoji',
+      emoji    : lastWord.split(':').join(''),
+      children : [{
+        text : ''
+      }],
+    }); // replace it
+  };
+
+  // plugins
+  const plugins = [InstantReplace(AddEmojis)];
 
   // empty state
   const emptyState = [{
@@ -229,6 +268,7 @@ const DashupUIChatInput = (props = {}) => {
 
       // if text
       if (child.text) return child.text;
+      if (child.emoji) return child.emoji;
       if (child.mention) return `${child.trigger}[${child.mention.display}](${child.mention.id})`;
       if (child.type === 'paragraph') return `${toText(child.children)}\n`;
 
@@ -331,26 +371,34 @@ const DashupUIChatInput = (props = {}) => {
   // on key down
   const onKeyDown = (e, data) => {
     // check mention ref
-    if (mention && mentionRef) {
+    if ((mention && mentionRef) || (emoji && emojiRef)) {
+      // actual items
+      let actualItems = items;
+
+      // emoji
+      if (emoji) {
+        actualItems = emojiIndex.search(emojiSearch);
+      }
+
       // check mention ref
-      if (e.key === 'ArrowUp') {
+      if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') {
         // prevent default
         e.preventDefault();
 
         // set index
         setIndex(index === 0 ? 0 : index - 1);
-      } else if (e.key === 'ArrowDown') {
+      } else if (e.key === 'ArrowDown' || e.key === 'ArrowRight') {
         // prevent default
         e.preventDefault();
 
         // set index
-        setIndex(index >= (items.length - 1) ? index : index + 1);
+        setIndex(index >= (actualItems.length - 1) ? index : index + 1);
       } else if (['Tab', 'Enter'].includes(e.key)) {
         // prevent default
         e.preventDefault();
 
         // set index
-        onMention(items[index]);
+        (mention ? onMention : onEmoji)(actualItems[index]);
       } else if (e.key === 'Escape') {
         setMention(null);
       }
@@ -456,26 +504,27 @@ const DashupUIChatInput = (props = {}) => {
 
   // insert mention
   const onEmoji = (data) => {
-    console.log(data); return;
     // select target
-    Transforms.select(editor, mention);
+    if (emoji) Transforms.select(editor, emoji);
 
     // mention
-    const insertMention = {
-      type     : 'mention',
-      mention  : data,
-      trigger  : trigger?.trigger,
+    const insertEmoji = {
+      type     : 'emoji',
+      emoji    : data.colons,
       children : [{
         text : ''
       }],
     };
 
     // set mention
-    setMention(null);
+    setEmoji(null);
   
     // insert nodes
-    Transforms.insertNodes(editor, insertMention);
+    Transforms.insertNodes(editor, insertEmoji);
     Transforms.move(editor);
+
+    // set emoji ref
+    setEmojiRef(null);
   };
 
   // insert mention
@@ -554,28 +603,6 @@ const DashupUIChatInput = (props = {}) => {
     };
   }, [embedId]);
 
-  // set search
-  useEffect(() => {
-    // input
-    const input = document.querySelector('.emoji-mart-search > input');
-
-    // check view
-    if (!input) return;
-
-    // set value
-    input.value = emojiSearch;
-
-    // trigger enter
-    const event = new KeyboardEvent('keydown', {
-      key     : 'Enter',
-      which   : 13,
-      keyCode : 13,
-    });
-
-    // dispatch
-    input.dispatchEvent(event);
-  }, [emojiSearch]);
-
   // create body
   const renderBody = (data) => {
     // return jsx
@@ -617,11 +644,6 @@ const DashupUIChatInput = (props = {}) => {
               <ToggleButton value="image" selected>
                 <Icon type="fas" icon="image" fixedWidth />
               </ToggleButton>
-              { !props.disableEmoji && (
-                <ToggleButton value="smile" selected onClick={ (e) => !setEmoji(true) && setEmojiRef(e.target) }>
-                  <Icon type="fas" icon="smile" fixedWidth />
-                </ToggleButton>
-              ) }
             </ToggleButtonGroup>
             <ToggleButton size="small" value="send" selected color="primary" onClick={ (e) => onSend(e, data) }>
               <Icon type="fas" icon="play" fixedWidth />
@@ -635,7 +657,7 @@ const DashupUIChatInput = (props = {}) => {
           anchorEl={ mentionRef }
           transformOrigin={ {
             vertical   : 'bottom',
-            horizontal : 'right',
+            horizontal : 'center',
           } }
           anchorOrigin={ {
             vertical   : 'top',
@@ -668,38 +690,27 @@ const DashupUIChatInput = (props = {}) => {
           anchorEl={ emojiRef }
           transformOrigin={ {
             vertical   : 'bottom',
-            horizontal : 'right',
+            horizontal : 'center',
           } }
           anchorOrigin={ {
             vertical   : 'top',
             horizontal : 'right',
           } }
+          hideBackdrop
           disableAutoFocus
           disableEnforceFocus
         >
-          <Box sx={ {
-            '& .emoji-mart' : {
-              border          : 0,
-              backgroundColor : theme.palette.background.paper,
-            },
-            '& .emoji-mart-bar' : {
-              borderColor : theme.palette.divider,
-            },
-            '& .emoji-mart-search input' : {
-              marginBottom    : 1,
-              backgroundColor : 'transparent!important',
-            },
-            '& .emoji-mart-category-label span' : {
-              backgroundColor : `${theme.palette.background.paper}!important`,
-            },
-          } }>
-            <Picker
-              ref={ pickerRef }
-              title="Dashup"
-              theme={ theme.palette.mode }
-              color={ theme.palette.primary.main }
-              onSelect={ console.log }
-            />
+          <Box p={ 1 } maxWidth={ 220 } textAlign="center">
+            { !!(emojiSearch || '').length && emojiIndex.search(emojiSearch).map((item, i) => {
+              // return jsx
+              return (
+                <IconButton key={ `item-${item.id}` } onClick={ (e) => onEmoji(item) } sx={ {
+                  backgroundColor : index === i ? 'primary.main' : undefined
+                } }>
+                  <EMEmoji emoji={ item.colons } size={ theme.typography.htmlFontSize } />
+                </IconButton>
+              );
+            }) }
           </Box>
         </Popover>
       </>

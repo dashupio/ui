@@ -54,8 +54,11 @@ const DashupUIPageFilter = (props = {}) => {
     return fields.filter((f) => (props.tags || page.get('data.tag') || []).includes(f.uuid));
   };
 
+  // disable menu
+  const disableFilter = !!(typeof eden !== 'undefined' ? eden : {}).state?.share?.disableFilter;
+
   // return JSX
-  return (
+  return disableFilter ? null : (
     <DashupContext.Consumer>
       { ({ page, dashup, setUser, getFields, getFieldStruct }) => {
 

@@ -206,6 +206,7 @@ const DashupUIChatMessage = (props = {}) => {
           left   : 0,
           right  : 0,
           bottom : -5,
+          zIndex : -1,
 
           background   : 'rgba(0, 0, 0, 0.15)',
           borderRadius : 2,
@@ -260,6 +261,10 @@ const DashupUIChatMessage = (props = {}) => {
             <Box sx={ {
               wordBreak  : 'break-word',
               whiteSpace : 'pre-line',
+
+              '& .emoji-mart-emoji' : {
+                verticalAlign : 'middle',
+              }
             } }>
               { parseContent(data.dashup, props.message.parsed || props.message.message) }
             </Box>

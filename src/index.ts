@@ -45,6 +45,7 @@ import Block from './Block';
 import Query from './Query';
 import Avatar from './Avatar';
 import colors from './colors';
+import Masonry from '@mui/lab/Masonry';
 import IconPicker from './IconPicker';
 import Permission from './Permission';
 import AdapterMoment from '@mui/lab/AdapterMoment';
@@ -90,6 +91,7 @@ export {
   IconPicker,
   Permission,
 
+  Masonry,
   AdapterMoment,
 
   // hooks

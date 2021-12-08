@@ -1,7 +1,8 @@
 
 // import simple markdown
 import React from 'react';
-import { Box, Link } from '../';
+import { Link } from '../';
+import { Emoji } from 'emoji-mart';
 import markdown from 'simple-markdown';
 
 // rules
@@ -35,6 +36,31 @@ const rules = {
         </Link>
       );
     }
+  },
+
+  emoji : {
+    ...markdown.defaultRules.em,
+
+    parse : capture => {
+      return {
+        emoji : capture[0],
+      };
+    },
+    match : markdown.anyScopeRegex(/^:(?:[^:\s]|::)*:/),
+    react : (node, output, state) => {
+      // set size
+      let size = 16;
+
+      // check theme
+      if (typeof theme !== 'undefined') {
+        size = theme.typography.htmlFontSize;
+      }
+
+      // return jsx
+      return (
+        <Emoji emoji={ node.emoji } key={ state.key } size={ size } />
+      );
+    },
   },
 
   // fix url
