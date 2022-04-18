@@ -283,6 +283,9 @@ const DashupUIChatInput = (props = {}) => {
     e.preventDefault();
     e.stopPropagation();
 
+    // check value
+    if (JSON.stringify(value) === JSON.stringify(emptyState)) return;
+
     // value to string
     const text = toText(value || []);
 
@@ -308,9 +311,14 @@ const DashupUIChatInput = (props = {}) => {
 
     // set embeds
     Transforms.select(editor, Editor.start(editor, []));
-
-    // set value
-    setValue(emptyState);
+    
+    // delete
+    Transforms.delete(editor, {
+      at : {
+        focus  : Editor.end(editor, []),
+        anchor : Editor.start(editor, []),
+      },
+    });
     
     // on send
     if (props.onSend) {
@@ -619,7 +627,12 @@ const DashupUIChatInput = (props = {}) => {
           </Stack>
         ) }
 
-        <Paper>
+        <Paper
+          sx={ {
+            borderRadius : 2,
+          } }
+          elevation={ 1 }
+        >
           <Stack spacing={ 1 } direction="row" alignItems="center" pr={ 2 }>
             <Box flex={ 1 } px={ 2 } py={ 1 } sx={ {
               '& .chat-control' : {

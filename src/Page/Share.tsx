@@ -1,6 +1,7 @@
 
 // import dependencies
 import copy from 'copy-to-clipboard';
+import QRCode from 'qrcode.react';
 import { Alert } from '@mui/material';
 import React, { useRef, useState } from 'react';
 import { Icon, View, Modal, DialogActions, FormControlLabel, FormGroup, Switch, DialogContentText, Box, TextField, Dialog, DialogTitle, Stack, Button, DialogContent, MenuItem, Divider, Tooltip, IconButton, LoadingButton, InputAdornment } from '../';
@@ -20,7 +21,7 @@ const debounce = (fn, to = 500) => {
 const DashupUIPageShare = (props = {}) => {
   // use state
   const [share, setSharing] = useState(null);
-  const [shares, setShares] = useState(null);
+  const [shares, setShares] = useState([]);
   const [saving, setSaving] = useState(false);
   const [prevent, setPrevent] = useState(false);
   const [copying, setCopying] = useState(null);
@@ -333,6 +334,10 @@ const DashupUIPageShare = (props = {}) => {
                           <>
                             <Box py={ 2 }>
                               <Divider />
+                            </Box>
+
+                            <Box pb={ 2 }>
+                              <QRCode value={ `https://${eden.get('config.domain')}/share/${share.slug}` } />
                             </Box>
 
                             <TextField

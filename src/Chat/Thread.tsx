@@ -6,7 +6,7 @@ import React, { useEffect, useRef, useState } from 'react';
 
 // import message
 import DashupUIChatMessage from './Message';
-import { Box, Typography, CircularProgress } from '../';
+import { Box, Stack, Typography, CircularProgress } from '../';
 
 // let context
 let Message = null;
@@ -55,14 +55,16 @@ const DashupUIChatThread = (props = {}) => {
           }
         } }>
           { !!scrollRef.current?.getScrollElement() && (
-            <InfiniteScroll
+            <Stack
               next={ props.onNext }
               style={ {
                 display       : 'flex',
                 flexDirection : 'column-reverse',
               } }
               inverse={ true }
+              spacing={ .5 }
               hasMore={ props.hasMore }
+              component={ InfiniteScroll }
               dataLength={ (messages || []).length }
 
               loader={ (
@@ -71,7 +73,8 @@ const DashupUIChatThread = (props = {}) => {
                 </Box>
               ) }
               endMessage={ (
-                <Typography variant="h5" sx={ {
+                <Typography sx={ {
+                  py        : 2,
                   textAlign : 'center',
                 } } gutterBottom>
                   { !(messages || []).length ? (
@@ -94,7 +97,7 @@ const DashupUIChatThread = (props = {}) => {
                   />
                 );
               }) }
-            </InfiniteScroll>
+            </Stack>
           ) }
         </SimpleBar>
       </Box>

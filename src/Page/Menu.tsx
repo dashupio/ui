@@ -1,18 +1,20 @@
 
 // import dependencies
 import React from 'react';
-import { Fab, Icon, styled, Stack, Tooltip, Box, Typography, Avatar, IconButton, AvatarGroup } from '../';
+import { Fab, Icon, styled, Stack, Tooltip, Box, Typography, Avatar, IconButton, useMediaQuery, AvatarGroup } from '../';
 
 // let context
 let DashupContext = null;
 
 // create menu component
 const DashupUIPageMenu = (props = {}) => {
+  // is mobile
+  const isMobile = useMediaQuery('(max-width:800px)');
 
   // get active
   const getActive = (page, dashup) => {
     // return actives
-    return [...(dashup.get('active') || [])].filter((a) => a.page === page?.get('_id'));
+    return [...(dashup.get('active') || [])].filter((a) => a.page === page?.get('_id') && a.user !== eden?.user?.get('_id'));
   };
 
   // disable menu
@@ -44,17 +46,24 @@ const DashupUIPageMenu = (props = {}) => {
         // return styled
         return (
           <Box sx={ {
-            pt            : 2,
-            pb            : 2,
-            mb            : 3,
+            p             : 2,
+            mx            : -2,
+            mt            : -2,
             display       : 'flex',
+            flexWrap      : 'wrap',
             alignItems    : 'center',
             flexDirection : 'row',
           } }>
-            <PageFab size="medium">
+            <PageFab size="small" onClick={ () => {
+              // mobile
+              if (!isMobile) return;
+
+              // emit
+              eden.emit('sidebar.left', true);
+            } }>
               <Icon icon={ page?.get('icon') || icon } fixedWidth />
             </PageFab>
-            <Typography variant="h4" component="h1" sx={ { ml : 2 } }>
+            <Typography variant="h5" component="h1" sx={ { ml : 2 } }>
               { title }
             </Typography>
             <Box sx={ { ml : 'auto' } }>

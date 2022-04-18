@@ -1,8 +1,8 @@
 
 // import dependencies
 import { Menu } from '@mui/material';
-import React, { useState } from 'react';
-import { Box, Chip, Stack, Icon, MenuItem, Divider, TextField, InputAdornment, IconButton, Query, Tooltip, ListItemIcon, ListItemText } from '../';
+import React, { useRef, useState } from 'react';
+import { Box, Chip, Stack, useTheme, Icon, MenuItem, Popover, Divider, TextField, InputAdornment, IconButton, Query, Tooltip, ListItemIcon, ListItemText } from '../';
 
 // let context
 let DashupContext = null;
@@ -25,6 +25,12 @@ const debounce = (func, timeout = 1000) => {
 
 // create menu component
 const DashupUIPageFilter = (props = {}) => {
+  // theme
+  const theme = useTheme();
+
+  // filter button
+  const filterButton = useRef(null);
+
   // state
   const [filter, setFilter] = useState(false);
   const [tagMenu, setTagMenu] = useState(null);
@@ -75,98 +81,43 @@ const DashupUIPageFilter = (props = {}) => {
         return (
           <>
             <Box sx={ {
-              width      : '100%',
+              p          : 2,
+              mx         : -2,
+              mt         : -2,
               display    : 'flex',
+              background : 'rgba(0, 0, 0, 0.05)',
               alignItems : 'center',
             } } mb={ 2 }>
 
-              { !!props.onSearch && (
-                <TextField
-                  label="Search"
-                  onChange={ (e) => debounce(props.onSearch, 500)(e.target.value && e.target.value.length ? e.target.value : null) }
-                  defaultValue={ page.get('data.search') || page.get('user.search') || '' }
-                  InputProps={ {
-                    startAdornment : (
-                      <InputAdornment position="start">
-                        <Icon type="fas" icon="search" fixedWidth />
-                      </InputAdornment>
-                    ),
-                  } }
-                />
-              ) }
-
-              <Stack direction="row" spacing={ 1 } ml="auto" alignItems="center">
-
-                { !!hasUser(page) && eden?.user?.exists() && (
+              <Stack direction="row" mr="auto" alignItems="center">
+                { !!props.onSearch && (
+                  <TextField
+                    sx={ {
+                      mr : 1,
+                    } }
+                    margin="none"
+                    variant="outlined"
+                    onChange={ (e) => debounce(props.onSearch, 500)(e.target.value && e.target.value.length ? e.target.value : null) }
+                    defaultValue={ page.get('data.search') || page.get('user.search') || '' }
+                    InputProps={ {
+                      sx : {
+                        backgroundColor : theme.palette.mode === 'light' ? theme.palette.light.main : theme.palette.dark.main,
+                      },
+                      size         : 'small',
+                      margin       : 'none',
+                      endAdornment : (
+                        <InputAdornment position="end">
+                          <Icon type="fas" icon="search" fixedWidth />
+                        </InputAdornment>
+                      ),
+                    } }
+                  />
+                ) }{ !!hasUser(page) && eden?.user?.exists() && (
                   <Tooltip title={ page.get('user.filter.me') ? 'Show All' : 'Show Mine' }>
                     <IconButton color={ page.get('user.filter.me') ? 'primary' : undefined } onClick={ (e) => setUser('filter.me', !page.get('user.filter.me')) }>
                       <Icon type="fas" icon="user" fixedWidth />
                     </IconButton>
                   </Tooltip>
-                ) }
-                    
-                { !!sortField && (
-                  <Tooltip title={ `${sortField.label || sortField.name}: ${page.get('data.sort.way') === 1 ? 'Asc' : 'Desc'}` }>
-                    <Chip
-                      icon={ page.get('data.sort.way') === -1 ? (
-                        <Icon type="fas" icon="sort-up" fixedWidth />
-                      ) : page.get('data.sort.way') === 1 ? (
-                        <Icon type="fas" icon="sort-down" fixedWidth />
-                      ) : null }
-                      label={ sortField.label || sortField.name }
-                      onClick={ (e) => props.onSort({ field : sortField.uuid }) }
-                      onDelete={ (e) => props.onSort({}) }
-                    />
-                  </Tooltip>
-                ) }
-
-                { !!props.onSort && (
-                  <>
-                    <Tooltip title="Sort View">
-                      <IconButton color={ typeof page.get('data.sort.way') !== 'undefined' ? 'primary' : undefined } onClick={ (e) => setSortMenu(e.target) }>
-                        { page.get('data.sort.way') === -1 ? (
-                          <Icon type="fas" icon="sort-up" fixedWidth />
-                        ) : page.get('data.sort.way') === 1 ? (
-                          <Icon type="fas" icon="sort-down" fixedWidth />
-                        ) : (
-                          <Icon type="fas" icon="sort" fixedWidth />
-                        ) }
-                      </IconButton>
-                    </Tooltip>
-                    <Menu
-                      open={ !!sortMenu }
-                      onClose={ () => setSortMenu(null) }
-                      anchorEl={ sortMenu }
-                    >
-                      { fields.map((field, i) => {
-                        // return jsx
-                        return (
-                          <MenuItem
-                            key={ `sort-${field.uuid}` }
-                            onClick={ () => !setSortMenu(null) && props.onSort({ field : field.uuid }) }
-                          >
-                            <ListItemIcon>
-                              <Icon type="fas" icon={ getFieldStruct(field.type)?.icon } fixedWidth />
-                            </ListItemIcon>
-                            <ListItemText>{ field.label }</ListItemText>
-                          </MenuItem>
-                        );
-                      }) }
-                      <Divider />
-                      <MenuItem
-                        key={ `sort-created` }
-                        onClick={ () => !setSortMenu(null) && props.onSort({ field : 'created_at' }) }
-                      >
-                        Created At
-                      </MenuItem>
-                      <MenuItem
-                        key={ `sort-updated` }
-                        onClick={ () => !setSortMenu(null) && props.onSort({ field : 'updated_at' }) }
-                      >
-                        Updated at
-                      </MenuItem>
-                    </Menu>
-                  </>
                 ) }
                     
                 { (page.get('user.filter.tags') || []).map((tag, i) => {
@@ -236,29 +187,106 @@ const DashupUIPageFilter = (props = {}) => {
 
                 { !!props.onFilter && (
                   <Tooltip title="Filter View">
-                    <IconButton color={ (page.get('user.query') ? page.get('user.query') : '[]').length > 2 || filter ? 'primary' : undefined } onClick={ (e) => setFilter(!filter) }>
+                    <IconButton ref={ filterButton } color={ (page.get('user.query') ? page.get('user.query') : '[]').length > 2 || filter ? 'primary' : undefined } onClick={ (e) => setFilter(!filter) }>
                       <Icon type="fas" icon="filter" fixedWidth />
                     </IconButton>
                   </Tooltip>
                 ) }
+                    
+                { !!sortField && (
+                  <Tooltip title={ `${sortField.label || sortField.name}: ${page.get('data.sort.way') === 1 ? 'Asc' : 'Desc'}` }>
+                    <Chip
+                      icon={ page.get('data.sort.way') === -1 ? (
+                        <Icon type="fas" icon="sort-up" fixedWidth />
+                      ) : page.get('data.sort.way') === 1 ? (
+                        <Icon type="fas" icon="sort-down" fixedWidth />
+                      ) : null }
+                      label={ sortField.label || sortField.name }
+                      onClick={ (e) => props.onSort({ field : sortField.uuid }) }
+                      onDelete={ (e) => props.onSort({}) }
+                    />
+                  </Tooltip>
+                ) }
 
+                { !!props.onSort && (
+                  <>
+                    <Tooltip title="Sort View">
+                      <IconButton color={ typeof page.get('data.sort.way') !== 'undefined' ? 'primary' : undefined } onClick={ (e) => setSortMenu(e.target) }>
+                        { page.get('data.sort.way') === -1 ? (
+                          <Icon type="fas" icon="sort-up" fixedWidth />
+                        ) : page.get('data.sort.way') === 1 ? (
+                          <Icon type="fas" icon="sort-down" fixedWidth />
+                        ) : (
+                          <Icon type="fas" icon="sort" fixedWidth />
+                        ) }
+                      </IconButton>
+                    </Tooltip>
+                    <Menu
+                      open={ !!sortMenu }
+                      onClose={ () => setSortMenu(null) }
+                      anchorEl={ sortMenu }
+                    >
+                      { fields.map((field, i) => {
+                        // return jsx
+                        return (
+                          <MenuItem
+                            key={ `sort-${field.uuid}` }
+                            onClick={ () => !setSortMenu(null) && props.onSort({ field : field.uuid }) }
+                          >
+                            <ListItemIcon>
+                              <Icon type="fas" icon={ getFieldStruct(field.type)?.icon } fixedWidth />
+                            </ListItemIcon>
+                            <ListItemText>{ field.label }</ListItemText>
+                          </MenuItem>
+                        );
+                      }) }
+                      <Divider />
+                      <MenuItem
+                        key={ `sort-created` }
+                        onClick={ () => !setSortMenu(null) && props.onSort({ field : 'created_at' }) }
+                      >
+                        Created At
+                      </MenuItem>
+                      <MenuItem
+                        key={ `sort-updated` }
+                        onClick={ () => !setSortMenu(null) && props.onSort({ field : 'updated_at' }) }
+                      >
+                        Updated at
+                      </MenuItem>
+                    </Menu>
+                  </>
+                ) }
+              </Stack>
+
+              <Stack direction="row" ml="auto" alignItems="center">
                 { props.children }
               </Stack>
             </Box>
 
             { !!filter && !!props.onFilter && (
-              <Box mb={ 2 }>
-                <Query
-                  page={ page }
-                  label="Filter"
-                  query={ props.query || page.get('user.query') }
-                  dashup={ dashup }
-                  fields={ fields }
-                  onChange={ props.onFilter }
-                  isString={ props.isString }
-                  getFieldStruct={ getFieldStruct }
-                />
-              </Box>
+              <Popover
+                id="page-filter"
+                open={ !!filter }
+                onClose={ () => setFilter(false) }
+                anchorEl={ filterButton?.current }
+                anchorOrigin={{
+                  vertical   : 'bottom',
+                  horizontal : 'left',
+                }}
+              >
+                <Box minWidth={ 420 }>
+                  <Query
+                    page={ page }
+                    label="Filter"
+                    query={ props.query || page.get('user.query') }
+                    dashup={ dashup }
+                    fields={ fields }
+                    onChange={ props.onFilter }
+                    isString={ props.isString }
+                    getFieldStruct={ getFieldStruct }
+                  />
+                </Box>
+              </Popover>
             ) }
           </>
         );

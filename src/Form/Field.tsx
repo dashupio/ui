@@ -9,6 +9,9 @@ let DashupUIContext = null;
 
 // create dashup grid body
 const DashupUIFormField = (props = {}) => {
+  // state
+  const [hovered, setHovered] = useState(false);
+
   // theme
   const theme = useTheme();
   
@@ -177,9 +180,11 @@ const DashupUIFormField = (props = {}) => {
   return !struct ? null : (
     <Box
       sx={ {
-        width    : props.col ? 'auto' : '100%',
-        display  : isViewOnly(props.clean || {}) && !props.updating ? 'none' : 'block',
-        position : 'relative',
+        flex       : props.field.col ? 1 : undefined,
+        width      : props.field.col ? 'auto' : '100%',
+        display    : isViewOnly(props.clean || {}) && !props.updating ? 'none' : 'block',
+        position   : 'relative',
+        marginLeft : theme.spacing(1),
 
         '&:hover > .updating' : {
           display : 'flex',
@@ -188,8 +193,10 @@ const DashupUIFormField = (props = {}) => {
       data-field={ props.field.uuid }
       data-type={ props.field.type }
       id={ `field-${props.field.uuid}${props.iKey ? `-${props.iKey}` : '' }` }
+      onMouseEnter={ () => props.updating && setHovered(true) }
+      onMouseLeave={ () => props.updating && setHovered(false) }
     >
-      { props.updating && (
+      { props.updating && hovered && (
         <>
           <Box sx={ {
             top             : 2,
@@ -246,7 +253,11 @@ const DashupUIFormField = (props = {}) => {
                   </ToggleButton>
                 </Tooltip>
                 <Tooltip title="Move Field">
-                  <ToggleButton value="move" className="moves" sx={ buttonSx }>
+                  <ToggleButton value="move" className="moves" sx={ {
+                    ...buttonSx,
+
+                    cursor : 'move',
+                  } }>
                     <Icon type="fas" icon="grip-vertical" fontSize="small" />
                   </ToggleButton>
                 </Tooltip>

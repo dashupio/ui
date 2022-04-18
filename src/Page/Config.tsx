@@ -151,8 +151,10 @@ const DashupUIPageConfig = (props = {}) => {
                 return (
                   <TabPanel key={ `tab-${t}` } value={ t.toLowerCase() } sx={ {
                     flex          : 1,
+                    display       : 'flex',
                     paddingLeft   : 0,
                     paddingRight  : 0,
+                    flexDirection : 'column',
                     paddingBottom : 0,
                   } }>
                     { `${tab}`.toLowerCase() === 'connects' ? (
@@ -179,8 +181,8 @@ const DashupUIPageConfig = (props = {}) => {
         { !!(props.missingRequire || []).length && struct?.data?.default && (
           <Box display="flex" flex={ 0 } justifyContent="flex-end" pt={ 2 }>
             { defaulting ? (
-              <Button onClick={ (e) => setDefaulting(false) }>
-                Cancel
+              <Button variant="contained" color="info" onClick={ (e) => setDefaulting(false) }>
+                Configure Myself
               </Button>
             ) : (
               <Button variant="contained" color="info" onClick={ (e) => setDefaulting(true) }>
@@ -188,7 +190,7 @@ const DashupUIPageConfig = (props = {}) => {
               </Button>
             ) }
             { !!defaulting && (
-              <LoadingButton sx={ { ml : 2 } } onClick={ (e) => onImport(e) } disabled={ !!importing } loading={ !!importing } variant="contained" color="primary">
+              <LoadingButton sx={ { ml : 1 } } onClick={ (e) => onImport(e) } disabled={ !!importing } loading={ !!importing } variant="contained" color="primary">
                 { importing ? 'Importing...' : 'Use Default Pages' }
               </LoadingButton>
             ) }

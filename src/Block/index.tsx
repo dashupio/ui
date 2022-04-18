@@ -54,12 +54,12 @@ const DashupUIBlock = (props = {}) => {
             </ToggleButton>
 
             <ToggleButtonGroup size="small" color="primary">
-              <Tooltip title="Clone Field">
+              <Tooltip title="Clone Block">
                 <ToggleButton value="clone" onClick={ (e) => props.onClone(props.block) } sx={ buttonSx }>
                   <Icon type="fas" icon="clone" fontSize="small" />
                 </ToggleButton>
               </Tooltip>
-              <Tooltip title="Field Config">
+              <Tooltip title="Block Config">
                 <ToggleButton value="config" onClick={ (e) => props.onConfig(props.block) } sx={ buttonSx }>
                   <Icon type="fas" icon="ellipsis-h" fontSize="small" />
                 </ToggleButton>

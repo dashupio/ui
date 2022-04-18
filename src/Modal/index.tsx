@@ -3,10 +3,13 @@
 // import dependencies
 import React from 'react';
 import moment from 'moment';
-import { Icon, Chat, Box, Paper, Dialog, DialogTitle, Stack, DialogContent } from '../';
+import SimpleBar from 'simplebar-react';
+import { Icon, Chat, Box, Paper, Dialog, DialogTitle, Stack, DialogContent, useMediaQuery } from '../';
 
 // create menu component
 const DashupUIModal = (props = {}) => {
+  // is mobile
+  const isMobile = useMediaQuery('(max-width:800px)');
 
   // return JSX
   return (
@@ -27,36 +30,42 @@ const DashupUIModal = (props = {}) => {
         } }>
           <Paper sx={ {
             flex         : 1,
-            maxWidth     : '66%',
+            maxWidth     : isMobile ? undefined : '66%',
+            position     : 'relative',
             borderRadius : 0,
           } }>
-            <Box p={ 2 } flex={ 1 } sx={ {
-              height        : '100%',
-              display       : 'flex',
-              flexDirection : 'column',
+            <SimpleBar style={ {
+              width  : '100%',
+              height : '75vh',
             } }>
-              { !!props.title && (
-                <DialogTitle sx={ { padding : 0 } }>
-                  <Box display="flex" flexDirection="row" alignItems="center">
-                    { !!props.icon && (
-                      <Box mr={ 2 }>
-                        <Icon icon={ props.icon } fixedWidth />
-                      </Box>
-                    ) }
-                    { props.title }
-                    { !!props.headerButtons && (
-                      <Box ml="auto">
-                        { props.headerButtons }
-                      </Box>
-                    ) }
-                  </Box>
-                </DialogTitle>
-              ) }
-              { props.children }
-            </Box>
+              <Box p={ 2 } flex={ 1 } sx={ {
+                display       : 'flex',
+                minHeight     : '75vh',
+                flexDirection : 'column',
+              } }>
+                { !!props.title && (
+                  <DialogTitle sx={ { padding : 0 } }>
+                    <Box display="flex" flexDirection="row" alignItems="center">
+                      { !!props.icon && (
+                        <Box mr={ 2 }>
+                          <Icon icon={ props.icon } fixedWidth />
+                        </Box>
+                      ) }
+                      { props.title }
+                      { !!props.headerButtons && (
+                        <Box ml="auto">
+                          { props.headerButtons }
+                        </Box>
+                      ) }
+                    </Box>
+                  </DialogTitle>
+                ) }
+                { props.children }
+              </Box>
+            </SimpleBar>
           </Paper>
           <Box sx={ {
-            display         : 'flex',
+            display         : isMobile ? 'none' : 'flex',
             maxWidth        : '34%',
             flexDirection   : 'column',
             backgroundColor : 'background.default',

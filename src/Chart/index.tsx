@@ -1,5 +1,5 @@
 // import dependencies
-import { Box } from '../index';
+import { Box, useTheme } from '../';
 import React, { useState, useEffect } from 'react';
 
 // let chart
@@ -8,6 +8,7 @@ let Chart = null;
 // export default
 const DashupUIChart = (props = {}) => {
   // create chat
+  const theme = useTheme();
   const [chart, setChart] = useState(!!Chart);
 
   // use effect
@@ -45,6 +46,10 @@ const DashupUIChart = (props = {}) => {
         width="100%"
         height="100%"
         
+        theme={ {
+          mode : theme.palette.mode,
+        } }
+
         { ...props }
       />
     </Box>

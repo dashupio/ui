@@ -123,6 +123,9 @@ const DashupUIPage = (props = {}) => {
 
   // add listeners
   useEffect(() => {
+    // check required
+    const { require = [] } = props;
+
     // check page
     if (ctx.id !== (props.page && props.page.get('_id'))) {
       // update ctx
@@ -139,6 +142,20 @@ const DashupUIPage = (props = {}) => {
     props.page.on('color', updateCtx);
     props.dashup.on('active', updateCtx);
 
+    // require
+    require.forEach((tld) => {
+      // on tld
+      props.page.on(tld?.key, updateCtx);
+    });
+
+    // on share
+    const onShare = () => props.onShare && props.onShare();
+    const onConfig = () => props.onConfig && props.onConfig();
+
+    // on share
+    props.dashup.on('share', onShare);
+    props.dashup.on('config', onConfig);
+
     // end effect
     return () => {
       // add listeners
@@ -147,8 +164,18 @@ const DashupUIPage = (props = {}) => {
       props.page.removeListener('name', updateCtx);
       props.page.removeListener('color', updateCtx);
       props.dashup.removeListener('active', updateCtx);
+
+      // on share
+      props.dashup.removeListener('share', onShare);
+      props.dashup.removeListener('config', onConfig);
+
+      // require
+      require.forEach((tld) => {
+        // on tld
+        props.page.removeListener(tld?.key, updateCtx);
+      });
     };
-  }, [props.page && props.page.get('_id')]);
+  }, [props.page && props.page.get('_id'), props.page && props.page.get('type')]);
 
   // missing require
   useEffect(() => {

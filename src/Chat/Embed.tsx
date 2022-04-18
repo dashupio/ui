@@ -1,15 +1,15 @@
 
 import moment from 'moment';
 import React, { useState } from 'react';
-import { Box, Card, Icon, Stack, colors, Link, Avatar, CardMedia, CardHeader, CardContent, Typography, CircularProgress } from '@dashup/ui';
+import { Box, Card, Icon, Stack, colors, Link, Avatar, CardMedia, CardHeader, CardContent, Typography, CircularProgress, useMediaQuery } from '@dashup/ui';
 
 // let context
 let DashupUIContext = null;
 
 // create dashup grid body
 const DashupUIChatEmbed = (props = {}) => {
-  // use state
-  const [show, setShow] = useState(false);
+  // is mobile
+  const isMobile = useMediaQuery('(max-width:800px)');
 
   // get duration
   const getDuration = (time) => {
@@ -96,8 +96,8 @@ const DashupUIChatEmbed = (props = {}) => {
     // return card
     return (
       <Card sx={ {
-        width    : data.size === 'small' ? 240 : 360,
-        maxWidth : data.size === 'small' ? '100%' : 360,
+        minWidth : isMobile ? '60vw' : data.size === 'small' ? 240 : 360,
+        maxWidth : isMobile ? '60vw' : data.size === 'small' ? '100%' : 360,
       } }>
         <CardHeader
           title={ props.embed.data?.title }

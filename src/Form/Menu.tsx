@@ -62,7 +62,9 @@ const DashupUIFormMenu = (props = {}) => {
             ModalProps={ {
               sx : {
                 right : 'auto',
-              }
+              },
+
+              disableScrollLock : true,
             } }
           >
             <Box px={ 3 } py={ 2 } height="100%" display="flex" flexDirection="column" maxWidth={ 360 }>

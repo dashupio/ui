@@ -48,7 +48,7 @@ import colors from './colors';
 import Masonry from '@mui/lab/Masonry';
 import IconPicker from './IconPicker';
 import Permission from './Permission';
-import AdapterMoment from '@mui/lab/AdapterMoment';
+import AdapterDateFns from '@mui/lab/AdapterDateFns';
 
 // hooks
 import useCache from './hooks/useCache';
@@ -69,9 +69,9 @@ LicenseInfo.setLicenseKey(
 
 // export mui extra
 export { withStyles } from '@mui/styles';
-export { alpha, styled, useTheme } from '@mui/material/styles';
+export { alpha, styled, useTheme, colorManipulator } from '@mui/material/styles';
 export { DataGridPro as DataGrid, GridActionsCellItem, GridColumnMenuContainer, SortGridMenuItems } from '@mui/x-data-grid-pro';
-export { TabList, TabPanel, TabContext, LocalizationProvider, TimePicker, DatePicker, DateTimePicker, LoadingButton } from '@mui/lab';
+export { TabList, TabPanel, TabContext, LocalizationProvider, TimePicker, DatePicker, CalendarPicker, DateTimePicker, LoadingButton } from '@mui/lab';
 
 // exporting
 export {
@@ -92,7 +92,7 @@ export {
   Permission,
 
   Masonry,
-  AdapterMoment,
+  AdapterDateFns,
 
   // hooks
   useCache,

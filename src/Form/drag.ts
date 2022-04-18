@@ -17,6 +17,24 @@ export default async (e, fields, setFields, setSaving, setConfig, setMenu) => {
   // check id/type
   if (!id && !type) return;
 
+  // check parent
+  if (id && parent === 'menu') {
+    // remove field
+    const allFields = fields.filter((f) => f.uuid !== id);
+
+    // loading
+    setSaving(true);
+  
+    // set page
+    await setFields(allFields);
+  
+    // loading
+    setSaving(false);
+  } else if (parent === 'menu') {
+    // return
+    return;
+  }
+
   // add field if it doesn't exist
   if (!id && type) {
     // set id

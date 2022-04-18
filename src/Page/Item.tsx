@@ -28,9 +28,10 @@ const DashupUIPageItem = (props = {}) => {
   const [confirming, setConfirming] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [actualData, setActualData] = useState((props.item && props.item.get()) || {});
+  const [buttonLoading, setButtonLoading] = useState(null);
 
   // destruct
-  const { page, dashup, getField, getFieldStruct, getForms, getFields } = props;
+  const { page, dashup, getField, getModels, getFieldStruct, getForms, getFields } = props;
 
   // use effect
   useEffect(() => {
@@ -141,6 +142,21 @@ const DashupUIPageItem = (props = {}) => {
 
     // tags
     return val;
+  };
+
+  // get buttons
+  const getButtons = (placement = 'modal-footer') => {
+    // load buttons
+    return getModels().reduce((accum, model) => {
+      // check page
+      const connects = (model.get('connects') || []).filter((c) => c.type === 'button' && (c.placements || []).includes(placement));
+
+      // connects
+      accum.push(...connects);
+
+      // return accum
+      return accum;
+    }, []);
   };
 
   // has tags
@@ -255,6 +271,26 @@ const DashupUIPageItem = (props = {}) => {
     setTimeout(() => setCreating(true), 200);
   };
 
+  // on button
+  const onButton = async (e, button) => {
+    // set loading
+    setButtonLoading(button?.uuid);
+
+    // load key
+    await dashup.action({
+      type   : 'connect',
+      page   : props.page.get('_id'),
+      struct : 'button',
+    }, 'trigger', {
+      button,
+      item  : props.item && props.item.get('_id'),
+      model : getModels()[0].get('_id'),
+    });
+
+    // set loading
+    setButtonLoading(null);
+  };
+
   // on submit
   const onSubmit = async (e, form) => {
     // prevent
@@ -349,7 +385,7 @@ const DashupUIPageItem = (props = {}) => {
   }, [props.item && props.item.get('_id')]);
 
   // get forms
-  const forms = getForms();
+  const forms = props.page.get('data.sorted.0') ? props.page.get('data.sorted').map((form) => props.dashup.page(form)).filter((f) => f) : getForms();
   const chosenForm = getForm(forms);
 
   // return jsx
@@ -581,11 +617,22 @@ const DashupUIPageItem = (props = {}) => {
                 </IconButton>
               </Tooltip>
             ) }
-            <Box flex={ 1 } textAlign="right">
+            <Stack spacing={ 1 } direction="row" sx={ {
+              flex           : 1,
+              justifyContent : 'end',
+            } }>
+              { getButtons().map((button) => {
+                // return buttons
+                return (
+                  <LoadingButton color="primary" variant="contained" onClick={ (e) => onButton(e, button) } loading={ buttonLoading === button.uuid }>
+                    { button.label || button.name || button.uuid }
+                  </LoadingButton>
+                );
+              }) }
               <LoadingButton color="success" variant="contained" onClick={ (e) => onSubmit(e, chosenForm) } disabled={ (!props.saveEmpty && !updated) || prevent || submitting } loading={ submitting }>
                 { submitting ? 'Submitting...' : 'Submit' }
               </LoadingButton>
-            </Box>
+            </Stack>
           </Stack>
         </Box>
       </Modal>

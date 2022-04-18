@@ -25,9 +25,10 @@ var lab = require('@mui/lab');
 var reactColor = require('react-color');
 var Masonry = require('@mui/lab/Masonry');
 var fontAwesomeIconChars = require('font-awesome-icon-chars');
-var AdapterMoment = require('@mui/lab/AdapterMoment');
+var AdapterDateFns = require('@mui/lab/AdapterDateFns');
 var xDataGridPro = require('@mui/x-data-grid-pro');
 var styles = require('@mui/styles');
+var reactIs = require('react-is');
 
 function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e : { 'default': e }; }
 
@@ -65,9 +66,10 @@ var View__default = /*#__PURE__*/_interopDefaultLegacy(View);
 var React__default = /*#__PURE__*/_interopDefaultLegacy(React);
 var InstantReplace__default = /*#__PURE__*/_interopDefaultLegacy(InstantReplace);
 var Masonry__default = /*#__PURE__*/_interopDefaultLegacy(Masonry);
-var AdapterMoment__default = /*#__PURE__*/_interopDefaultLegacy(AdapterMoment);
+var AdapterDateFns__default = /*#__PURE__*/_interopDefaultLegacy(AdapterDateFns);
+var reactIs__default = /*#__PURE__*/_interopDefaultLegacy(reactIs);
 
-function ownKeys(object, enumerableOnly) {
+function ownKeys$1(object, enumerableOnly) {
   var keys = Object.keys(object);
 
   if (Object.getOwnPropertySymbols) {
@@ -90,13 +92,13 @@ function _objectSpread2(target) {
     var source = arguments[i] != null ? arguments[i] : {};
 
     if (i % 2) {
-      ownKeys(Object(source), true).forEach(function (key) {
-        _defineProperty(target, key, source[key]);
+      ownKeys$1(Object(source), true).forEach(function (key) {
+        _defineProperty$1(target, key, source[key]);
       });
     } else if (Object.getOwnPropertyDescriptors) {
       Object.defineProperties(target, Object.getOwnPropertyDescriptors(source));
     } else {
-      ownKeys(Object(source)).forEach(function (key) {
+      ownKeys$1(Object(source)).forEach(function (key) {
         Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key));
       });
     }
@@ -105,20 +107,20 @@ function _objectSpread2(target) {
   return target;
 }
 
-function _typeof(obj) {
+function _typeof$1(obj) {
   "@babel/helpers - typeof";
 
   if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") {
-    _typeof = function (obj) {
+    _typeof$1 = function (obj) {
       return typeof obj;
     };
   } else {
-    _typeof = function (obj) {
+    _typeof$1 = function (obj) {
       return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj;
     };
   }
 
-  return _typeof(obj);
+  return _typeof$1(obj);
 }
 
 function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) {
@@ -157,7 +159,7 @@ function _asyncToGenerator(fn) {
   };
 }
 
-function _defineProperty(obj, key, value) {
+function _defineProperty$1(obj, key, value) {
   if (key in obj) {
     Object.defineProperty(obj, key, {
       value: value,
@@ -172,8 +174,8 @@ function _defineProperty(obj, key, value) {
   return obj;
 }
 
-function _extends() {
-  _extends = Object.assign || function (target) {
+function _extends$1() {
+  _extends$1 = Object.assign || function (target) {
     for (var i = 1; i < arguments.length; i++) {
       var source = arguments[i];
 
@@ -187,7 +189,7 @@ function _extends() {
     return target;
   };
 
-  return _extends.apply(this, arguments);
+  return _extends$1.apply(this, arguments);
 }
 
 function _slicedToArray(arr, i) {
@@ -448,12 +450,15 @@ var DashupUIPageMenu = function DashupUIPageMenu() {
   var _state, _state$share;
 
   var props = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+  // is mobile
+  var isMobile = material.useMediaQuery('(max-width:800px)'); // get active
 
-  // get active
   var getActive = function getActive(page, dashup) {
     // return actives
     return _toConsumableArray(dashup.get('active') || []).filter(function (a) {
-      return a.page === (page === null || page === void 0 ? void 0 : page.get('_id'));
+      var _eden, _eden$user;
+
+      return a.page === (page === null || page === void 0 ? void 0 : page.get('_id')) && a.user !== ((_eden = eden) === null || _eden === void 0 ? void 0 : (_eden$user = _eden.user) === null || _eden$user === void 0 ? void 0 : _eden$user.get('_id'));
     });
   }; // disable menu
 
@@ -487,20 +492,27 @@ var DashupUIPageMenu = function DashupUIPageMenu() {
 
     return /*#__PURE__*/React__default['default'].createElement(material.Box, {
       sx: {
-        pt: 2,
-        pb: 2,
-        mb: 3,
+        p: 2,
+        mx: -2,
+        mt: -2,
         display: 'flex',
+        flexWrap: 'wrap',
         alignItems: 'center',
         flexDirection: 'row'
       }
     }, /*#__PURE__*/React__default['default'].createElement(PageFab, {
-      size: "medium"
+      size: "small",
+      onClick: function onClick() {
+        // mobile
+        if (!isMobile) return; // emit
+
+        eden.emit('sidebar.left', true);
+      }
     }, /*#__PURE__*/React__default['default'].createElement(DashupUIIcon, {
       icon: (page === null || page === void 0 ? void 0 : page.get('icon')) || icon,
       fixedWidth: true
     })), /*#__PURE__*/React__default['default'].createElement(material.Typography, {
-      variant: "h4",
+      variant: "h5",
       component: "h1",
       sx: {
         ml: 2
@@ -782,7 +794,7 @@ var DashupUIPageAudit = function DashupUIPageAudit() {
     spacing: 1
   }, props.audit.changes.map(function (change, a) {
     // return jsx
-    return /*#__PURE__*/React__default['default'].createElement(DashupUIPageAuditChange, _extends({
+    return /*#__PURE__*/React__default['default'].createElement(DashupUIPageAuditChange, _extends$1({
       key: "change-".concat(props.audit.id, "-").concat(a)
     }, props, {
       change: change
@@ -856,12 +868,18 @@ var DashupUIPageItem = function DashupUIPageItem() {
   var _useState23 = React.useState(props.item && props.item.get() || {}),
       _useState24 = _slicedToArray(_useState23, 2),
       actualData = _useState24[0],
-      setActualData = _useState24[1]; // destruct
+      setActualData = _useState24[1];
+
+  var _useState25 = React.useState(null),
+      _useState26 = _slicedToArray(_useState25, 2),
+      buttonLoading = _useState26[0],
+      setButtonLoading = _useState26[1]; // destruct
 
 
   var page = props.page,
       dashup = props.dashup,
       getField = props.getField,
+      getModels = props.getModels,
       getFieldStruct = props.getFieldStruct,
       getForms = props.getForms,
       getFields = props.getFields; // use effect
@@ -972,6 +990,22 @@ var DashupUIPageItem = function DashupUIPageItem() {
     }); // tags
 
     return val;
+  }; // get buttons
+
+
+  var getButtons = function getButtons() {
+    var placement = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 'modal-footer';
+    // load buttons
+    return getModels().reduce(function (accum, model) {
+      // check page
+      var connects = (model.get('connects') || []).filter(function (c) {
+        return c.type === 'button' && (c.placements || []).includes(placement);
+      }); // connects
+
+      accum.push.apply(accum, _toConsumableArray(connects)); // return accum
+
+      return accum;
+    }, []);
   }; // has tags
 
 
@@ -1099,28 +1133,66 @@ var DashupUIPageItem = function DashupUIPageItem() {
     setTimeout(function () {
       return setCreating(true);
     }, 200);
-  }; // on submit
+  }; // on button
 
 
-  var _onSubmit = /*#__PURE__*/function () {
-    var _ref2 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee2(e, form) {
-      var _props$item;
-
-      var creating, result, url, state;
+  var onButton = /*#__PURE__*/function () {
+    var _ref2 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee2(e, button) {
       return regeneratorRuntime.wrap(function _callee2$(_context2) {
         while (1) {
           switch (_context2.prev = _context2.next) {
+            case 0:
+              // set loading
+              setButtonLoading(button === null || button === void 0 ? void 0 : button.uuid); // load key
+
+              _context2.next = 3;
+              return dashup.action({
+                type: 'connect',
+                page: props.page.get('_id'),
+                struct: 'button'
+              }, 'trigger', {
+                button: button,
+                item: props.item && props.item.get('_id'),
+                model: getModels()[0].get('_id')
+              });
+
+            case 3:
+              // set loading
+              setButtonLoading(null);
+
+            case 4:
+            case "end":
+              return _context2.stop();
+          }
+        }
+      }, _callee2);
+    }));
+
+    return function onButton(_x2, _x3) {
+      return _ref2.apply(this, arguments);
+    };
+  }(); // on submit
+
+
+  var _onSubmit = /*#__PURE__*/function () {
+    var _ref3 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee3(e, form) {
+      var _props$item;
+
+      var creating, result, url, state;
+      return regeneratorRuntime.wrap(function _callee3$(_context3) {
+        while (1) {
+          switch (_context3.prev = _context3.next) {
             case 0:
               // prevent
               e.preventDefault();
               e.stopPropagation(); // check submitting
 
               if (!submitting) {
-                _context2.next = 4;
+                _context3.next = 4;
                 break;
               }
 
-              return _context2.abrupt("return");
+              return _context3.abrupt("return");
 
             case 4:
               // submitting
@@ -1128,7 +1200,7 @@ var DashupUIPageItem = function DashupUIPageItem() {
 
               creating = !((_props$item = props.item) !== null && _props$item !== void 0 && _props$item.get('_id')); // submit form
 
-              _context2.next = 8;
+              _context3.next = 8;
               return props.dashup.action({
                 type: 'page',
                 page: props.page.get('_id'),
@@ -1140,7 +1212,7 @@ var DashupUIPageItem = function DashupUIPageItem() {
               }, actualData));
 
             case 8:
-              result = _context2.sent;
+              result = _context3.sent;
               // set to item
               props.item.set('_id', result._id);
               props.item.set('_meta', result._meta); // set item
@@ -1164,14 +1236,14 @@ var DashupUIPageItem = function DashupUIPageItem() {
 
             case 14:
             case "end":
-              return _context2.stop();
+              return _context3.stop();
           }
         }
-      }, _callee2);
+      }, _callee3);
     }));
 
-    return function onSubmit(_x2, _x3) {
-      return _ref2.apply(this, arguments);
+    return function onSubmit(_x4, _x5) {
+      return _ref3.apply(this, arguments);
     };
   }(); // audits
 
@@ -1213,7 +1285,11 @@ var DashupUIPageItem = function DashupUIPageItem() {
     };
   }, [props.item && props.item.get('_id')]); // get forms
 
-  var forms = getForms();
+  var forms = props.page.get('data.sorted.0') ? props.page.get('data.sorted').map(function (form) {
+    return props.dashup.page(form);
+  }).filter(function (f) {
+    return f;
+  }) : getForms();
   var chosenForm = getForm(forms); // return jsx
 
   return /*#__PURE__*/React__default['default'].createElement(React__default['default'].Fragment, null, /*#__PURE__*/React__default['default'].createElement(DashupUIModal, {
@@ -1442,7 +1518,7 @@ var DashupUIPageItem = function DashupUIPageItem() {
         paddingLeft: 0,
         paddingRight: 0
       }
-    }, /*#__PURE__*/React__default['default'].createElement(DashupUIForm, _extends({}, props, {
+    }, /*#__PURE__*/React__default['default'].createElement(DashupUIForm, _extends$1({}, props, {
       id: page.get('_id'),
       data: actualData,
       fields: t.get('data.fields') || [],
@@ -1482,10 +1558,24 @@ var DashupUIPageItem = function DashupUIPageItem() {
     type: "fas",
     icon: "plus",
     fontSize: "small"
-  }))), /*#__PURE__*/React__default['default'].createElement(material.Box, {
-    flex: 1,
-    textAlign: "right"
-  }, /*#__PURE__*/React__default['default'].createElement(lab.LoadingButton, {
+  }))), /*#__PURE__*/React__default['default'].createElement(material.Stack, {
+    spacing: 1,
+    direction: "row",
+    sx: {
+      flex: 1,
+      justifyContent: 'end'
+    }
+  }, getButtons().map(function (button) {
+    // return buttons
+    return /*#__PURE__*/React__default['default'].createElement(lab.LoadingButton, {
+      color: "primary",
+      variant: "contained",
+      onClick: function onClick(e) {
+        return onButton(e, button);
+      },
+      loading: buttonLoading === button.uuid
+    }, button.label || button.name || button.uuid);
+  }), /*#__PURE__*/React__default['default'].createElement(lab.LoadingButton, {
     color: "success",
     variant: "contained",
     onClick: function onClick(e) {
@@ -1531,7 +1621,7 @@ var DashupUIPageItemWrapper = function DashupUIPageItemWrapper() {
   // return jsx
   return /*#__PURE__*/React__default['default'].createElement(DashupContext$5.Consumer, null, function (data) {
     // return jsx
-    return /*#__PURE__*/React__default['default'].createElement(DashupUIPageItem, _extends({}, props, data));
+    return /*#__PURE__*/React__default['default'].createElement(DashupUIPageItem, _extends$1({}, props, data));
   });
 }; // export default page menu
 
@@ -1542,6 +1632,2564 @@ var Item = (function (ctx) {
 
   return DashupUIPageItemWrapper;
 });
+
+var commonjsGlobal = typeof globalThis !== 'undefined' ? globalThis : typeof window !== 'undefined' ? window : typeof global !== 'undefined' ? global : typeof self !== 'undefined' ? self : {};
+
+function createCommonjsModule(fn, module) {
+	return module = { exports: {} }, fn(module, module.exports), module.exports;
+}
+
+function getCjsExportFromNamespace (n) {
+	return n && n['default'] || n;
+}
+
+/*
+object-assign
+(c) Sindre Sorhus
+@license MIT
+*/
+/* eslint-disable no-unused-vars */
+var getOwnPropertySymbols = Object.getOwnPropertySymbols;
+var hasOwnProperty = Object.prototype.hasOwnProperty;
+var propIsEnumerable = Object.prototype.propertyIsEnumerable;
+
+function toObject(val) {
+	if (val === null || val === undefined) {
+		throw new TypeError('Object.assign cannot be called with null or undefined');
+	}
+
+	return Object(val);
+}
+
+function shouldUseNative() {
+	try {
+		if (!Object.assign) {
+			return false;
+		}
+
+		// Detect buggy property enumeration order in older V8 versions.
+
+		// https://bugs.chromium.org/p/v8/issues/detail?id=4118
+		var test1 = new String('abc');  // eslint-disable-line no-new-wrappers
+		test1[5] = 'de';
+		if (Object.getOwnPropertyNames(test1)[0] === '5') {
+			return false;
+		}
+
+		// https://bugs.chromium.org/p/v8/issues/detail?id=3056
+		var test2 = {};
+		for (var i = 0; i < 10; i++) {
+			test2['_' + String.fromCharCode(i)] = i;
+		}
+		var order2 = Object.getOwnPropertyNames(test2).map(function (n) {
+			return test2[n];
+		});
+		if (order2.join('') !== '0123456789') {
+			return false;
+		}
+
+		// https://bugs.chromium.org/p/v8/issues/detail?id=3056
+		var test3 = {};
+		'abcdefghijklmnopqrst'.split('').forEach(function (letter) {
+			test3[letter] = letter;
+		});
+		if (Object.keys(Object.assign({}, test3)).join('') !==
+				'abcdefghijklmnopqrst') {
+			return false;
+		}
+
+		return true;
+	} catch (err) {
+		// We don't expect any of the above to throw, but better to be safe.
+		return false;
+	}
+}
+
+var objectAssign = shouldUseNative() ? Object.assign : function (target, source) {
+	var from;
+	var to = toObject(target);
+	var symbols;
+
+	for (var s = 1; s < arguments.length; s++) {
+		from = Object(arguments[s]);
+
+		for (var key in from) {
+			if (hasOwnProperty.call(from, key)) {
+				to[key] = from[key];
+			}
+		}
+
+		if (getOwnPropertySymbols) {
+			symbols = getOwnPropertySymbols(from);
+			for (var i = 0; i < symbols.length; i++) {
+				if (propIsEnumerable.call(from, symbols[i])) {
+					to[symbols[i]] = from[symbols[i]];
+				}
+			}
+		}
+	}
+
+	return to;
+};
+
+/**
+ * Copyright (c) 2013-present, Facebook, Inc.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
+var ReactPropTypesSecret$1 = 'SECRET_DO_NOT_PASS_THIS_OR_YOU_WILL_BE_FIRED';
+
+var ReactPropTypesSecret_1 = ReactPropTypesSecret$1;
+
+var printWarning$1 = function() {};
+
+if (process.env.NODE_ENV !== 'production') {
+  var ReactPropTypesSecret = ReactPropTypesSecret_1;
+  var loggedTypeFailures = {};
+  var has$1 = Function.call.bind(Object.prototype.hasOwnProperty);
+
+  printWarning$1 = function(text) {
+    var message = 'Warning: ' + text;
+    if (typeof console !== 'undefined') {
+      console.error(message);
+    }
+    try {
+      // --- Welcome to debugging React ---
+      // This error was thrown as a convenience so that you can use this stack
+      // to find the callsite that caused this warning to fire.
+      throw new Error(message);
+    } catch (x) {}
+  };
+}
+
+/**
+ * Assert that the values match with the type specs.
+ * Error messages are memorized and will only be shown once.
+ *
+ * @param {object} typeSpecs Map of name to a ReactPropType
+ * @param {object} values Runtime values that need to be type-checked
+ * @param {string} location e.g. "prop", "context", "child context"
+ * @param {string} componentName Name of the component for error messages.
+ * @param {?Function} getStack Returns the component stack.
+ * @private
+ */
+function checkPropTypes(typeSpecs, values, location, componentName, getStack) {
+  if (process.env.NODE_ENV !== 'production') {
+    for (var typeSpecName in typeSpecs) {
+      if (has$1(typeSpecs, typeSpecName)) {
+        var error;
+        // Prop type validation may throw. In case they do, we don't want to
+        // fail the render phase where it didn't fail before. So we log it.
+        // After these have been cleaned up, we'll let them throw.
+        try {
+          // This is intentionally an invariant that gets caught. It's the same
+          // behavior as without this statement except with a better message.
+          if (typeof typeSpecs[typeSpecName] !== 'function') {
+            var err = Error(
+              (componentName || 'React class') + ': ' + location + ' type `' + typeSpecName + '` is invalid; ' +
+              'it must be a function, usually from the `prop-types` package, but received `' + typeof typeSpecs[typeSpecName] + '`.'
+            );
+            err.name = 'Invariant Violation';
+            throw err;
+          }
+          error = typeSpecs[typeSpecName](values, typeSpecName, componentName, location, null, ReactPropTypesSecret);
+        } catch (ex) {
+          error = ex;
+        }
+        if (error && !(error instanceof Error)) {
+          printWarning$1(
+            (componentName || 'React class') + ': type specification of ' +
+            location + ' `' + typeSpecName + '` is invalid; the type checker ' +
+            'function must return `null` or an `Error` but returned a ' + typeof error + '. ' +
+            'You may have forgotten to pass an argument to the type checker ' +
+            'creator (arrayOf, instanceOf, objectOf, oneOf, oneOfType, and ' +
+            'shape all require an argument).'
+          );
+        }
+        if (error instanceof Error && !(error.message in loggedTypeFailures)) {
+          // Only monitor this failure once because there tends to be a lot of the
+          // same error.
+          loggedTypeFailures[error.message] = true;
+
+          var stack = getStack ? getStack() : '';
+
+          printWarning$1(
+            'Failed ' + location + ' type: ' + error.message + (stack != null ? stack : '')
+          );
+        }
+      }
+    }
+  }
+}
+
+/**
+ * Resets warning cache when testing.
+ *
+ * @private
+ */
+checkPropTypes.resetWarningCache = function() {
+  if (process.env.NODE_ENV !== 'production') {
+    loggedTypeFailures = {};
+  }
+};
+
+var checkPropTypes_1 = checkPropTypes;
+
+var has = Function.call.bind(Object.prototype.hasOwnProperty);
+var printWarning = function() {};
+
+if (process.env.NODE_ENV !== 'production') {
+  printWarning = function(text) {
+    var message = 'Warning: ' + text;
+    if (typeof console !== 'undefined') {
+      console.error(message);
+    }
+    try {
+      // --- Welcome to debugging React ---
+      // This error was thrown as a convenience so that you can use this stack
+      // to find the callsite that caused this warning to fire.
+      throw new Error(message);
+    } catch (x) {}
+  };
+}
+
+function emptyFunctionThatReturnsNull() {
+  return null;
+}
+
+var factoryWithTypeCheckers = function(isValidElement, throwOnDirectAccess) {
+  /* global Symbol */
+  var ITERATOR_SYMBOL = typeof Symbol === 'function' && Symbol.iterator;
+  var FAUX_ITERATOR_SYMBOL = '@@iterator'; // Before Symbol spec.
+
+  /**
+   * Returns the iterator method function contained on the iterable object.
+   *
+   * Be sure to invoke the function with the iterable as context:
+   *
+   *     var iteratorFn = getIteratorFn(myIterable);
+   *     if (iteratorFn) {
+   *       var iterator = iteratorFn.call(myIterable);
+   *       ...
+   *     }
+   *
+   * @param {?object} maybeIterable
+   * @return {?function}
+   */
+  function getIteratorFn(maybeIterable) {
+    var iteratorFn = maybeIterable && (ITERATOR_SYMBOL && maybeIterable[ITERATOR_SYMBOL] || maybeIterable[FAUX_ITERATOR_SYMBOL]);
+    if (typeof iteratorFn === 'function') {
+      return iteratorFn;
+    }
+  }
+
+  /**
+   * Collection of methods that allow declaration and validation of props that are
+   * supplied to React components. Example usage:
+   *
+   *   var Props = require('ReactPropTypes');
+   *   var MyArticle = React.createClass({
+   *     propTypes: {
+   *       // An optional string prop named "description".
+   *       description: Props.string,
+   *
+   *       // A required enum prop named "category".
+   *       category: Props.oneOf(['News','Photos']).isRequired,
+   *
+   *       // A prop named "dialog" that requires an instance of Dialog.
+   *       dialog: Props.instanceOf(Dialog).isRequired
+   *     },
+   *     render: function() { ... }
+   *   });
+   *
+   * A more formal specification of how these methods are used:
+   *
+   *   type := array|bool|func|object|number|string|oneOf([...])|instanceOf(...)
+   *   decl := ReactPropTypes.{type}(.isRequired)?
+   *
+   * Each and every declaration produces a function with the same signature. This
+   * allows the creation of custom validation functions. For example:
+   *
+   *  var MyLink = React.createClass({
+   *    propTypes: {
+   *      // An optional string or URI prop named "href".
+   *      href: function(props, propName, componentName) {
+   *        var propValue = props[propName];
+   *        if (propValue != null && typeof propValue !== 'string' &&
+   *            !(propValue instanceof URI)) {
+   *          return new Error(
+   *            'Expected a string or an URI for ' + propName + ' in ' +
+   *            componentName
+   *          );
+   *        }
+   *      }
+   *    },
+   *    render: function() {...}
+   *  });
+   *
+   * @internal
+   */
+
+  var ANONYMOUS = '<<anonymous>>';
+
+  // Important!
+  // Keep this list in sync with production version in `./factoryWithThrowingShims.js`.
+  var ReactPropTypes = {
+    array: createPrimitiveTypeChecker('array'),
+    bool: createPrimitiveTypeChecker('boolean'),
+    func: createPrimitiveTypeChecker('function'),
+    number: createPrimitiveTypeChecker('number'),
+    object: createPrimitiveTypeChecker('object'),
+    string: createPrimitiveTypeChecker('string'),
+    symbol: createPrimitiveTypeChecker('symbol'),
+
+    any: createAnyTypeChecker(),
+    arrayOf: createArrayOfTypeChecker,
+    element: createElementTypeChecker(),
+    elementType: createElementTypeTypeChecker(),
+    instanceOf: createInstanceTypeChecker,
+    node: createNodeChecker(),
+    objectOf: createObjectOfTypeChecker,
+    oneOf: createEnumTypeChecker,
+    oneOfType: createUnionTypeChecker,
+    shape: createShapeTypeChecker,
+    exact: createStrictShapeTypeChecker,
+  };
+
+  /**
+   * inlined Object.is polyfill to avoid requiring consumers ship their own
+   * https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/is
+   */
+  /*eslint-disable no-self-compare*/
+  function is(x, y) {
+    // SameValue algorithm
+    if (x === y) {
+      // Steps 1-5, 7-10
+      // Steps 6.b-6.e: +0 != -0
+      return x !== 0 || 1 / x === 1 / y;
+    } else {
+      // Step 6.a: NaN == NaN
+      return x !== x && y !== y;
+    }
+  }
+  /*eslint-enable no-self-compare*/
+
+  /**
+   * We use an Error-like object for backward compatibility as people may call
+   * PropTypes directly and inspect their output. However, we don't use real
+   * Errors anymore. We don't inspect their stack anyway, and creating them
+   * is prohibitively expensive if they are created too often, such as what
+   * happens in oneOfType() for any type before the one that matched.
+   */
+  function PropTypeError(message) {
+    this.message = message;
+    this.stack = '';
+  }
+  // Make `instanceof Error` still work for returned errors.
+  PropTypeError.prototype = Error.prototype;
+
+  function createChainableTypeChecker(validate) {
+    if (process.env.NODE_ENV !== 'production') {
+      var manualPropTypeCallCache = {};
+      var manualPropTypeWarningCount = 0;
+    }
+    function checkType(isRequired, props, propName, componentName, location, propFullName, secret) {
+      componentName = componentName || ANONYMOUS;
+      propFullName = propFullName || propName;
+
+      if (secret !== ReactPropTypesSecret_1) {
+        if (throwOnDirectAccess) {
+          // New behavior only for users of `prop-types` package
+          var err = new Error(
+            'Calling PropTypes validators directly is not supported by the `prop-types` package. ' +
+            'Use `PropTypes.checkPropTypes()` to call them. ' +
+            'Read more at http://fb.me/use-check-prop-types'
+          );
+          err.name = 'Invariant Violation';
+          throw err;
+        } else if (process.env.NODE_ENV !== 'production' && typeof console !== 'undefined') {
+          // Old behavior for people using React.PropTypes
+          var cacheKey = componentName + ':' + propName;
+          if (
+            !manualPropTypeCallCache[cacheKey] &&
+            // Avoid spamming the console because they are often not actionable except for lib authors
+            manualPropTypeWarningCount < 3
+          ) {
+            printWarning(
+              'You are manually calling a React.PropTypes validation ' +
+              'function for the `' + propFullName + '` prop on `' + componentName  + '`. This is deprecated ' +
+              'and will throw in the standalone `prop-types` package. ' +
+              'You may be seeing this warning due to a third-party PropTypes ' +
+              'library. See https://fb.me/react-warning-dont-call-proptypes ' + 'for details.'
+            );
+            manualPropTypeCallCache[cacheKey] = true;
+            manualPropTypeWarningCount++;
+          }
+        }
+      }
+      if (props[propName] == null) {
+        if (isRequired) {
+          if (props[propName] === null) {
+            return new PropTypeError('The ' + location + ' `' + propFullName + '` is marked as required ' + ('in `' + componentName + '`, but its value is `null`.'));
+          }
+          return new PropTypeError('The ' + location + ' `' + propFullName + '` is marked as required in ' + ('`' + componentName + '`, but its value is `undefined`.'));
+        }
+        return null;
+      } else {
+        return validate(props, propName, componentName, location, propFullName);
+      }
+    }
+
+    var chainedCheckType = checkType.bind(null, false);
+    chainedCheckType.isRequired = checkType.bind(null, true);
+
+    return chainedCheckType;
+  }
+
+  function createPrimitiveTypeChecker(expectedType) {
+    function validate(props, propName, componentName, location, propFullName, secret) {
+      var propValue = props[propName];
+      var propType = getPropType(propValue);
+      if (propType !== expectedType) {
+        // `propValue` being instance of, say, date/regexp, pass the 'object'
+        // check, but we can offer a more precise error message here rather than
+        // 'of type `object`'.
+        var preciseType = getPreciseType(propValue);
+
+        return new PropTypeError('Invalid ' + location + ' `' + propFullName + '` of type ' + ('`' + preciseType + '` supplied to `' + componentName + '`, expected ') + ('`' + expectedType + '`.'));
+      }
+      return null;
+    }
+    return createChainableTypeChecker(validate);
+  }
+
+  function createAnyTypeChecker() {
+    return createChainableTypeChecker(emptyFunctionThatReturnsNull);
+  }
+
+  function createArrayOfTypeChecker(typeChecker) {
+    function validate(props, propName, componentName, location, propFullName) {
+      if (typeof typeChecker !== 'function') {
+        return new PropTypeError('Property `' + propFullName + '` of component `' + componentName + '` has invalid PropType notation inside arrayOf.');
+      }
+      var propValue = props[propName];
+      if (!Array.isArray(propValue)) {
+        var propType = getPropType(propValue);
+        return new PropTypeError('Invalid ' + location + ' `' + propFullName + '` of type ' + ('`' + propType + '` supplied to `' + componentName + '`, expected an array.'));
+      }
+      for (var i = 0; i < propValue.length; i++) {
+        var error = typeChecker(propValue, i, componentName, location, propFullName + '[' + i + ']', ReactPropTypesSecret_1);
+        if (error instanceof Error) {
+          return error;
+        }
+      }
+      return null;
+    }
+    return createChainableTypeChecker(validate);
+  }
+
+  function createElementTypeChecker() {
+    function validate(props, propName, componentName, location, propFullName) {
+      var propValue = props[propName];
+      if (!isValidElement(propValue)) {
+        var propType = getPropType(propValue);
+        return new PropTypeError('Invalid ' + location + ' `' + propFullName + '` of type ' + ('`' + propType + '` supplied to `' + componentName + '`, expected a single ReactElement.'));
+      }
+      return null;
+    }
+    return createChainableTypeChecker(validate);
+  }
+
+  function createElementTypeTypeChecker() {
+    function validate(props, propName, componentName, location, propFullName) {
+      var propValue = props[propName];
+      if (!reactIs__default['default'].isValidElementType(propValue)) {
+        var propType = getPropType(propValue);
+        return new PropTypeError('Invalid ' + location + ' `' + propFullName + '` of type ' + ('`' + propType + '` supplied to `' + componentName + '`, expected a single ReactElement type.'));
+      }
+      return null;
+    }
+    return createChainableTypeChecker(validate);
+  }
+
+  function createInstanceTypeChecker(expectedClass) {
+    function validate(props, propName, componentName, location, propFullName) {
+      if (!(props[propName] instanceof expectedClass)) {
+        var expectedClassName = expectedClass.name || ANONYMOUS;
+        var actualClassName = getClassName(props[propName]);
+        return new PropTypeError('Invalid ' + location + ' `' + propFullName + '` of type ' + ('`' + actualClassName + '` supplied to `' + componentName + '`, expected ') + ('instance of `' + expectedClassName + '`.'));
+      }
+      return null;
+    }
+    return createChainableTypeChecker(validate);
+  }
+
+  function createEnumTypeChecker(expectedValues) {
+    if (!Array.isArray(expectedValues)) {
+      if (process.env.NODE_ENV !== 'production') {
+        if (arguments.length > 1) {
+          printWarning(
+            'Invalid arguments supplied to oneOf, expected an array, got ' + arguments.length + ' arguments. ' +
+            'A common mistake is to write oneOf(x, y, z) instead of oneOf([x, y, z]).'
+          );
+        } else {
+          printWarning('Invalid argument supplied to oneOf, expected an array.');
+        }
+      }
+      return emptyFunctionThatReturnsNull;
+    }
+
+    function validate(props, propName, componentName, location, propFullName) {
+      var propValue = props[propName];
+      for (var i = 0; i < expectedValues.length; i++) {
+        if (is(propValue, expectedValues[i])) {
+          return null;
+        }
+      }
+
+      var valuesString = JSON.stringify(expectedValues, function replacer(key, value) {
+        var type = getPreciseType(value);
+        if (type === 'symbol') {
+          return String(value);
+        }
+        return value;
+      });
+      return new PropTypeError('Invalid ' + location + ' `' + propFullName + '` of value `' + String(propValue) + '` ' + ('supplied to `' + componentName + '`, expected one of ' + valuesString + '.'));
+    }
+    return createChainableTypeChecker(validate);
+  }
+
+  function createObjectOfTypeChecker(typeChecker) {
+    function validate(props, propName, componentName, location, propFullName) {
+      if (typeof typeChecker !== 'function') {
+        return new PropTypeError('Property `' + propFullName + '` of component `' + componentName + '` has invalid PropType notation inside objectOf.');
+      }
+      var propValue = props[propName];
+      var propType = getPropType(propValue);
+      if (propType !== 'object') {
+        return new PropTypeError('Invalid ' + location + ' `' + propFullName + '` of type ' + ('`' + propType + '` supplied to `' + componentName + '`, expected an object.'));
+      }
+      for (var key in propValue) {
+        if (has(propValue, key)) {
+          var error = typeChecker(propValue, key, componentName, location, propFullName + '.' + key, ReactPropTypesSecret_1);
+          if (error instanceof Error) {
+            return error;
+          }
+        }
+      }
+      return null;
+    }
+    return createChainableTypeChecker(validate);
+  }
+
+  function createUnionTypeChecker(arrayOfTypeCheckers) {
+    if (!Array.isArray(arrayOfTypeCheckers)) {
+      process.env.NODE_ENV !== 'production' ? printWarning('Invalid argument supplied to oneOfType, expected an instance of array.') : void 0;
+      return emptyFunctionThatReturnsNull;
+    }
+
+    for (var i = 0; i < arrayOfTypeCheckers.length; i++) {
+      var checker = arrayOfTypeCheckers[i];
+      if (typeof checker !== 'function') {
+        printWarning(
+          'Invalid argument supplied to oneOfType. Expected an array of check functions, but ' +
+          'received ' + getPostfixForTypeWarning(checker) + ' at index ' + i + '.'
+        );
+        return emptyFunctionThatReturnsNull;
+      }
+    }
+
+    function validate(props, propName, componentName, location, propFullName) {
+      for (var i = 0; i < arrayOfTypeCheckers.length; i++) {
+        var checker = arrayOfTypeCheckers[i];
+        if (checker(props, propName, componentName, location, propFullName, ReactPropTypesSecret_1) == null) {
+          return null;
+        }
+      }
+
+      return new PropTypeError('Invalid ' + location + ' `' + propFullName + '` supplied to ' + ('`' + componentName + '`.'));
+    }
+    return createChainableTypeChecker(validate);
+  }
+
+  function createNodeChecker() {
+    function validate(props, propName, componentName, location, propFullName) {
+      if (!isNode(props[propName])) {
+        return new PropTypeError('Invalid ' + location + ' `' + propFullName + '` supplied to ' + ('`' + componentName + '`, expected a ReactNode.'));
+      }
+      return null;
+    }
+    return createChainableTypeChecker(validate);
+  }
+
+  function createShapeTypeChecker(shapeTypes) {
+    function validate(props, propName, componentName, location, propFullName) {
+      var propValue = props[propName];
+      var propType = getPropType(propValue);
+      if (propType !== 'object') {
+        return new PropTypeError('Invalid ' + location + ' `' + propFullName + '` of type `' + propType + '` ' + ('supplied to `' + componentName + '`, expected `object`.'));
+      }
+      for (var key in shapeTypes) {
+        var checker = shapeTypes[key];
+        if (!checker) {
+          continue;
+        }
+        var error = checker(propValue, key, componentName, location, propFullName + '.' + key, ReactPropTypesSecret_1);
+        if (error) {
+          return error;
+        }
+      }
+      return null;
+    }
+    return createChainableTypeChecker(validate);
+  }
+
+  function createStrictShapeTypeChecker(shapeTypes) {
+    function validate(props, propName, componentName, location, propFullName) {
+      var propValue = props[propName];
+      var propType = getPropType(propValue);
+      if (propType !== 'object') {
+        return new PropTypeError('Invalid ' + location + ' `' + propFullName + '` of type `' + propType + '` ' + ('supplied to `' + componentName + '`, expected `object`.'));
+      }
+      // We need to check all keys in case some are required but missing from
+      // props.
+      var allKeys = objectAssign({}, props[propName], shapeTypes);
+      for (var key in allKeys) {
+        var checker = shapeTypes[key];
+        if (!checker) {
+          return new PropTypeError(
+            'Invalid ' + location + ' `' + propFullName + '` key `' + key + '` supplied to `' + componentName + '`.' +
+            '\nBad object: ' + JSON.stringify(props[propName], null, '  ') +
+            '\nValid keys: ' +  JSON.stringify(Object.keys(shapeTypes), null, '  ')
+          );
+        }
+        var error = checker(propValue, key, componentName, location, propFullName + '.' + key, ReactPropTypesSecret_1);
+        if (error) {
+          return error;
+        }
+      }
+      return null;
+    }
+
+    return createChainableTypeChecker(validate);
+  }
+
+  function isNode(propValue) {
+    switch (typeof propValue) {
+      case 'number':
+      case 'string':
+      case 'undefined':
+        return true;
+      case 'boolean':
+        return !propValue;
+      case 'object':
+        if (Array.isArray(propValue)) {
+          return propValue.every(isNode);
+        }
+        if (propValue === null || isValidElement(propValue)) {
+          return true;
+        }
+
+        var iteratorFn = getIteratorFn(propValue);
+        if (iteratorFn) {
+          var iterator = iteratorFn.call(propValue);
+          var step;
+          if (iteratorFn !== propValue.entries) {
+            while (!(step = iterator.next()).done) {
+              if (!isNode(step.value)) {
+                return false;
+              }
+            }
+          } else {
+            // Iterator will provide entry [k,v] tuples rather than values.
+            while (!(step = iterator.next()).done) {
+              var entry = step.value;
+              if (entry) {
+                if (!isNode(entry[1])) {
+                  return false;
+                }
+              }
+            }
+          }
+        } else {
+          return false;
+        }
+
+        return true;
+      default:
+        return false;
+    }
+  }
+
+  function isSymbol(propType, propValue) {
+    // Native Symbol.
+    if (propType === 'symbol') {
+      return true;
+    }
+
+    // falsy value can't be a Symbol
+    if (!propValue) {
+      return false;
+    }
+
+    // 19.4.3.5 Symbol.prototype[@@toStringTag] === 'Symbol'
+    if (propValue['@@toStringTag'] === 'Symbol') {
+      return true;
+    }
+
+    // Fallback for non-spec compliant Symbols which are polyfilled.
+    if (typeof Symbol === 'function' && propValue instanceof Symbol) {
+      return true;
+    }
+
+    return false;
+  }
+
+  // Equivalent of `typeof` but with special handling for array and regexp.
+  function getPropType(propValue) {
+    var propType = typeof propValue;
+    if (Array.isArray(propValue)) {
+      return 'array';
+    }
+    if (propValue instanceof RegExp) {
+      // Old webkits (at least until Android 4.0) return 'function' rather than
+      // 'object' for typeof a RegExp. We'll normalize this here so that /bla/
+      // passes PropTypes.object.
+      return 'object';
+    }
+    if (isSymbol(propType, propValue)) {
+      return 'symbol';
+    }
+    return propType;
+  }
+
+  // This handles more types than `getPropType`. Only used for error messages.
+  // See `createPrimitiveTypeChecker`.
+  function getPreciseType(propValue) {
+    if (typeof propValue === 'undefined' || propValue === null) {
+      return '' + propValue;
+    }
+    var propType = getPropType(propValue);
+    if (propType === 'object') {
+      if (propValue instanceof Date) {
+        return 'date';
+      } else if (propValue instanceof RegExp) {
+        return 'regexp';
+      }
+    }
+    return propType;
+  }
+
+  // Returns a string that is postfixed to a warning about an invalid type.
+  // For example, "undefined" or "of type array"
+  function getPostfixForTypeWarning(value) {
+    var type = getPreciseType(value);
+    switch (type) {
+      case 'array':
+      case 'object':
+        return 'an ' + type;
+      case 'boolean':
+      case 'date':
+      case 'regexp':
+        return 'a ' + type;
+      default:
+        return type;
+    }
+  }
+
+  // Returns class name of the object, if any.
+  function getClassName(propValue) {
+    if (!propValue.constructor || !propValue.constructor.name) {
+      return ANONYMOUS;
+    }
+    return propValue.constructor.name;
+  }
+
+  ReactPropTypes.checkPropTypes = checkPropTypes_1;
+  ReactPropTypes.resetWarningCache = checkPropTypes_1.resetWarningCache;
+  ReactPropTypes.PropTypes = ReactPropTypes;
+
+  return ReactPropTypes;
+};
+
+function emptyFunction() {}
+function emptyFunctionWithReset() {}
+emptyFunctionWithReset.resetWarningCache = emptyFunction;
+
+var factoryWithThrowingShims = function() {
+  function shim(props, propName, componentName, location, propFullName, secret) {
+    if (secret === ReactPropTypesSecret_1) {
+      // It is still safe when called from React.
+      return;
+    }
+    var err = new Error(
+      'Calling PropTypes validators directly is not supported by the `prop-types` package. ' +
+      'Use PropTypes.checkPropTypes() to call them. ' +
+      'Read more at http://fb.me/use-check-prop-types'
+    );
+    err.name = 'Invariant Violation';
+    throw err;
+  }  shim.isRequired = shim;
+  function getShim() {
+    return shim;
+  }  // Important!
+  // Keep this list in sync with production version in `./factoryWithTypeCheckers.js`.
+  var ReactPropTypes = {
+    array: shim,
+    bool: shim,
+    func: shim,
+    number: shim,
+    object: shim,
+    string: shim,
+    symbol: shim,
+
+    any: shim,
+    arrayOf: getShim,
+    element: shim,
+    elementType: shim,
+    instanceOf: getShim,
+    node: shim,
+    objectOf: getShim,
+    oneOf: getShim,
+    oneOfType: getShim,
+    shape: getShim,
+    exact: getShim,
+
+    checkPropTypes: emptyFunctionWithReset,
+    resetWarningCache: emptyFunction
+  };
+
+  ReactPropTypes.PropTypes = ReactPropTypes;
+
+  return ReactPropTypes;
+};
+
+var propTypes = createCommonjsModule(function (module) {
+/**
+ * Copyright (c) 2013-present, Facebook, Inc.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
+if (process.env.NODE_ENV !== 'production') {
+  var ReactIs = reactIs__default['default'];
+
+  // By explicitly using `prop-types` you are opting into new development behavior.
+  // http://fb.me/prop-types-in-prod
+  var throwOnDirectAccess = true;
+  module.exports = factoryWithTypeCheckers(ReactIs.isElement, throwOnDirectAccess);
+} else {
+  // By explicitly using `prop-types` you are opting into new production behavior.
+  // http://fb.me/prop-types-in-prod
+  module.exports = factoryWithThrowingShims();
+}
+});
+
+var mode = {
+	MODE_NUMBER :		1 << 0,
+	MODE_ALPHA_NUM : 	1 << 1,
+	MODE_8BIT_BYTE : 	1 << 2,
+	MODE_KANJI :		1 << 3
+};
+
+function QR8bitByte(data) {
+	this.mode = mode.MODE_8BIT_BYTE;
+	this.data = data;
+}
+
+QR8bitByte.prototype = {
+
+	getLength : function(buffer) {
+		return this.data.length;
+	},
+	
+	write : function(buffer) {
+		for (var i = 0; i < this.data.length; i++) {
+			// not JIS ...
+			buffer.put(this.data.charCodeAt(i), 8);
+		}
+	}
+};
+
+var _8BitByte = QR8bitByte;
+
+var ErrorCorrectLevel = {
+	L : 1,
+	M : 0,
+	Q : 3,
+	H : 2
+};
+
+// ErrorCorrectLevel
+
+
+function QRRSBlock(totalCount, dataCount) {
+	this.totalCount = totalCount;
+	this.dataCount  = dataCount;
+}
+
+QRRSBlock.RS_BLOCK_TABLE = [
+
+	// L
+	// M
+	// Q
+	// H
+
+	// 1
+	[1, 26, 19],
+	[1, 26, 16],
+	[1, 26, 13],
+	[1, 26, 9],
+	
+	// 2
+	[1, 44, 34],
+	[1, 44, 28],
+	[1, 44, 22],
+	[1, 44, 16],
+
+	// 3
+	[1, 70, 55],
+	[1, 70, 44],
+	[2, 35, 17],
+	[2, 35, 13],
+
+	// 4		
+	[1, 100, 80],
+	[2, 50, 32],
+	[2, 50, 24],
+	[4, 25, 9],
+	
+	// 5
+	[1, 134, 108],
+	[2, 67, 43],
+	[2, 33, 15, 2, 34, 16],
+	[2, 33, 11, 2, 34, 12],
+	
+	// 6
+	[2, 86, 68],
+	[4, 43, 27],
+	[4, 43, 19],
+	[4, 43, 15],
+	
+	// 7		
+	[2, 98, 78],
+	[4, 49, 31],
+	[2, 32, 14, 4, 33, 15],
+	[4, 39, 13, 1, 40, 14],
+	
+	// 8
+	[2, 121, 97],
+	[2, 60, 38, 2, 61, 39],
+	[4, 40, 18, 2, 41, 19],
+	[4, 40, 14, 2, 41, 15],
+	
+	// 9
+	[2, 146, 116],
+	[3, 58, 36, 2, 59, 37],
+	[4, 36, 16, 4, 37, 17],
+	[4, 36, 12, 4, 37, 13],
+	
+	// 10		
+	[2, 86, 68, 2, 87, 69],
+	[4, 69, 43, 1, 70, 44],
+	[6, 43, 19, 2, 44, 20],
+	[6, 43, 15, 2, 44, 16],
+
+	// 11
+	[4, 101, 81],
+	[1, 80, 50, 4, 81, 51],
+	[4, 50, 22, 4, 51, 23],
+	[3, 36, 12, 8, 37, 13],
+
+	// 12
+	[2, 116, 92, 2, 117, 93],
+	[6, 58, 36, 2, 59, 37],
+	[4, 46, 20, 6, 47, 21],
+	[7, 42, 14, 4, 43, 15],
+
+	// 13
+	[4, 133, 107],
+	[8, 59, 37, 1, 60, 38],
+	[8, 44, 20, 4, 45, 21],
+	[12, 33, 11, 4, 34, 12],
+
+	// 14
+	[3, 145, 115, 1, 146, 116],
+	[4, 64, 40, 5, 65, 41],
+	[11, 36, 16, 5, 37, 17],
+	[11, 36, 12, 5, 37, 13],
+
+	// 15
+	[5, 109, 87, 1, 110, 88],
+	[5, 65, 41, 5, 66, 42],
+	[5, 54, 24, 7, 55, 25],
+	[11, 36, 12],
+
+	// 16
+	[5, 122, 98, 1, 123, 99],
+	[7, 73, 45, 3, 74, 46],
+	[15, 43, 19, 2, 44, 20],
+	[3, 45, 15, 13, 46, 16],
+
+	// 17
+	[1, 135, 107, 5, 136, 108],
+	[10, 74, 46, 1, 75, 47],
+	[1, 50, 22, 15, 51, 23],
+	[2, 42, 14, 17, 43, 15],
+
+	// 18
+	[5, 150, 120, 1, 151, 121],
+	[9, 69, 43, 4, 70, 44],
+	[17, 50, 22, 1, 51, 23],
+	[2, 42, 14, 19, 43, 15],
+
+	// 19
+	[3, 141, 113, 4, 142, 114],
+	[3, 70, 44, 11, 71, 45],
+	[17, 47, 21, 4, 48, 22],
+	[9, 39, 13, 16, 40, 14],
+
+	// 20
+	[3, 135, 107, 5, 136, 108],
+	[3, 67, 41, 13, 68, 42],
+	[15, 54, 24, 5, 55, 25],
+	[15, 43, 15, 10, 44, 16],
+
+	// 21
+	[4, 144, 116, 4, 145, 117],
+	[17, 68, 42],
+	[17, 50, 22, 6, 51, 23],
+	[19, 46, 16, 6, 47, 17],
+
+	// 22
+	[2, 139, 111, 7, 140, 112],
+	[17, 74, 46],
+	[7, 54, 24, 16, 55, 25],
+	[34, 37, 13],
+
+	// 23
+	[4, 151, 121, 5, 152, 122],
+	[4, 75, 47, 14, 76, 48],
+	[11, 54, 24, 14, 55, 25],
+	[16, 45, 15, 14, 46, 16],
+
+	// 24
+	[6, 147, 117, 4, 148, 118],
+	[6, 73, 45, 14, 74, 46],
+	[11, 54, 24, 16, 55, 25],
+	[30, 46, 16, 2, 47, 17],
+
+	// 25
+	[8, 132, 106, 4, 133, 107],
+	[8, 75, 47, 13, 76, 48],
+	[7, 54, 24, 22, 55, 25],
+	[22, 45, 15, 13, 46, 16],
+
+	// 26
+	[10, 142, 114, 2, 143, 115],
+	[19, 74, 46, 4, 75, 47],
+	[28, 50, 22, 6, 51, 23],
+	[33, 46, 16, 4, 47, 17],
+
+	// 27
+	[8, 152, 122, 4, 153, 123],
+	[22, 73, 45, 3, 74, 46],
+	[8, 53, 23, 26, 54, 24],
+	[12, 45, 15, 28, 46, 16],
+
+	// 28
+	[3, 147, 117, 10, 148, 118],
+	[3, 73, 45, 23, 74, 46],
+	[4, 54, 24, 31, 55, 25],
+	[11, 45, 15, 31, 46, 16],
+
+	// 29
+	[7, 146, 116, 7, 147, 117],
+	[21, 73, 45, 7, 74, 46],
+	[1, 53, 23, 37, 54, 24],
+	[19, 45, 15, 26, 46, 16],
+
+	// 30
+	[5, 145, 115, 10, 146, 116],
+	[19, 75, 47, 10, 76, 48],
+	[15, 54, 24, 25, 55, 25],
+	[23, 45, 15, 25, 46, 16],
+
+	// 31
+	[13, 145, 115, 3, 146, 116],
+	[2, 74, 46, 29, 75, 47],
+	[42, 54, 24, 1, 55, 25],
+	[23, 45, 15, 28, 46, 16],
+
+	// 32
+	[17, 145, 115],
+	[10, 74, 46, 23, 75, 47],
+	[10, 54, 24, 35, 55, 25],
+	[19, 45, 15, 35, 46, 16],
+
+	// 33
+	[17, 145, 115, 1, 146, 116],
+	[14, 74, 46, 21, 75, 47],
+	[29, 54, 24, 19, 55, 25],
+	[11, 45, 15, 46, 46, 16],
+
+	// 34
+	[13, 145, 115, 6, 146, 116],
+	[14, 74, 46, 23, 75, 47],
+	[44, 54, 24, 7, 55, 25],
+	[59, 46, 16, 1, 47, 17],
+
+	// 35
+	[12, 151, 121, 7, 152, 122],
+	[12, 75, 47, 26, 76, 48],
+	[39, 54, 24, 14, 55, 25],
+	[22, 45, 15, 41, 46, 16],
+
+	// 36
+	[6, 151, 121, 14, 152, 122],
+	[6, 75, 47, 34, 76, 48],
+	[46, 54, 24, 10, 55, 25],
+	[2, 45, 15, 64, 46, 16],
+
+	// 37
+	[17, 152, 122, 4, 153, 123],
+	[29, 74, 46, 14, 75, 47],
+	[49, 54, 24, 10, 55, 25],
+	[24, 45, 15, 46, 46, 16],
+
+	// 38
+	[4, 152, 122, 18, 153, 123],
+	[13, 74, 46, 32, 75, 47],
+	[48, 54, 24, 14, 55, 25],
+	[42, 45, 15, 32, 46, 16],
+
+	// 39
+	[20, 147, 117, 4, 148, 118],
+	[40, 75, 47, 7, 76, 48],
+	[43, 54, 24, 22, 55, 25],
+	[10, 45, 15, 67, 46, 16],
+
+	// 40
+	[19, 148, 118, 6, 149, 119],
+	[18, 75, 47, 31, 76, 48],
+	[34, 54, 24, 34, 55, 25],
+	[20, 45, 15, 61, 46, 16]
+];
+
+QRRSBlock.getRSBlocks = function(typeNumber, errorCorrectLevel) {
+	
+	var rsBlock = QRRSBlock.getRsBlockTable(typeNumber, errorCorrectLevel);
+	
+	if (rsBlock == undefined) {
+		throw new Error("bad rs block @ typeNumber:" + typeNumber + "/errorCorrectLevel:" + errorCorrectLevel);
+	}
+
+	var length = rsBlock.length / 3;
+	
+	var list = new Array();
+	
+	for (var i = 0; i < length; i++) {
+
+		var count = rsBlock[i * 3 + 0];
+		var totalCount = rsBlock[i * 3 + 1];
+		var dataCount  = rsBlock[i * 3 + 2];
+
+		for (var j = 0; j < count; j++) {
+			list.push(new QRRSBlock(totalCount, dataCount) );	
+		}
+	}
+	
+	return list;
+};
+
+QRRSBlock.getRsBlockTable = function(typeNumber, errorCorrectLevel) {
+
+	switch(errorCorrectLevel) {
+	case ErrorCorrectLevel.L :
+		return QRRSBlock.RS_BLOCK_TABLE[(typeNumber - 1) * 4 + 0];
+	case ErrorCorrectLevel.M :
+		return QRRSBlock.RS_BLOCK_TABLE[(typeNumber - 1) * 4 + 1];
+	case ErrorCorrectLevel.Q :
+		return QRRSBlock.RS_BLOCK_TABLE[(typeNumber - 1) * 4 + 2];
+	case ErrorCorrectLevel.H :
+		return QRRSBlock.RS_BLOCK_TABLE[(typeNumber - 1) * 4 + 3];
+	default :
+		return undefined;
+	}
+};
+
+var RSBlock = QRRSBlock;
+
+function QRBitBuffer() {
+	this.buffer = new Array();
+	this.length = 0;
+}
+
+QRBitBuffer.prototype = {
+
+	get : function(index) {
+		var bufIndex = Math.floor(index / 8);
+		return ( (this.buffer[bufIndex] >>> (7 - index % 8) ) & 1) == 1;
+	},
+	
+	put : function(num, length) {
+		for (var i = 0; i < length; i++) {
+			this.putBit( ( (num >>> (length - i - 1) ) & 1) == 1);
+		}
+	},
+	
+	getLengthInBits : function() {
+		return this.length;
+	},
+	
+	putBit : function(bit) {
+	
+		var bufIndex = Math.floor(this.length / 8);
+		if (this.buffer.length <= bufIndex) {
+			this.buffer.push(0);
+		}
+	
+		if (bit) {
+			this.buffer[bufIndex] |= (0x80 >>> (this.length % 8) );
+		}
+	
+		this.length++;
+	}
+};
+
+var BitBuffer = QRBitBuffer;
+
+var QRMath = {
+
+	glog : function(n) {
+	
+		if (n < 1) {
+			throw new Error("glog(" + n + ")");
+		}
+		
+		return QRMath.LOG_TABLE[n];
+	},
+	
+	gexp : function(n) {
+	
+		while (n < 0) {
+			n += 255;
+		}
+	
+		while (n >= 256) {
+			n -= 255;
+		}
+	
+		return QRMath.EXP_TABLE[n];
+	},
+	
+	EXP_TABLE : new Array(256),
+	
+	LOG_TABLE : new Array(256)
+
+};
+	
+for (var i = 0; i < 8; i++) {
+	QRMath.EXP_TABLE[i] = 1 << i;
+}
+for (var i = 8; i < 256; i++) {
+	QRMath.EXP_TABLE[i] = QRMath.EXP_TABLE[i - 4]
+		^ QRMath.EXP_TABLE[i - 5]
+		^ QRMath.EXP_TABLE[i - 6]
+		^ QRMath.EXP_TABLE[i - 8];
+}
+for (var i = 0; i < 255; i++) {
+	QRMath.LOG_TABLE[QRMath.EXP_TABLE[i] ] = i;
+}
+
+var math = QRMath;
+
+function QRPolynomial(num, shift) {
+
+	if (num.length == undefined) {
+		throw new Error(num.length + "/" + shift);
+	}
+
+	var offset = 0;
+
+	while (offset < num.length && num[offset] == 0) {
+		offset++;
+	}
+
+	this.num = new Array(num.length - offset + shift);
+	for (var i = 0; i < num.length - offset; i++) {
+		this.num[i] = num[i + offset];
+	}
+}
+
+QRPolynomial.prototype = {
+
+	get : function(index) {
+		return this.num[index];
+	},
+	
+	getLength : function() {
+		return this.num.length;
+	},
+	
+	multiply : function(e) {
+	
+		var num = new Array(this.getLength() + e.getLength() - 1);
+	
+		for (var i = 0; i < this.getLength(); i++) {
+			for (var j = 0; j < e.getLength(); j++) {
+				num[i + j] ^= math.gexp(math.glog(this.get(i) ) + math.glog(e.get(j) ) );
+			}
+		}
+	
+		return new QRPolynomial(num, 0);
+	},
+	
+	mod : function(e) {
+	
+		if (this.getLength() - e.getLength() < 0) {
+			return this;
+		}
+	
+		var ratio = math.glog(this.get(0) ) - math.glog(e.get(0) );
+	
+		var num = new Array(this.getLength() );
+		
+		for (var i = 0; i < this.getLength(); i++) {
+			num[i] = this.get(i);
+		}
+		
+		for (var i = 0; i < e.getLength(); i++) {
+			num[i] ^= math.gexp(math.glog(e.get(i) ) + ratio);
+		}
+	
+		// recursive call
+		return new QRPolynomial(num, 0).mod(e);
+	}
+};
+
+var Polynomial = QRPolynomial;
+
+var QRMaskPattern = {
+	PATTERN000 : 0,
+	PATTERN001 : 1,
+	PATTERN010 : 2,
+	PATTERN011 : 3,
+	PATTERN100 : 4,
+	PATTERN101 : 5,
+	PATTERN110 : 6,
+	PATTERN111 : 7
+};
+
+var QRUtil = {
+
+    PATTERN_POSITION_TABLE : [
+	    [],
+	    [6, 18],
+	    [6, 22],
+	    [6, 26],
+	    [6, 30],
+	    [6, 34],
+	    [6, 22, 38],
+	    [6, 24, 42],
+	    [6, 26, 46],
+	    [6, 28, 50],
+	    [6, 30, 54],		
+	    [6, 32, 58],
+	    [6, 34, 62],
+	    [6, 26, 46, 66],
+	    [6, 26, 48, 70],
+	    [6, 26, 50, 74],
+	    [6, 30, 54, 78],
+	    [6, 30, 56, 82],
+	    [6, 30, 58, 86],
+	    [6, 34, 62, 90],
+	    [6, 28, 50, 72, 94],
+	    [6, 26, 50, 74, 98],
+	    [6, 30, 54, 78, 102],
+	    [6, 28, 54, 80, 106],
+	    [6, 32, 58, 84, 110],
+	    [6, 30, 58, 86, 114],
+	    [6, 34, 62, 90, 118],
+	    [6, 26, 50, 74, 98, 122],
+	    [6, 30, 54, 78, 102, 126],
+	    [6, 26, 52, 78, 104, 130],
+	    [6, 30, 56, 82, 108, 134],
+	    [6, 34, 60, 86, 112, 138],
+	    [6, 30, 58, 86, 114, 142],
+	    [6, 34, 62, 90, 118, 146],
+	    [6, 30, 54, 78, 102, 126, 150],
+	    [6, 24, 50, 76, 102, 128, 154],
+	    [6, 28, 54, 80, 106, 132, 158],
+	    [6, 32, 58, 84, 110, 136, 162],
+	    [6, 26, 54, 82, 110, 138, 166],
+	    [6, 30, 58, 86, 114, 142, 170]
+    ],
+
+    G15 : (1 << 10) | (1 << 8) | (1 << 5) | (1 << 4) | (1 << 2) | (1 << 1) | (1 << 0),
+    G18 : (1 << 12) | (1 << 11) | (1 << 10) | (1 << 9) | (1 << 8) | (1 << 5) | (1 << 2) | (1 << 0),
+    G15_MASK : (1 << 14) | (1 << 12) | (1 << 10)	| (1 << 4) | (1 << 1),
+
+    getBCHTypeInfo : function(data) {
+	    var d = data << 10;
+	    while (QRUtil.getBCHDigit(d) - QRUtil.getBCHDigit(QRUtil.G15) >= 0) {
+		    d ^= (QRUtil.G15 << (QRUtil.getBCHDigit(d) - QRUtil.getBCHDigit(QRUtil.G15) ) ); 	
+	    }
+	    return ( (data << 10) | d) ^ QRUtil.G15_MASK;
+    },
+
+    getBCHTypeNumber : function(data) {
+	    var d = data << 12;
+	    while (QRUtil.getBCHDigit(d) - QRUtil.getBCHDigit(QRUtil.G18) >= 0) {
+		    d ^= (QRUtil.G18 << (QRUtil.getBCHDigit(d) - QRUtil.getBCHDigit(QRUtil.G18) ) ); 	
+	    }
+	    return (data << 12) | d;
+    },
+
+    getBCHDigit : function(data) {
+
+	    var digit = 0;
+
+	    while (data != 0) {
+		    digit++;
+		    data >>>= 1;
+	    }
+
+	    return digit;
+    },
+
+    getPatternPosition : function(typeNumber) {
+	    return QRUtil.PATTERN_POSITION_TABLE[typeNumber - 1];
+    },
+
+    getMask : function(maskPattern, i, j) {
+	    
+	    switch (maskPattern) {
+		    
+	    case QRMaskPattern.PATTERN000 : return (i + j) % 2 == 0;
+	    case QRMaskPattern.PATTERN001 : return i % 2 == 0;
+	    case QRMaskPattern.PATTERN010 : return j % 3 == 0;
+	    case QRMaskPattern.PATTERN011 : return (i + j) % 3 == 0;
+	    case QRMaskPattern.PATTERN100 : return (Math.floor(i / 2) + Math.floor(j / 3) ) % 2 == 0;
+	    case QRMaskPattern.PATTERN101 : return (i * j) % 2 + (i * j) % 3 == 0;
+	    case QRMaskPattern.PATTERN110 : return ( (i * j) % 2 + (i * j) % 3) % 2 == 0;
+	    case QRMaskPattern.PATTERN111 : return ( (i * j) % 3 + (i + j) % 2) % 2 == 0;
+
+	    default :
+		    throw new Error("bad maskPattern:" + maskPattern);
+	    }
+    },
+
+    getErrorCorrectPolynomial : function(errorCorrectLength) {
+
+	    var a = new Polynomial([1], 0);
+
+	    for (var i = 0; i < errorCorrectLength; i++) {
+		    a = a.multiply(new Polynomial([1, math.gexp(i)], 0) );
+	    }
+
+	    return a;
+    },
+
+    getLengthInBits : function(mode$1, type) {
+
+	    if (1 <= type && type < 10) {
+
+		    // 1 - 9
+
+		    switch(mode$1) {
+		    case mode.MODE_NUMBER 	: return 10;
+		    case mode.MODE_ALPHA_NUM 	: return 9;
+		    case mode.MODE_8BIT_BYTE	: return 8;
+		    case mode.MODE_KANJI  	: return 8;
+		    default :
+			    throw new Error("mode:" + mode$1);
+		    }
+
+	    } else if (type < 27) {
+
+		    // 10 - 26
+
+		    switch(mode$1) {
+		    case mode.MODE_NUMBER 	: return 12;
+		    case mode.MODE_ALPHA_NUM 	: return 11;
+		    case mode.MODE_8BIT_BYTE	: return 16;
+		    case mode.MODE_KANJI  	: return 10;
+		    default :
+			    throw new Error("mode:" + mode$1);
+		    }
+
+	    } else if (type < 41) {
+
+		    // 27 - 40
+
+		    switch(mode$1) {
+		    case mode.MODE_NUMBER 	: return 14;
+		    case mode.MODE_ALPHA_NUM	: return 13;
+		    case mode.MODE_8BIT_BYTE	: return 16;
+		    case mode.MODE_KANJI  	: return 12;
+		    default :
+			    throw new Error("mode:" + mode$1);
+		    }
+
+	    } else {
+		    throw new Error("type:" + type);
+	    }
+    },
+
+    getLostPoint : function(qrCode) {
+	    
+	    var moduleCount = qrCode.getModuleCount();
+	    
+	    var lostPoint = 0;
+	    
+	    // LEVEL1
+	    
+	    for (var row = 0; row < moduleCount; row++) {
+
+		    for (var col = 0; col < moduleCount; col++) {
+
+			    var sameCount = 0;
+			    var dark = qrCode.isDark(row, col);
+
+				for (var r = -1; r <= 1; r++) {
+
+				    if (row + r < 0 || moduleCount <= row + r) {
+					    continue;
+				    }
+
+				    for (var c = -1; c <= 1; c++) {
+
+					    if (col + c < 0 || moduleCount <= col + c) {
+						    continue;
+					    }
+
+					    if (r == 0 && c == 0) {
+						    continue;
+					    }
+
+					    if (dark == qrCode.isDark(row + r, col + c) ) {
+						    sameCount++;
+					    }
+				    }
+			    }
+
+			    if (sameCount > 5) {
+				    lostPoint += (3 + sameCount - 5);
+			    }
+		    }
+	    }
+
+	    // LEVEL2
+
+	    for (var row = 0; row < moduleCount - 1; row++) {
+		    for (var col = 0; col < moduleCount - 1; col++) {
+			    var count = 0;
+			    if (qrCode.isDark(row,     col    ) ) count++;
+			    if (qrCode.isDark(row + 1, col    ) ) count++;
+			    if (qrCode.isDark(row,     col + 1) ) count++;
+			    if (qrCode.isDark(row + 1, col + 1) ) count++;
+			    if (count == 0 || count == 4) {
+				    lostPoint += 3;
+			    }
+		    }
+	    }
+
+	    // LEVEL3
+
+	    for (var row = 0; row < moduleCount; row++) {
+		    for (var col = 0; col < moduleCount - 6; col++) {
+			    if (qrCode.isDark(row, col)
+					    && !qrCode.isDark(row, col + 1)
+					    &&  qrCode.isDark(row, col + 2)
+					    &&  qrCode.isDark(row, col + 3)
+					    &&  qrCode.isDark(row, col + 4)
+					    && !qrCode.isDark(row, col + 5)
+					    &&  qrCode.isDark(row, col + 6) ) {
+				    lostPoint += 40;
+			    }
+		    }
+	    }
+
+	    for (var col = 0; col < moduleCount; col++) {
+		    for (var row = 0; row < moduleCount - 6; row++) {
+			    if (qrCode.isDark(row, col)
+					    && !qrCode.isDark(row + 1, col)
+					    &&  qrCode.isDark(row + 2, col)
+					    &&  qrCode.isDark(row + 3, col)
+					    &&  qrCode.isDark(row + 4, col)
+					    && !qrCode.isDark(row + 5, col)
+					    &&  qrCode.isDark(row + 6, col) ) {
+				    lostPoint += 40;
+			    }
+		    }
+	    }
+
+	    // LEVEL4
+	    
+	    var darkCount = 0;
+
+	    for (var col = 0; col < moduleCount; col++) {
+		    for (var row = 0; row < moduleCount; row++) {
+			    if (qrCode.isDark(row, col) ) {
+				    darkCount++;
+			    }
+		    }
+	    }
+	    
+	    var ratio = Math.abs(100 * darkCount / moduleCount / moduleCount - 50) / 5;
+	    lostPoint += ratio * 10;
+
+	    return lostPoint;		
+    }
+};
+
+var util = QRUtil;
+
+function QRCode$1(typeNumber, errorCorrectLevel) {
+	this.typeNumber = typeNumber;
+	this.errorCorrectLevel = errorCorrectLevel;
+	this.modules = null;
+	this.moduleCount = 0;
+	this.dataCache = null;
+	this.dataList = [];
+}
+
+// for client side minification
+var proto = QRCode$1.prototype;
+
+proto.addData = function(data) {
+	var newData = new _8BitByte(data);
+	this.dataList.push(newData);
+	this.dataCache = null;
+};
+
+proto.isDark = function(row, col) {
+	if (row < 0 || this.moduleCount <= row || col < 0 || this.moduleCount <= col) {
+		throw new Error(row + "," + col);
+	}
+	return this.modules[row][col];
+};
+
+proto.getModuleCount = function() {
+	return this.moduleCount;
+};
+
+proto.make = function() {
+	// Calculate automatically typeNumber if provided is < 1
+	if (this.typeNumber < 1 ){
+		var typeNumber = 1;
+		for (typeNumber = 1; typeNumber < 40; typeNumber++) {
+			var rsBlocks = RSBlock.getRSBlocks(typeNumber, this.errorCorrectLevel);
+
+			var buffer = new BitBuffer();
+			var totalDataCount = 0;
+			for (var i = 0; i < rsBlocks.length; i++) {
+				totalDataCount += rsBlocks[i].dataCount;
+			}
+
+			for (var i = 0; i < this.dataList.length; i++) {
+				var data = this.dataList[i];
+				buffer.put(data.mode, 4);
+				buffer.put(data.getLength(), util.getLengthInBits(data.mode, typeNumber) );
+				data.write(buffer);
+			}
+			if (buffer.getLengthInBits() <= totalDataCount * 8)
+				break;
+		}
+		this.typeNumber = typeNumber;
+	}
+	this.makeImpl(false, this.getBestMaskPattern() );
+};
+
+proto.makeImpl = function(test, maskPattern) {
+	
+	this.moduleCount = this.typeNumber * 4 + 17;
+	this.modules = new Array(this.moduleCount);
+	
+	for (var row = 0; row < this.moduleCount; row++) {
+		
+		this.modules[row] = new Array(this.moduleCount);
+		
+		for (var col = 0; col < this.moduleCount; col++) {
+			this.modules[row][col] = null;//(col + row) % 3;
+		}
+	}
+
+	this.setupPositionProbePattern(0, 0);
+	this.setupPositionProbePattern(this.moduleCount - 7, 0);
+	this.setupPositionProbePattern(0, this.moduleCount - 7);
+	this.setupPositionAdjustPattern();
+	this.setupTimingPattern();
+	this.setupTypeInfo(test, maskPattern);
+	
+	if (this.typeNumber >= 7) {
+		this.setupTypeNumber(test);
+	}
+
+	if (this.dataCache == null) {
+		this.dataCache = QRCode$1.createData(this.typeNumber, this.errorCorrectLevel, this.dataList);
+	}
+
+	this.mapData(this.dataCache, maskPattern);
+};
+
+proto.setupPositionProbePattern = function(row, col)  {
+	
+	for (var r = -1; r <= 7; r++) {
+		
+		if (row + r <= -1 || this.moduleCount <= row + r) continue;
+		
+		for (var c = -1; c <= 7; c++) {
+			
+			if (col + c <= -1 || this.moduleCount <= col + c) continue;
+			
+			if ( (0 <= r && r <= 6 && (c == 0 || c == 6) )
+					|| (0 <= c && c <= 6 && (r == 0 || r == 6) )
+					|| (2 <= r && r <= 4 && 2 <= c && c <= 4) ) {
+				this.modules[row + r][col + c] = true;
+			} else {
+				this.modules[row + r][col + c] = false;
+			}
+		}		
+	}		
+};
+
+proto.getBestMaskPattern = function() {
+
+	var minLostPoint = 0;
+	var pattern = 0;
+
+	for (var i = 0; i < 8; i++) {
+		
+		this.makeImpl(true, i);
+
+		var lostPoint = util.getLostPoint(this);
+
+		if (i == 0 || minLostPoint >  lostPoint) {
+			minLostPoint = lostPoint;
+			pattern = i;
+		}
+	}
+
+	return pattern;
+};
+
+proto.createMovieClip = function(target_mc, instance_name, depth) {
+
+	var qr_mc = target_mc.createEmptyMovieClip(instance_name, depth);
+	var cs = 1;
+
+	this.make();
+
+	for (var row = 0; row < this.modules.length; row++) {
+		
+		var y = row * cs;
+		
+		for (var col = 0; col < this.modules[row].length; col++) {
+
+			var x = col * cs;
+			var dark = this.modules[row][col];
+		
+			if (dark) {
+				qr_mc.beginFill(0, 100);
+				qr_mc.moveTo(x, y);
+				qr_mc.lineTo(x + cs, y);
+				qr_mc.lineTo(x + cs, y + cs);
+				qr_mc.lineTo(x, y + cs);
+				qr_mc.endFill();
+			}
+		}
+	}
+	
+	return qr_mc;
+};
+
+proto.setupTimingPattern = function() {
+	
+	for (var r = 8; r < this.moduleCount - 8; r++) {
+		if (this.modules[r][6] != null) {
+			continue;
+		}
+		this.modules[r][6] = (r % 2 == 0);
+	}
+
+	for (var c = 8; c < this.moduleCount - 8; c++) {
+		if (this.modules[6][c] != null) {
+			continue;
+		}
+		this.modules[6][c] = (c % 2 == 0);
+	}
+};
+
+proto.setupPositionAdjustPattern = function() {
+
+	var pos = util.getPatternPosition(this.typeNumber);
+	
+	for (var i = 0; i < pos.length; i++) {
+	
+		for (var j = 0; j < pos.length; j++) {
+		
+			var row = pos[i];
+			var col = pos[j];
+			
+			if (this.modules[row][col] != null) {
+				continue;
+			}
+			
+			for (var r = -2; r <= 2; r++) {
+			
+				for (var c = -2; c <= 2; c++) {
+				
+					if (r == -2 || r == 2 || c == -2 || c == 2
+							|| (r == 0 && c == 0) ) {
+						this.modules[row + r][col + c] = true;
+					} else {
+						this.modules[row + r][col + c] = false;
+					}
+				}
+			}
+		}
+	}
+};
+
+proto.setupTypeNumber = function(test) {
+
+	var bits = util.getBCHTypeNumber(this.typeNumber);
+
+	for (var i = 0; i < 18; i++) {
+		var mod = (!test && ( (bits >> i) & 1) == 1);
+		this.modules[Math.floor(i / 3)][i % 3 + this.moduleCount - 8 - 3] = mod;
+	}
+
+	for (var i = 0; i < 18; i++) {
+		var mod = (!test && ( (bits >> i) & 1) == 1);
+		this.modules[i % 3 + this.moduleCount - 8 - 3][Math.floor(i / 3)] = mod;
+	}
+};
+
+proto.setupTypeInfo = function(test, maskPattern) {
+
+	var data = (this.errorCorrectLevel << 3) | maskPattern;
+	var bits = util.getBCHTypeInfo(data);
+
+	// vertical		
+	for (var i = 0; i < 15; i++) {
+
+		var mod = (!test && ( (bits >> i) & 1) == 1);
+
+		if (i < 6) {
+			this.modules[i][8] = mod;
+		} else if (i < 8) {
+			this.modules[i + 1][8] = mod;
+		} else {
+			this.modules[this.moduleCount - 15 + i][8] = mod;
+		}
+	}
+
+	// horizontal
+	for (var i = 0; i < 15; i++) {
+
+		var mod = (!test && ( (bits >> i) & 1) == 1);
+		
+		if (i < 8) {
+			this.modules[8][this.moduleCount - i - 1] = mod;
+		} else if (i < 9) {
+			this.modules[8][15 - i - 1 + 1] = mod;
+		} else {
+			this.modules[8][15 - i - 1] = mod;
+		}
+	}
+
+	// fixed module
+	this.modules[this.moduleCount - 8][8] = (!test);
+};
+
+proto.mapData = function(data, maskPattern) {
+	
+	var inc = -1;
+	var row = this.moduleCount - 1;
+	var bitIndex = 7;
+	var byteIndex = 0;
+	
+	for (var col = this.moduleCount - 1; col > 0; col -= 2) {
+
+		if (col == 6) col--;
+
+		while (true) {
+
+			for (var c = 0; c < 2; c++) {
+				
+				if (this.modules[row][col - c] == null) {
+					
+					var dark = false;
+
+					if (byteIndex < data.length) {
+						dark = ( ( (data[byteIndex] >>> bitIndex) & 1) == 1);
+					}
+
+					var mask = util.getMask(maskPattern, row, col - c);
+
+					if (mask) {
+						dark = !dark;
+					}
+					
+					this.modules[row][col - c] = dark;
+					bitIndex--;
+
+					if (bitIndex == -1) {
+						byteIndex++;
+						bitIndex = 7;
+					}
+				}
+			}
+							
+			row += inc;
+
+			if (row < 0 || this.moduleCount <= row) {
+				row -= inc;
+				inc = -inc;
+				break;
+			}
+		}
+	}
+};
+
+QRCode$1.PAD0 = 0xEC;
+QRCode$1.PAD1 = 0x11;
+
+QRCode$1.createData = function(typeNumber, errorCorrectLevel, dataList) {
+	
+	var rsBlocks = RSBlock.getRSBlocks(typeNumber, errorCorrectLevel);
+	
+	var buffer = new BitBuffer();
+	
+	for (var i = 0; i < dataList.length; i++) {
+		var data = dataList[i];
+		buffer.put(data.mode, 4);
+		buffer.put(data.getLength(), util.getLengthInBits(data.mode, typeNumber) );
+		data.write(buffer);
+	}
+
+	// calc num max data.
+	var totalDataCount = 0;
+	for (var i = 0; i < rsBlocks.length; i++) {
+		totalDataCount += rsBlocks[i].dataCount;
+	}
+
+	if (buffer.getLengthInBits() > totalDataCount * 8) {
+		throw new Error("code length overflow. ("
+			+ buffer.getLengthInBits()
+			+ ">"
+			+  totalDataCount * 8
+			+ ")");
+	}
+
+	// end code
+	if (buffer.getLengthInBits() + 4 <= totalDataCount * 8) {
+		buffer.put(0, 4);
+	}
+
+	// padding
+	while (buffer.getLengthInBits() % 8 != 0) {
+		buffer.putBit(false);
+	}
+
+	// padding
+	while (true) {
+		
+		if (buffer.getLengthInBits() >= totalDataCount * 8) {
+			break;
+		}
+		buffer.put(QRCode$1.PAD0, 8);
+		
+		if (buffer.getLengthInBits() >= totalDataCount * 8) {
+			break;
+		}
+		buffer.put(QRCode$1.PAD1, 8);
+	}
+
+	return QRCode$1.createBytes(buffer, rsBlocks);
+};
+
+QRCode$1.createBytes = function(buffer, rsBlocks) {
+
+	var offset = 0;
+	
+	var maxDcCount = 0;
+	var maxEcCount = 0;
+	
+	var dcdata = new Array(rsBlocks.length);
+	var ecdata = new Array(rsBlocks.length);
+	
+	for (var r = 0; r < rsBlocks.length; r++) {
+
+		var dcCount = rsBlocks[r].dataCount;
+		var ecCount = rsBlocks[r].totalCount - dcCount;
+
+		maxDcCount = Math.max(maxDcCount, dcCount);
+		maxEcCount = Math.max(maxEcCount, ecCount);
+		
+		dcdata[r] = new Array(dcCount);
+		
+		for (var i = 0; i < dcdata[r].length; i++) {
+			dcdata[r][i] = 0xff & buffer.buffer[i + offset];
+		}
+		offset += dcCount;
+		
+		var rsPoly = util.getErrorCorrectPolynomial(ecCount);
+		var rawPoly = new Polynomial(dcdata[r], rsPoly.getLength() - 1);
+
+		var modPoly = rawPoly.mod(rsPoly);
+		ecdata[r] = new Array(rsPoly.getLength() - 1);
+		for (var i = 0; i < ecdata[r].length; i++) {
+            var modIndex = i + modPoly.getLength() - ecdata[r].length;
+			ecdata[r][i] = (modIndex >= 0)? modPoly.get(modIndex) : 0;
+		}
+
+	}
+	
+	var totalCodeCount = 0;
+	for (var i = 0; i < rsBlocks.length; i++) {
+		totalCodeCount += rsBlocks[i].totalCount;
+	}
+
+	var data = new Array(totalCodeCount);
+	var index = 0;
+
+	for (var i = 0; i < maxDcCount; i++) {
+		for (var r = 0; r < rsBlocks.length; r++) {
+			if (i < dcdata[r].length) {
+				data[index++] = dcdata[r][i];
+			}
+		}
+	}
+
+	for (var i = 0; i < maxEcCount; i++) {
+		for (var r = 0; r < rsBlocks.length; r++) {
+			if (i < ecdata[r].length) {
+				data[index++] = ecdata[r][i];
+			}
+		}
+	}
+
+	return data;
+};
+
+var QRCode_1 = QRCode$1;
+
+function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
+function _extends() { _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return _extends.apply(this, arguments); }
+
+function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
+
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(source, true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(source).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+
+function _objectWithoutProperties(source, excluded) { if (source == null) return {}; var target = _objectWithoutPropertiesLoose(source, excluded); var key, i; if (Object.getOwnPropertySymbols) { var sourceSymbolKeys = Object.getOwnPropertySymbols(source); for (i = 0; i < sourceSymbolKeys.length; i++) { key = sourceSymbolKeys[i]; if (excluded.indexOf(key) >= 0) continue; if (!Object.prototype.propertyIsEnumerable.call(source, key)) continue; target[key] = source[key]; } } return target; }
+
+function _objectWithoutPropertiesLoose(source, excluded) { if (source == null) return {}; var target = {}; var sourceKeys = Object.keys(source); var key, i; for (i = 0; i < sourceKeys.length; i++) { key = sourceKeys[i]; if (excluded.indexOf(key) >= 0) continue; target[key] = source[key]; } return target; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
+
+function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
+
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+
+
+ // qr.js doesn't handle error level of zero (M) so we need to do it right,
+// thus the deep require.
+
+
+
+
+ // TODO: pull this off of the QRCode class type so it matches.
+
+
+// Convert from UTF-16, forcing the use of byte-mode encoding in our QR Code.
+// This allows us to encode Hanji, Kanji, emoji, etc. Ideally we'd do more
+// detection and not resort to byte-mode if possible, but we're trading off
+// a smaller library for a smaller amount of data we can potentially encode.
+// Based on http://jonisalonen.com/2012/from-utf-16-to-utf-8-in-javascript/
+function convertStr(str) {
+  var out = '';
+
+  for (var i = 0; i < str.length; i++) {
+    var charcode = str.charCodeAt(i);
+
+    if (charcode < 0x0080) {
+      out += String.fromCharCode(charcode);
+    } else if (charcode < 0x0800) {
+      out += String.fromCharCode(0xc0 | charcode >> 6);
+      out += String.fromCharCode(0x80 | charcode & 0x3f);
+    } else if (charcode < 0xd800 || charcode >= 0xe000) {
+      out += String.fromCharCode(0xe0 | charcode >> 12);
+      out += String.fromCharCode(0x80 | charcode >> 6 & 0x3f);
+      out += String.fromCharCode(0x80 | charcode & 0x3f);
+    } else {
+      // This is a surrogate pair, so we'll reconsitute the pieces and work
+      // from that
+      i++;
+      charcode = 0x10000 + ((charcode & 0x3ff) << 10 | str.charCodeAt(i) & 0x3ff);
+      out += String.fromCharCode(0xf0 | charcode >> 18);
+      out += String.fromCharCode(0x80 | charcode >> 12 & 0x3f);
+      out += String.fromCharCode(0x80 | charcode >> 6 & 0x3f);
+      out += String.fromCharCode(0x80 | charcode & 0x3f);
+    }
+  }
+
+  return out;
+}
+
+var DEFAULT_PROPS = {
+  size: 128,
+  level: 'L',
+  bgColor: '#FFFFFF',
+  fgColor: '#000000',
+  includeMargin: false
+};
+var PROP_TYPES = process.env.NODE_ENV !== 'production' ? {
+  value: propTypes.string.isRequired,
+  size: propTypes.number,
+  level: propTypes.oneOf(['L', 'M', 'Q', 'H']),
+  bgColor: propTypes.string,
+  fgColor: propTypes.string,
+  includeMargin: propTypes.bool,
+  imageSettings: propTypes.shape({
+    src: propTypes.string.isRequired,
+    height: propTypes.number.isRequired,
+    width: propTypes.number.isRequired,
+    excavate: propTypes.bool,
+    x: propTypes.number,
+    y: propTypes.number
+  })
+} : {};
+var MARGIN_SIZE = 4; // This is *very* rough estimate of max amount of QRCode allowed to be covered.
+// It is "wrong" in a lot of ways (area is a terrible way to estimate, it
+// really should be number of modules covered), but if for some reason we don't
+// get an explicit height or width, I'd rather default to something than throw.
+
+var DEFAULT_IMG_SCALE = 0.1;
+
+function generatePath(modules) {
+  var margin = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
+  var ops = [];
+  modules.forEach(function (row, y) {
+    var start = null;
+    row.forEach(function (cell, x) {
+      if (!cell && start !== null) {
+        // M0 0h7v1H0z injects the space with the move and drops the comma,
+        // saving a char per operation
+        ops.push("M".concat(start + margin, " ").concat(y + margin, "h").concat(x - start, "v1H").concat(start + margin, "z"));
+        start = null;
+        return;
+      } // end of row, clean up or skip
+
+
+      if (x === row.length - 1) {
+        if (!cell) {
+          // We would have closed the op above already so this can only mean
+          // 2+ light modules in a row.
+          return;
+        }
+
+        if (start === null) {
+          // Just a single dark module.
+          ops.push("M".concat(x + margin, ",").concat(y + margin, " h1v1H").concat(x + margin, "z"));
+        } else {
+          // Otherwise finish the current line.
+          ops.push("M".concat(start + margin, ",").concat(y + margin, " h").concat(x + 1 - start, "v1H").concat(start + margin, "z"));
+        }
+
+        return;
+      }
+
+      if (cell && start === null) {
+        start = x;
+      }
+    });
+  });
+  return ops.join('');
+} // We could just do this in generatePath, except that we want to support
+// non-Path2D canvas, so we need to keep it an explicit step.
+
+
+function excavateModules(modules, excavation) {
+  return modules.slice().map(function (row, y) {
+    if (y < excavation.y || y >= excavation.y + excavation.h) {
+      return row;
+    }
+
+    return row.map(function (cell, x) {
+      if (x < excavation.x || x >= excavation.x + excavation.w) {
+        return cell;
+      }
+
+      return false;
+    });
+  });
+}
+
+function getImageSettings(props, cells) {
+  var imageSettings = props.imageSettings,
+      size = props.size,
+      includeMargin = props.includeMargin;
+
+  if (imageSettings == null) {
+    return null;
+  }
+
+  var margin = includeMargin ? MARGIN_SIZE : 0;
+  var numCells = cells.length + margin * 2;
+  var defaultSize = Math.floor(size * DEFAULT_IMG_SCALE);
+  var scale = numCells / size;
+  var w = (imageSettings.width || defaultSize) * scale;
+  var h = (imageSettings.height || defaultSize) * scale;
+  var x = imageSettings.x == null ? cells.length / 2 - w / 2 : imageSettings.x * scale;
+  var y = imageSettings.y == null ? cells.length / 2 - h / 2 : imageSettings.y * scale;
+  var excavation = null;
+
+  if (imageSettings.excavate) {
+    var floorX = Math.floor(x);
+    var floorY = Math.floor(y);
+    var ceilW = Math.ceil(w + x - floorX);
+    var ceilH = Math.ceil(h + y - floorY);
+    excavation = {
+      x: floorX,
+      y: floorY,
+      w: ceilW,
+      h: ceilH
+    };
+  }
+
+  return {
+    x: x,
+    y: y,
+    h: h,
+    w: w,
+    excavation: excavation
+  };
+} // For canvas we're going to switch our drawing mode based on whether or not
+// the environment supports Path2D. We only need the constructor to be
+// supported, but Edge doesn't actually support the path (string) type
+// argument. Luckily it also doesn't support the addPath() method. We can
+// treat that as the same thing.
+
+
+var SUPPORTS_PATH2D = function () {
+  try {
+    new Path2D().addPath(new Path2D());
+  } catch (e) {
+    return false;
+  }
+
+  return true;
+}();
+
+var QRCodeCanvas =
+/*#__PURE__*/
+function (_React$PureComponent) {
+  _inherits(QRCodeCanvas, _React$PureComponent);
+
+  function QRCodeCanvas() {
+    var _getPrototypeOf2;
+
+    var _this;
+
+    _classCallCheck(this, QRCodeCanvas);
+
+    for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
+      args[_key] = arguments[_key];
+    }
+
+    _this = _possibleConstructorReturn(this, (_getPrototypeOf2 = _getPrototypeOf(QRCodeCanvas)).call.apply(_getPrototypeOf2, [this].concat(args)));
+
+    _defineProperty(_assertThisInitialized(_this), "_canvas", void 0);
+
+    _defineProperty(_assertThisInitialized(_this), "_image", void 0);
+
+    _defineProperty(_assertThisInitialized(_this), "state", {
+      imgLoaded: false
+    });
+
+    _defineProperty(_assertThisInitialized(_this), "handleImageLoad", function () {
+      _this.setState({
+        imgLoaded: true
+      });
+    });
+
+    return _this;
+  }
+
+  _createClass(QRCodeCanvas, [{
+    key: "componentDidMount",
+    value: function componentDidMount() {
+      if (this._image && this._image.complete) {
+        this.handleImageLoad();
+      }
+
+      this.update();
+    }
+  }, {
+    key: "componentWillReceiveProps",
+    value: function componentWillReceiveProps(nextProps) {
+      var _this$props$imageSett, _nextProps$imageSetti;
+
+      var currentSrc = (_this$props$imageSett = this.props.imageSettings) === null || _this$props$imageSett === void 0 ? void 0 : _this$props$imageSett.src;
+      var nextSrc = (_nextProps$imageSetti = nextProps.imageSettings) === null || _nextProps$imageSetti === void 0 ? void 0 : _nextProps$imageSetti.src;
+
+      if (currentSrc !== nextSrc) {
+        this.setState({
+          imgLoaded: false
+        });
+      }
+    }
+  }, {
+    key: "componentDidUpdate",
+    value: function componentDidUpdate() {
+      this.update();
+    }
+  }, {
+    key: "update",
+    value: function update() {
+      var _this$props = this.props,
+          value = _this$props.value,
+          size = _this$props.size,
+          level = _this$props.level,
+          bgColor = _this$props.bgColor,
+          fgColor = _this$props.fgColor,
+          includeMargin = _this$props.includeMargin,
+          imageSettings = _this$props.imageSettings; // We'll use type===-1 to force QRCode to automatically pick the best type
+
+      var qrcode = new QRCode_1(-1, ErrorCorrectLevel[level]);
+      qrcode.addData(convertStr(value));
+      qrcode.make();
+
+      if (this._canvas != null) {
+        var canvas = this._canvas;
+        var ctx = canvas.getContext('2d');
+
+        if (!ctx) {
+          return;
+        }
+
+        var cells = qrcode.modules;
+
+        if (cells === null) {
+          return;
+        }
+
+        var margin = includeMargin ? MARGIN_SIZE : 0;
+        var numCells = cells.length + margin * 2;
+        var calculatedImageSettings = getImageSettings(this.props, cells);
+
+        if (imageSettings != null && calculatedImageSettings != null) {
+          if (calculatedImageSettings.excavation != null) {
+            cells = excavateModules(cells, calculatedImageSettings.excavation);
+          }
+        } // We're going to scale this so that the number of drawable units
+        // matches the number of cells. This avoids rounding issues, but does
+        // result in some potentially unwanted single pixel issues between
+        // blocks, only in environments that don't support Path2D.
+
+
+        var pixelRatio = window.devicePixelRatio || 1;
+        canvas.height = canvas.width = size * pixelRatio;
+        var scale = size / numCells * pixelRatio;
+        ctx.scale(scale, scale); // Draw solid background, only paint dark modules.
+
+        ctx.fillStyle = bgColor;
+        ctx.fillRect(0, 0, numCells, numCells);
+        ctx.fillStyle = fgColor;
+
+        if (SUPPORTS_PATH2D) {
+          // $FlowFixMe: Path2D c'tor doesn't support args yet.
+          ctx.fill(new Path2D(generatePath(cells, margin)));
+        } else {
+          cells.forEach(function (row, rdx) {
+            row.forEach(function (cell, cdx) {
+              if (cell) {
+                ctx.fillRect(cdx + margin, rdx + margin, 1, 1);
+              }
+            });
+          });
+        }
+
+        if (this.state.imgLoaded && this._image && calculatedImageSettings != null) {
+          ctx.drawImage(this._image, calculatedImageSettings.x + margin, calculatedImageSettings.y + margin, calculatedImageSettings.w, calculatedImageSettings.h);
+        }
+      }
+    }
+  }, {
+    key: "render",
+    value: function render() {
+      var _this2 = this;
+
+      var _this$props2 = this.props;
+          _this$props2.value;
+          var size = _this$props2.size;
+          _this$props2.level;
+          _this$props2.bgColor;
+          _this$props2.fgColor;
+          var style = _this$props2.style;
+          _this$props2.includeMargin;
+          var imageSettings = _this$props2.imageSettings,
+          otherProps = _objectWithoutProperties(_this$props2, ["value", "size", "level", "bgColor", "fgColor", "style", "includeMargin", "imageSettings"]);
+
+      var canvasStyle = _objectSpread({
+        height: size,
+        width: size
+      }, style);
+
+      var img = null;
+      var imgSrc = imageSettings && imageSettings.src;
+
+      if (imageSettings != null && imgSrc != null) {
+        img = React__default['default'].createElement("img", {
+          src: imgSrc,
+          style: {
+            display: 'none'
+          },
+          onLoad: this.handleImageLoad,
+          ref: function ref(_ref) {
+            return _this2._image = _ref;
+          }
+        });
+      }
+
+      return React__default['default'].createElement(React__default['default'].Fragment, null, React__default['default'].createElement("canvas", _extends({
+        style: canvasStyle,
+        height: size,
+        width: size,
+        ref: function ref(_ref2) {
+          return _this2._canvas = _ref2;
+        }
+      }, otherProps)), img);
+    }
+  }]);
+
+  return QRCodeCanvas;
+}(React__default['default'].PureComponent);
+
+_defineProperty(QRCodeCanvas, "defaultProps", DEFAULT_PROPS);
+
+if (process.env.NODE_ENV !== 'production') {
+  QRCodeCanvas.propTypes = PROP_TYPES;
+}
+
+var QRCodeSVG =
+/*#__PURE__*/
+function (_React$PureComponent2) {
+  _inherits(QRCodeSVG, _React$PureComponent2);
+
+  function QRCodeSVG() {
+    _classCallCheck(this, QRCodeSVG);
+
+    return _possibleConstructorReturn(this, _getPrototypeOf(QRCodeSVG).apply(this, arguments));
+  }
+
+  _createClass(QRCodeSVG, [{
+    key: "render",
+    value: function render() {
+      var _this$props3 = this.props,
+          value = _this$props3.value,
+          size = _this$props3.size,
+          level = _this$props3.level,
+          bgColor = _this$props3.bgColor,
+          fgColor = _this$props3.fgColor,
+          includeMargin = _this$props3.includeMargin,
+          imageSettings = _this$props3.imageSettings,
+          otherProps = _objectWithoutProperties(_this$props3, ["value", "size", "level", "bgColor", "fgColor", "includeMargin", "imageSettings"]); // We'll use type===-1 to force QRCode to automatically pick the best type
+
+
+      var qrcode = new QRCode_1(-1, ErrorCorrectLevel[level]);
+      qrcode.addData(convertStr(value));
+      qrcode.make();
+      var cells = qrcode.modules;
+
+      if (cells === null) {
+        return null;
+      }
+
+      var margin = includeMargin ? MARGIN_SIZE : 0;
+      var numCells = cells.length + margin * 2;
+      var calculatedImageSettings = getImageSettings(this.props, cells);
+      var image = null;
+
+      if (imageSettings != null && calculatedImageSettings != null) {
+        if (calculatedImageSettings.excavation != null) {
+          cells = excavateModules(cells, calculatedImageSettings.excavation);
+        }
+
+        image = React__default['default'].createElement("image", {
+          xlinkHref: imageSettings.src,
+          height: calculatedImageSettings.h,
+          width: calculatedImageSettings.w,
+          x: calculatedImageSettings.x + margin,
+          y: calculatedImageSettings.y + margin,
+          preserveAspectRatio: "none"
+        });
+      } // Drawing strategy: instead of a rect per module, we're going to create a
+      // single path for the dark modules and layer that on top of a light rect,
+      // for a total of 2 DOM nodes. We pay a bit more in string concat but that's
+      // way faster than DOM ops.
+      // For level 1, 441 nodes -> 2
+      // For level 40, 31329 -> 2
+
+
+      var fgPath = generatePath(cells, margin);
+      return React__default['default'].createElement("svg", _extends({
+        shapeRendering: "crispEdges",
+        height: size,
+        width: size,
+        viewBox: "0 0 ".concat(numCells, " ").concat(numCells)
+      }, otherProps), React__default['default'].createElement("path", {
+        fill: bgColor,
+        d: "M0,0 h".concat(numCells, "v").concat(numCells, "H0z")
+      }), React__default['default'].createElement("path", {
+        fill: fgColor,
+        d: fgPath
+      }), image);
+    }
+  }]);
+
+  return QRCodeSVG;
+}(React__default['default'].PureComponent);
+
+_defineProperty(QRCodeSVG, "defaultProps", DEFAULT_PROPS);
+
+if (process.env.NODE_ENV !== 'production') {
+  QRCodeSVG.propTypes = PROP_TYPES;
+}
+
+var QRCode = function QRCode(props) {
+  var renderAs = props.renderAs,
+      otherProps = _objectWithoutProperties(props, ["renderAs"]);
+
+  var Component = renderAs === 'svg' ? QRCodeSVG : QRCodeCanvas;
+  return React__default['default'].createElement(Component, otherProps);
+};
+
+QRCode.defaultProps = _objectSpread({
+  renderAs: 'canvas'
+}, DEFAULT_PROPS);
+var lib$1 = QRCode;
 
 var loading = false;
 var DashupContext$4 = null; // debounce
@@ -1566,7 +4214,7 @@ var DashupUIPageShare = function DashupUIPageShare() {
       share = _useState2[0],
       setSharing = _useState2[1];
 
-  var _useState3 = React.useState(null),
+  var _useState3 = React.useState([]),
       _useState4 = _slicedToArray(_useState3, 2),
       shares = _useState4[0],
       setShares = _useState4[1];
@@ -1914,7 +4562,11 @@ var DashupUIPageShare = function DashupUIPageShare() {
       }
     })), !!['embed', 'link'].includes(share.type) && /*#__PURE__*/React__default['default'].createElement(React__default['default'].Fragment, null, !!share.slug && /*#__PURE__*/React__default['default'].createElement(React__default['default'].Fragment, null, /*#__PURE__*/React__default['default'].createElement(material.Box, {
       py: 2
-    }, /*#__PURE__*/React__default['default'].createElement(material.Divider, null)), /*#__PURE__*/React__default['default'].createElement(material.TextField, {
+    }, /*#__PURE__*/React__default['default'].createElement(material.Divider, null)), /*#__PURE__*/React__default['default'].createElement(material.Box, {
+      pb: 2
+    }, /*#__PURE__*/React__default['default'].createElement(lib$1, {
+      value: "https://".concat(eden.get('config.domain'), "/share/").concat(share.slug)
+    })), /*#__PURE__*/React__default['default'].createElement(material.TextField, {
       label: "Share URL",
       value: "https://".concat(eden.get('config.domain'), "/share/").concat(share.slug),
       fullWidth: true,
@@ -2110,8 +4762,11 @@ var DashupUIPageFilter = function DashupUIPageFilter() {
   var _state, _state$share;
 
   var props = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+  // theme
+  var theme = styles$1.useTheme(); // filter button
 
-  // state
+  var filterButton = React.useRef(null); // state
+
   var _useState = React.useState(false),
       _useState2 = _slicedToArray(_useState, 2),
       filter = _useState2[0],
@@ -2173,32 +4828,43 @@ var DashupUIPageFilter = function DashupUIPageFilter() {
 
     return /*#__PURE__*/React__default['default'].createElement(React__default['default'].Fragment, null, /*#__PURE__*/React__default['default'].createElement(material.Box, {
       sx: {
-        width: '100%',
+        p: 2,
+        mx: -2,
+        mt: -2,
         display: 'flex',
+        background: 'rgba(0, 0, 0, 0.05)',
         alignItems: 'center'
       },
       mb: 2
+    }, /*#__PURE__*/React__default['default'].createElement(material.Stack, {
+      direction: "row",
+      mr: "auto",
+      alignItems: "center"
     }, !!props.onSearch && /*#__PURE__*/React__default['default'].createElement(material.TextField, {
-      label: "Search",
+      sx: {
+        mr: 1
+      },
+      margin: "none",
+      variant: "outlined",
       onChange: function onChange(e) {
         return debounce$4(props.onSearch, 500)(e.target.value && e.target.value.length ? e.target.value : null);
       },
       defaultValue: page.get('data.search') || page.get('user.search') || '',
       InputProps: {
-        startAdornment: /*#__PURE__*/React__default['default'].createElement(material.InputAdornment, {
-          position: "start"
+        sx: {
+          backgroundColor: theme.palette.mode === 'light' ? theme.palette.light.main : theme.palette.dark.main
+        },
+        size: 'small',
+        margin: 'none',
+        endAdornment: /*#__PURE__*/React__default['default'].createElement(material.InputAdornment, {
+          position: "end"
         }, /*#__PURE__*/React__default['default'].createElement(DashupUIIcon, {
           type: "fas",
           icon: "search",
           fixedWidth: true
         }))
       }
-    }), /*#__PURE__*/React__default['default'].createElement(material.Stack, {
-      direction: "row",
-      spacing: 1,
-      ml: "auto",
-      alignItems: "center"
-    }, !!hasUser(page) && ((_eden = eden) === null || _eden === void 0 ? void 0 : (_eden$user = _eden.user) === null || _eden$user === void 0 ? void 0 : _eden$user.exists()) && /*#__PURE__*/React__default['default'].createElement(material.Tooltip, {
+    }), !!hasUser(page) && ((_eden = eden) === null || _eden === void 0 ? void 0 : (_eden$user = _eden.user) === null || _eden$user === void 0 ? void 0 : _eden$user.exists()) && /*#__PURE__*/React__default['default'].createElement(material.Tooltip, {
       title: page.get('user.filter.me') ? 'Show All' : 'Show Mine'
     }, /*#__PURE__*/React__default['default'].createElement(material.IconButton, {
       color: page.get('user.filter.me') ? 'primary' : undefined,
@@ -2208,6 +4874,82 @@ var DashupUIPageFilter = function DashupUIPageFilter() {
     }, /*#__PURE__*/React__default['default'].createElement(DashupUIIcon, {
       type: "fas",
       icon: "user",
+      fixedWidth: true
+    }))), (page.get('user.filter.tags') || []).map(function (tag, i) {
+      var _option$color, _option$color2, _option$color3;
+
+      // get field
+      var field = tags.find(function (f) {
+        return f.uuid === (tag === null || tag === void 0 ? void 0 : tag.field);
+      }); // check field
+
+      if (!field) return null; // get option
+
+      var option = (field.options || []).find(function (opt) {
+        return opt.value === (tag === null || tag === void 0 ? void 0 : tag.value);
+      }) || {}; // jsx
+
+      return /*#__PURE__*/React__default['default'].createElement(material.Tooltip, {
+        key: "filter-".concat(tag === null || tag === void 0 ? void 0 : tag.field, "-").concat(tag === null || tag === void 0 ? void 0 : tag.value),
+        title: "".concat(field.label || field.name, ": ").concat(option.label || (tag === null || tag === void 0 ? void 0 : tag.value))
+      }, /*#__PURE__*/React__default['default'].createElement(material.Chip, {
+        sx: {
+          color: ((_option$color = option.color) === null || _option$color === void 0 ? void 0 : _option$color.hex) && theme.palette.getContrastText((_option$color2 = option.color) === null || _option$color2 === void 0 ? void 0 : _option$color2.hex),
+          backgroundColor: (_option$color3 = option.color) === null || _option$color3 === void 0 ? void 0 : _option$color3.hex
+        },
+        label: option.label || (tag === null || tag === void 0 ? void 0 : tag.value),
+        onDelete: function onDelete(e) {
+          return props.onTag(field, option || tag);
+        }
+      }));
+    }), !!props.onTag && hasTags(page) && /*#__PURE__*/React__default['default'].createElement(React__default['default'].Fragment, null, /*#__PURE__*/React__default['default'].createElement(material.Tooltip, {
+      title: "Filter by Tag"
+    }, /*#__PURE__*/React__default['default'].createElement(material.IconButton, {
+      color: (page.get('user.filter.tags') || []).length ? 'primary' : undefined,
+      onClick: function onClick(e) {
+        return setTagMenu(e.target);
+      }
+    }, /*#__PURE__*/React__default['default'].createElement(DashupUIIcon, {
+      type: "fas",
+      icon: "tag",
+      fixedWidth: true
+    }))), /*#__PURE__*/React__default['default'].createElement(material.Menu, {
+      open: !!tagMenu,
+      onClose: function onClose() {
+        return setTagMenu(null);
+      },
+      anchorEl: tagMenu
+    }, tags.reduce(function (accum, tag, i) {
+      // arr
+      var arr = []; // push
+
+      if (i !== 0) arr.push( /*#__PURE__*/React__default['default'].createElement(material.Divider, {
+        key: "div-".concat(tag.uuid)
+      })); // push
+
+      arr.push.apply(arr, _toConsumableArray((tag.options || []).map(function (option, i) {
+        // return jsx
+        return /*#__PURE__*/React__default['default'].createElement(material.MenuItem, {
+          key: "tag-".concat(tag.uuid, "-").concat(option.value),
+          onClick: function onClick() {
+            return !setTagMenu(null) && props.onTag(tag, option);
+          }
+        }, option.label);
+      }))); // push
+
+      accum.push.apply(accum, arr);
+      return accum;
+    }, []))), !!props.onFilter && /*#__PURE__*/React__default['default'].createElement(material.Tooltip, {
+      title: "Filter View"
+    }, /*#__PURE__*/React__default['default'].createElement(material.IconButton, {
+      ref: filterButton,
+      color: (page.get('user.query') ? page.get('user.query') : '[]').length > 2 || filter ? 'primary' : undefined,
+      onClick: function onClick(e) {
+        return setFilter(!filter);
+      }
+    }, /*#__PURE__*/React__default['default'].createElement(DashupUIIcon, {
+      type: "fas",
+      icon: "filter",
       fixedWidth: true
     }))), !!sortField && /*#__PURE__*/React__default['default'].createElement(material.Tooltip, {
       title: "".concat(sortField.label || sortField.name, ": ").concat(page.get('data.sort.way') === 1 ? 'Asc' : 'Desc')
@@ -2285,83 +5027,23 @@ var DashupUIPageFilter = function DashupUIPageFilter() {
           field: 'updated_at'
         });
       }
-    }, "Updated at"))), (page.get('user.filter.tags') || []).map(function (tag, i) {
-      var _option$color, _option$color2, _option$color3;
-
-      // get field
-      var field = tags.find(function (f) {
-        return f.uuid === (tag === null || tag === void 0 ? void 0 : tag.field);
-      }); // check field
-
-      if (!field) return null; // get option
-
-      var option = (field.options || []).find(function (opt) {
-        return opt.value === (tag === null || tag === void 0 ? void 0 : tag.value);
-      }) || {}; // jsx
-
-      return /*#__PURE__*/React__default['default'].createElement(material.Tooltip, {
-        key: "filter-".concat(tag === null || tag === void 0 ? void 0 : tag.field, "-").concat(tag === null || tag === void 0 ? void 0 : tag.value),
-        title: "".concat(field.label || field.name, ": ").concat(option.label || (tag === null || tag === void 0 ? void 0 : tag.value))
-      }, /*#__PURE__*/React__default['default'].createElement(material.Chip, {
-        sx: {
-          color: ((_option$color = option.color) === null || _option$color === void 0 ? void 0 : _option$color.hex) && theme.palette.getContrastText((_option$color2 = option.color) === null || _option$color2 === void 0 ? void 0 : _option$color2.hex),
-          backgroundColor: (_option$color3 = option.color) === null || _option$color3 === void 0 ? void 0 : _option$color3.hex
-        },
-        label: option.label || (tag === null || tag === void 0 ? void 0 : tag.value),
-        onDelete: function onDelete(e) {
-          return props.onTag(field, option || tag);
-        }
-      }));
-    }), !!props.onTag && hasTags(page) && /*#__PURE__*/React__default['default'].createElement(React__default['default'].Fragment, null, /*#__PURE__*/React__default['default'].createElement(material.Tooltip, {
-      title: "Filter by Tag"
-    }, /*#__PURE__*/React__default['default'].createElement(material.IconButton, {
-      color: (page.get('user.filter.tags') || []).length ? 'primary' : undefined,
-      onClick: function onClick(e) {
-        return setTagMenu(e.target);
-      }
-    }, /*#__PURE__*/React__default['default'].createElement(DashupUIIcon, {
-      type: "fas",
-      icon: "tag",
-      fixedWidth: true
-    }))), /*#__PURE__*/React__default['default'].createElement(material.Menu, {
-      open: !!tagMenu,
+    }, "Updated at")))), /*#__PURE__*/React__default['default'].createElement(material.Stack, {
+      direction: "row",
+      ml: "auto",
+      alignItems: "center"
+    }, props.children)), !!filter && !!props.onFilter && /*#__PURE__*/React__default['default'].createElement(material.Popover, {
+      id: "page-filter",
+      open: !!filter,
       onClose: function onClose() {
-        return setTagMenu(null);
+        return setFilter(false);
       },
-      anchorEl: tagMenu
-    }, tags.reduce(function (accum, tag, i) {
-      // arr
-      var arr = []; // push
-
-      if (i !== 0) arr.push( /*#__PURE__*/React__default['default'].createElement(material.Divider, {
-        key: "div-".concat(tag.uuid)
-      })); // push
-
-      arr.push.apply(arr, _toConsumableArray((tag.options || []).map(function (option, i) {
-        // return jsx
-        return /*#__PURE__*/React__default['default'].createElement(material.MenuItem, {
-          key: "tag-".concat(tag.uuid, "-").concat(option.value),
-          onClick: function onClick() {
-            return !setTagMenu(null) && props.onTag(tag, option);
-          }
-        }, option.label);
-      }))); // push
-
-      accum.push.apply(accum, arr);
-      return accum;
-    }, []))), !!props.onFilter && /*#__PURE__*/React__default['default'].createElement(material.Tooltip, {
-      title: "Filter View"
-    }, /*#__PURE__*/React__default['default'].createElement(material.IconButton, {
-      color: (page.get('user.query') ? page.get('user.query') : '[]').length > 2 || filter ? 'primary' : undefined,
-      onClick: function onClick(e) {
-        return setFilter(!filter);
+      anchorEl: filterButton === null || filterButton === void 0 ? void 0 : filterButton.current,
+      anchorOrigin: {
+        vertical: 'bottom',
+        horizontal: 'left'
       }
-    }, /*#__PURE__*/React__default['default'].createElement(DashupUIIcon, {
-      type: "fas",
-      icon: "filter",
-      fixedWidth: true
-    }))), props.children)), !!filter && !!props.onFilter && /*#__PURE__*/React__default['default'].createElement(material.Box, {
-      mb: 2
+    }, /*#__PURE__*/React__default['default'].createElement(material.Box, {
+      minWidth: 420
     }, /*#__PURE__*/React__default['default'].createElement(DashupUIQuery, {
       page: page,
       label: "Filter",
@@ -2371,7 +5053,7 @@ var DashupUIPageFilter = function DashupUIPageFilter() {
       onChange: props.onFilter,
       isString: props.isString,
       getFieldStruct: getFieldStruct
-    })));
+    }))));
   });
 }; // export default page menu
 
@@ -2586,8 +5268,10 @@ var DashupUIPageConfig = function DashupUIPageConfig() {
       value: t.toLowerCase(),
       sx: {
         flex: 1,
+        display: 'flex',
         paddingLeft: 0,
         paddingRight: 0,
+        flexDirection: 'column',
         paddingBottom: 0
       }
     }, "".concat(tab).toLowerCase() === 'connects' ? /*#__PURE__*/React__default['default'].createElement(DashupUIPage.Connect, {
@@ -2604,10 +5288,12 @@ var DashupUIPageConfig = function DashupUIPageConfig() {
     justifyContent: "flex-end",
     pt: 2
   }, defaulting ? /*#__PURE__*/React__default['default'].createElement(material.Button, {
+    variant: "contained",
+    color: "info",
     onClick: function onClick(e) {
       return setDefaulting(false);
     }
-  }, "Cancel") : /*#__PURE__*/React__default['default'].createElement(material.Button, {
+  }, "Configure Myself") : /*#__PURE__*/React__default['default'].createElement(material.Button, {
     variant: "contained",
     color: "info",
     onClick: function onClick(e) {
@@ -2615,7 +5301,7 @@ var DashupUIPageConfig = function DashupUIPageConfig() {
     }
   }, "Use Default Pages"), !!defaulting && /*#__PURE__*/React__default['default'].createElement(lab.LoadingButton, {
     sx: {
-      ml: 2
+      ml: 1
     },
     onClick: function onClick(e) {
       return onImport(e);
@@ -2673,7 +5359,7 @@ var DashupUIPageConfigWrap = function DashupUIPageConfigWrap() {
   // return jsx
   return /*#__PURE__*/React__default['default'].createElement(DashupContext$2.Consumer, null, function (data) {
     // return jsx
-    return /*#__PURE__*/React__default['default'].createElement(DashupUIPageConfig, _extends({}, data, props));
+    return /*#__PURE__*/React__default['default'].createElement(DashupUIPageConfig, _extends$1({}, data, props));
   });
 }; // export default page menu
 
@@ -2684,16 +5370,6 @@ var Config$1 = (function (ctx) {
 
   return DashupUIPageConfigWrap;
 });
-
-var commonjsGlobal = typeof globalThis !== 'undefined' ? globalThis : typeof window !== 'undefined' ? window : typeof global !== 'undefined' ? global : typeof self !== 'undefined' ? self : {};
-
-function createCommonjsModule(fn, module) {
-	return module = { exports: {} }, fn(module, module.exports), module.exports;
-}
-
-function getCjsExportFromNamespace (n) {
-	return n && n['default'] || n;
-}
 
 // Found this seed-based random generator somewhere
 // Based on The Central Randomizer 1.3 (C) 1997 by Paul Houle (houle@msc.cornell.edu)
@@ -3259,7 +5935,7 @@ var DashupUIPageConnect = function DashupUIPageConnect() {
         });
       },
       fullWidth: true
-    }), /*#__PURE__*/React__default['default'].createElement(View__default['default'], _extends({}, data, {
+    }), /*#__PURE__*/React__default['default'].createElement(View__default['default'], _extends$1({}, data, {
       type: "connect",
       view: "config",
       struct: updating.type,
@@ -3503,7 +6179,11 @@ var DashupUIPage = function DashupUIPage() {
 
 
   React.useEffect(function () {
-    // check page
+    // check required
+    var _props$require2 = props.require,
+        require = _props$require2 === void 0 ? [] : _props$require2; // check page
+
+
     if (ctx.id !== (props.page && props.page.get('_id'))) {
       // update ctx
       updateCtx();
@@ -3516,7 +6196,25 @@ var DashupUIPage = function DashupUIPage() {
     props.page.on('icon', updateCtx);
     props.page.on('name', updateCtx);
     props.page.on('color', updateCtx);
-    props.dashup.on('active', updateCtx); // end effect
+    props.dashup.on('active', updateCtx); // require
+
+    require.forEach(function (tld) {
+      // on tld
+      props.page.on(tld === null || tld === void 0 ? void 0 : tld.key, updateCtx);
+    }); // on share
+
+
+    var onShare = function onShare() {
+      return props.onShare && props.onShare();
+    };
+
+    var onConfig = function onConfig() {
+      return props.onConfig && props.onConfig();
+    }; // on share
+
+
+    props.dashup.on('share', onShare);
+    props.dashup.on('config', onConfig); // end effect
 
     return function () {
       // add listeners
@@ -3524,9 +6222,17 @@ var DashupUIPage = function DashupUIPage() {
       props.page.removeListener('icon', updateCtx);
       props.page.removeListener('name', updateCtx);
       props.page.removeListener('color', updateCtx);
-      props.dashup.removeListener('active', updateCtx);
+      props.dashup.removeListener('active', updateCtx); // on share
+
+      props.dashup.removeListener('share', onShare);
+      props.dashup.removeListener('config', onConfig); // require
+
+      require.forEach(function (tld) {
+        // on tld
+        props.page.removeListener(tld === null || tld === void 0 ? void 0 : tld.key, updateCtx);
+      });
     };
-  }, [props.page && props.page.get('_id')]); // missing require
+  }, [props.page && props.page.get('_id'), props.page && props.page.get('type')]); // missing require
 
   React.useEffect(function () {
     // shown config
@@ -3627,7 +6333,7 @@ var _self = (typeof window !== 'undefined')
 var Prism = (function (_self) {
 
 	// Private helper vars
-	var lang = /\blang(?:uage)?-([\w-]+)\b/i;
+	var lang = /(?:^|\s)lang(?:uage)?-([\w-]+)(?=\s|$)/i;
 	var uniqueId = 0;
 
 	// The grammar object for plaintext
@@ -3657,6 +6363,27 @@ var Prism = (function (_self) {
 		 * @public
 		 */
 		manual: _self.Prism && _self.Prism.manual,
+		/**
+		 * By default, if Prism is in a web worker, it assumes that it is in a worker it created itself, so it uses
+		 * `addEventListener` to communicate with its parent instance. However, if you're using Prism manually in your
+		 * own worker, you don't want it to do this.
+		 *
+		 * By setting this value to `true`, Prism will not add its own listeners to the worker.
+		 *
+		 * You obviously have to change this value before Prism executes. To do this, you can add an
+		 * empty Prism object into the global scope before loading the Prism script like this:
+		 *
+		 * ```js
+		 * window.Prism = window.Prism || {};
+		 * Prism.disableWorkerMessageHandler = true;
+		 * // Load Prism's script
+		 * ```
+		 *
+		 * @default false
+		 * @type {boolean}
+		 * @memberof Prism
+		 * @public
+		 */
 		disableWorkerMessageHandler: _self.Prism && _self.Prism.disableWorkerMessageHandler,
 
 		/**
@@ -3771,13 +6498,31 @@ var Prism = (function (_self) {
 			 * @returns {string}
 			 */
 			getLanguage: function (element) {
-				while (element && !lang.test(element.className)) {
+				while (element) {
+					var m = lang.exec(element.className);
+					if (m) {
+						return m[1].toLowerCase();
+					}
 					element = element.parentElement;
 				}
-				if (element) {
-					return (element.className.match(lang) || [, 'none'])[1].toLowerCase();
-				}
 				return 'none';
+			},
+
+			/**
+			 * Sets the Prism `language-xxxx` class of the given element.
+			 *
+			 * @param {Element} element
+			 * @param {string} language
+			 * @returns {void}
+			 */
+			setLanguage: function (element, language) {
+				// remove all `language-xxxx` classes
+				// (this might leave behind a leading space)
+				element.className = element.className.replace(RegExp(lang, 'gi'), '');
+
+				// add the new `language-xxxx` class
+				// (using `classList` will automatically clean up spaces for us)
+				element.classList.add('language-' + language);
 			},
 
 			/**
@@ -4134,12 +6879,12 @@ var Prism = (function (_self) {
 			var grammar = _.languages[language];
 
 			// Set language on the element, if not present
-			element.className = element.className.replace(lang, '').replace(/\s+/g, ' ') + ' language-' + language;
+			_.util.setLanguage(element, language);
 
 			// Set language on the parent, for styling
 			var parent = element.parentElement;
 			if (parent && parent.nodeName.toLowerCase() === 'pre') {
-				parent.className = parent.className.replace(lang, '').replace(/\s+/g, ' ') + ' language-' + language;
+				_.util.setLanguage(parent, language);
 			}
 
 			var code = element.textContent;
@@ -4534,7 +7279,7 @@ var Prism = (function (_self) {
 
 					if (greedy) {
 						match = matchPattern(pattern, pos, text, lookbehind);
-						if (!match) {
+						if (!match || match.index >= text.length) {
 							break;
 						}
 
@@ -5110,14 +7855,14 @@ Prism.languages.clike = {
 		greedy: true
 	},
 	'class-name': {
-		pattern: /(\b(?:class|interface|extends|implements|trait|instanceof|new)\s+|\bcatch\s+\()[\w.\\]+/i,
+		pattern: /(\b(?:class|extends|implements|instanceof|interface|new|trait)\s+|\bcatch\s+\()[\w.\\]+/i,
 		lookbehind: true,
 		inside: {
 			'punctuation': /[.\\]/
 		}
 	},
-	'keyword': /\b(?:if|else|while|do|for|return|in|instanceof|function|new|try|throw|catch|finally|null|break|continue)\b/,
-	'boolean': /\b(?:true|false)\b/,
+	'keyword': /\b(?:break|catch|continue|do|else|finally|for|function|if|in|instanceof|new|null|return|throw|try|while)\b/,
+	'boolean': /\b(?:false|true)\b/,
 	'function': /\b\w+(?=\()/,
 	'number': /\b0x[\da-f]+\b|(?:\b\d+(?:\.\d*)?|\B\.\d+)(?:e[+-]?\d+)?/i,
 	'operator': /[<>]=?|[!=]=?=?|--?|\+\+?|&&?|\|\|?|[?*/~^%]/,
@@ -5133,7 +7878,7 @@ Prism.languages.javascript = Prism.languages.extend('clike', {
 	'class-name': [
 		Prism.languages.clike['class-name'],
 		{
-			pattern: /(^|[^$\w\xA0-\uFFFF])(?!\s)[_$A-Z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*(?=\.(?:prototype|constructor))/,
+			pattern: /(^|[^$\w\xA0-\uFFFF])(?!\s)[_$A-Z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*(?=\.(?:constructor|prototype))/,
 			lookbehind: true
 		}
 	],
@@ -5149,11 +7894,38 @@ Prism.languages.javascript = Prism.languages.extend('clike', {
 	],
 	// Allow for all non-ASCII characters (See http://stackoverflow.com/a/2008444)
 	'function': /#?(?!\s)[_$a-zA-Z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*(?=\s*(?:\.\s*(?:apply|bind|call)\s*)?\()/,
-	'number': /\b(?:(?:0[xX](?:[\dA-Fa-f](?:_[\dA-Fa-f])?)+|0[bB](?:[01](?:_[01])?)+|0[oO](?:[0-7](?:_[0-7])?)+)n?|(?:\d(?:_\d)?)+n|NaN|Infinity)\b|(?:\b(?:\d(?:_\d)?)+\.?(?:\d(?:_\d)?)*|\B\.(?:\d(?:_\d)?)+)(?:[Ee][+-]?(?:\d(?:_\d)?)+)?/,
+	'number': {
+		pattern: RegExp(
+			/(^|[^\w$])/.source +
+			'(?:' +
+			(
+				// constant
+				/NaN|Infinity/.source +
+				'|' +
+				// binary integer
+				/0[bB][01]+(?:_[01]+)*n?/.source +
+				'|' +
+				// octal integer
+				/0[oO][0-7]+(?:_[0-7]+)*n?/.source +
+				'|' +
+				// hexadecimal integer
+				/0[xX][\dA-Fa-f]+(?:_[\dA-Fa-f]+)*n?/.source +
+				'|' +
+				// decimal bigint
+				/\d+(?:_\d+)*n/.source +
+				'|' +
+				// decimal number (integer or float) but no bigint
+				/(?:\d+(?:_\d+)*(?:\.(?:\d+(?:_\d+)*)?)?|\.\d+(?:_\d+)*)(?:[Ee][+-]?\d+(?:_\d+)*)?/.source
+			) +
+			')' +
+			/(?![\w$])/.source
+		),
+		lookbehind: true
+	},
 	'operator': /--|\+\+|\*\*=?|=>|&&=?|\|\|=?|[!=]==|<<=?|>>>?=?|[-+*/%&|^!=<>]=?|\.{3}|\?\?=?|\?\.?|[~:]/
 });
 
-Prism.languages.javascript['class-name'][0].pattern = /(\b(?:class|interface|extends|implements|instanceof|new)\s+)[\w.\\]+/;
+Prism.languages.javascript['class-name'][0].pattern = /(\b(?:class|extends|implements|instanceof|interface|new)\s+)[\w.\\]+/;
 
 Prism.languages.insertBefore('javascript', 'keyword', {
 	'regex': {
@@ -5229,7 +8001,21 @@ Prism.languages.insertBefore('javascript', 'string', {
 			},
 			'string': /[\s\S]+/
 		}
+	},
+	'string-property': {
+		pattern: /((?:^|[,{])[ \t]*)(["'])(?:\\(?:\r\n|[\s\S])|(?!\2)[^\\\r\n])*\2(?=\s*:)/m,
+		lookbehind: true,
+		greedy: true,
+		alias: 'property'
 	}
+});
+
+Prism.languages.insertBefore('javascript', 'operator', {
+	'literal-property': {
+		pattern: /((?:^|[,{])[ \t]*)(?!\s)[_$a-zA-Z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*(?=\s*:)/m,
+		lookbehind: true,
+		alias: 'property'
+	},
 });
 
 if (Prism.languages.markup) {
@@ -5287,21 +8073,57 @@ Prism.languages.js = Prism.languages.javascript;
 	var SELECTOR = 'pre[data-src]:not([' + STATUS_ATTR + '="' + STATUS_LOADED + '"])'
 		+ ':not([' + STATUS_ATTR + '="' + STATUS_LOADING + '"])';
 
-	var lang = /\blang(?:uage)?-([\w-]+)\b/i;
-
 	/**
-	 * Sets the Prism `language-xxxx` or `lang-xxxx` class to the given language.
+	 * Loads the given file.
 	 *
-	 * @param {HTMLElement} element
-	 * @param {string} language
-	 * @returns {void}
+	 * @param {string} src The URL or path of the source file to load.
+	 * @param {(result: string) => void} success
+	 * @param {(reason: string) => void} error
 	 */
-	function setLanguageClass(element, language) {
-		var className = element.className;
-		className = className.replace(lang, ' ') + ' language-' + language;
-		element.className = className.replace(/\s+/g, ' ').trim();
+	function loadFile(src, success, error) {
+		var xhr = new XMLHttpRequest();
+		xhr.open('GET', src, true);
+		xhr.onreadystatechange = function () {
+			if (xhr.readyState == 4) {
+				if (xhr.status < 400 && xhr.responseText) {
+					success(xhr.responseText);
+				} else {
+					if (xhr.status >= 400) {
+						error(FAILURE_MESSAGE(xhr.status, xhr.statusText));
+					} else {
+						error(FAILURE_EMPTY_MESSAGE);
+					}
+				}
+			}
+		};
+		xhr.send(null);
 	}
 
+	/**
+	 * Parses the given range.
+	 *
+	 * This returns a range with inclusive ends.
+	 *
+	 * @param {string | null | undefined} range
+	 * @returns {[number, number | undefined] | undefined}
+	 */
+	function parseRange(range) {
+		var m = /^\s*(\d+)\s*(?:(,)\s*(?:(\d+)\s*)?)?$/.exec(range || '');
+		if (m) {
+			var start = Number(m[1]);
+			var comma = m[2];
+			var end = m[3];
+
+			if (!comma) {
+				return [start, start];
+			}
+			if (!end) {
+				return [start, undefined];
+			}
+			return [start, Number(end)];
+		}
+		return undefined;
+	}
 
 	Prism.hooks.add('before-highlightall', function (env) {
 		env.selector += ', ' + SELECTOR;
@@ -5329,8 +8151,8 @@ Prism.languages.js = Prism.languages.javascript;
 			}
 
 			// set language classes
-			setLanguageClass(code, language);
-			setLanguageClass(pre, language);
+			Prism.util.setLanguage(code, language);
+			Prism.util.setLanguage(pre, language);
 
 			// preload the language
 			var autoloader = Prism.plugins.autoloader;
@@ -5339,31 +8161,45 @@ Prism.languages.js = Prism.languages.javascript;
 			}
 
 			// load file
-			var xhr = new XMLHttpRequest();
-			xhr.open('GET', src, true);
-			xhr.onreadystatechange = function () {
-				if (xhr.readyState == 4) {
-					if (xhr.status < 400 && xhr.responseText) {
-						// mark as loaded
-						pre.setAttribute(STATUS_ATTR, STATUS_LOADED);
+			loadFile(
+				src,
+				function (text) {
+					// mark as loaded
+					pre.setAttribute(STATUS_ATTR, STATUS_LOADED);
 
-						// highlight code
-						code.textContent = xhr.responseText;
-						Prism.highlightElement(code);
+					// handle data-range
+					var range = parseRange(pre.getAttribute('data-range'));
+					if (range) {
+						var lines = text.split(/\r\n?|\n/g);
 
-					} else {
-						// mark as failed
-						pre.setAttribute(STATUS_ATTR, STATUS_FAILED);
+						// the range is one-based and inclusive on both ends
+						var start = range[0];
+						var end = range[1] == null ? lines.length : range[1];
 
-						if (xhr.status >= 400) {
-							code.textContent = FAILURE_MESSAGE(xhr.status, xhr.statusText);
-						} else {
-							code.textContent = FAILURE_EMPTY_MESSAGE;
+						if (start < 0) { start += lines.length; }
+						start = Math.max(0, Math.min(start - 1, lines.length));
+						if (end < 0) { end += lines.length; }
+						end = Math.max(0, Math.min(end, lines.length));
+
+						text = lines.slice(start, end).join('\n');
+
+						// add data-start for line numbers
+						if (!pre.hasAttribute('data-start')) {
+							pre.setAttribute('data-start', String(start + 1));
 						}
 					}
+
+					// highlight code
+					code.textContent = text;
+					Prism.highlightElement(code);
+				},
+				function (error) {
+					// mark as failed
+					pre.setAttribute(STATUS_ATTR, STATUS_FAILED);
+
+					code.textContent = error;
 				}
-			};
-			xhr.send(null);
+			);
 		}
 	});
 
@@ -6963,13 +9799,8 @@ var DashupUIContext$7 = null; // create dashup grid body
 
 var DashupUIChatEmbed = function DashupUIChatEmbed() {
   var props = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-
-  // use state
-  var _useState = React.useState(false),
-      _useState2 = _slicedToArray(_useState, 2);
-      _useState2[0];
-      _useState2[1]; // get duration
-
+  // is mobile
+  var isMobile = dashupUI.useMediaQuery('(max-width:800px)'); // get duration
 
   var getDuration = function getDuration(time) {
     // return duration
@@ -7039,8 +9870,8 @@ var DashupUIChatEmbed = function DashupUIChatEmbed() {
 
     return /*#__PURE__*/React__default['default'].createElement(dashupUI.Card, {
       sx: {
-        width: data.size === 'small' ? 240 : 360,
-        maxWidth: data.size === 'small' ? '100%' : 360
+        minWidth: isMobile ? '60vw' : data.size === 'small' ? 240 : 360,
+        maxWidth: isMobile ? '60vw' : data.size === 'small' ? '100%' : 360
       }
     }, /*#__PURE__*/React__default['default'].createElement(dashupUI.CardHeader, {
       title: (_props$embed$data9 = props.embed.data) === null || _props$embed$data9 === void 0 ? void 0 : _props$embed$data9.title,
@@ -7216,7 +10047,7 @@ var Leaf = function Leaf(_ref) {
   var attributes = _ref.attributes,
       children = _ref.children,
       leaf = _ref.leaf;
-  return /*#__PURE__*/React__default['default'].createElement("span", _extends({}, attributes, {
+  return /*#__PURE__*/React__default['default'].createElement("span", _extends$1({}, attributes, {
     style: {
       fontStyle: leaf.italic ? 'italic' : null,
       fontWeight: leaf.bold ? 'bold' : null,
@@ -7234,7 +10065,7 @@ var Emoji = function Emoji(_ref2) {
   // theme
   var theme = styles$1.useTheme(); // return chip
 
-  return /*#__PURE__*/React__default['default'].createElement(material.Box, _extends({}, attributes, {
+  return /*#__PURE__*/React__default['default'].createElement(material.Box, _extends$1({}, attributes, {
     component: "span",
     contentEditable: false
   }), /*#__PURE__*/React__default['default'].createElement(emojiMart.Emoji, {
@@ -7274,7 +10105,7 @@ var Mention = function Mention(_ref3) {
 
   var actualColor = ((_element$mention2 = element.mention) === null || _element$mention2 === void 0 ? void 0 : _element$mention2.color) || color; // return jsx
 
-  return /*#__PURE__*/React__default['default'].createElement(material.Chip, _extends({}, attributes, {
+  return /*#__PURE__*/React__default['default'].createElement(material.Chip, _extends$1({}, attributes, {
     contentEditable: false,
     sx: {
       color: (actualColor === null || actualColor === void 0 ? void 0 : actualColor.hex) && theme.palette.getContrastText(actualColor.hex),
@@ -7457,10 +10288,10 @@ var DashupUIChatInput = function DashupUIChatInput() {
         if (typeof token !== 'string') {
           var _ranges$push;
 
-          ranges.push((_ranges$push = {}, _defineProperty(_ranges$push, token.type, true), _defineProperty(_ranges$push, "focus", {
+          ranges.push((_ranges$push = {}, _defineProperty$1(_ranges$push, token.type, true), _defineProperty$1(_ranges$push, "focus", {
             path: path,
             offset: end
-          }), _defineProperty(_ranges$push, "anchor", {
+          }), _defineProperty$1(_ranges$push, "anchor", {
             path: path,
             offset: start
           }), _ranges$push));
@@ -7506,18 +10337,27 @@ var DashupUIChatInput = function DashupUIChatInput() {
             case 0:
               // prevent default
               e.preventDefault();
-              e.stopPropagation(); // value to string
+              e.stopPropagation(); // check value
 
-              text = toText(value || []); // validate
-
-              if (!(posting || _long)) {
-                _context.next = 5;
+              if (!(JSON.stringify(value) === JSON.stringify(emptyState))) {
+                _context.next = 4;
                 break;
               }
 
               return _context.abrupt("return");
 
-            case 5:
+            case 4:
+              // value to string
+              text = toText(value || []); // validate
+
+              if (!(posting || _long)) {
+                _context.next = 7;
+                break;
+              }
+
+              return _context.abrupt("return");
+
+            case 7:
               // set posting
               setPosting(true); // message
 
@@ -7533,33 +10373,38 @@ var DashupUIChatInput = function DashupUIChatInput() {
               allEmbeds[embedId] = [];
               setEmbeds(_toConsumableArray(allEmbeds[embedId])); // set embeds
 
-              slate.Transforms.select(editor, slate.Editor.start(editor, [])); // set value
+              slate.Transforms.select(editor, slate.Editor.start(editor, [])); // delete
 
-              setValue(emptyState); // on send
+              slate.Transforms["delete"](editor, {
+                at: {
+                  focus: slate.Editor.end(editor, []),
+                  anchor: slate.Editor.start(editor, [])
+                }
+              }); // on send
 
               if (!props.onSend) {
-                _context.next = 16;
+                _context.next = 18;
                 break;
               }
 
-              _context.next = 14;
+              _context.next = 16;
               return props.onSend(e, newMessage);
 
-            case 14:
-              _context.next = 21;
+            case 16:
+              _context.next = 23;
               break;
 
-            case 16:
+            case 18:
               // emit message
               data.onMessage(newMessage); // call join
 
-              _context.next = 19;
+              _context.next = 21;
               return data.dashup.action({
                 type: 'page',
                 struct: 'channel'
               }, 'send', newMessage);
 
-            case 19:
+            case 21:
               message = _context.sent;
 
               // check if success
@@ -7568,11 +10413,11 @@ var DashupUIChatInput = function DashupUIChatInput() {
                 eden.alert.error('Failed to send');
               }
 
-            case 21:
+            case 23:
               // update
               setPosting(false);
 
-            case 22:
+            case 24:
             case "end":
               return _context.stop();
           }
@@ -7880,7 +10725,12 @@ var DashupUIChatInput = function DashupUIChatInput() {
         embed: embed,
         key: "embed-".concat(i)
       });
-    })), /*#__PURE__*/React__default['default'].createElement(material.Paper, null, /*#__PURE__*/React__default['default'].createElement(material.Stack, {
+    })), /*#__PURE__*/React__default['default'].createElement(material.Paper, {
+      sx: {
+        borderRadius: 2
+      },
+      elevation: 1
+    }, /*#__PURE__*/React__default['default'].createElement(material.Stack, {
       spacing: 1,
       direction: "row",
       alignItems: "center",
@@ -10207,7 +13057,9 @@ var DashupUIChatMessage = function DashupUIChatMessage() {
 
   var props = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
   // theme
-  var theme = styles$1.useTheme(); // get embeds
+  var theme = styles$1.useTheme(); // is mobile
+
+  var isMobile = material.useMediaQuery('(max-width:800px)'); // get embeds
 
   var getEmbeds = function getEmbeds() {
     var _props$message;
@@ -10324,8 +13176,8 @@ var DashupUIChatMessage = function DashupUIChatMessage() {
             mb: 0.5,
             '& .CodeMirror.cm-s-one-dark': {
               height: 'auto',
-              maxWidth: 480,
-              minWidth: 480
+              maxWidth: isMobile ? '60vw' : 480,
+              minWidth: isMobile ? '60vw' : 480
             }
           }
         }, /*#__PURE__*/React__default['default'].createElement(View__default['default'], {
@@ -10366,6 +13218,7 @@ var DashupUIChatMessage = function DashupUIChatMessage() {
     return /*#__PURE__*/React__default['default'].createElement(material.Box, {
       mt: inThread() ? 0 : props.size === 'sm' ? 1 : 1.5,
       sx: {
+        flex: isMobile ? 1 : undefined,
         position: 'relative',
         '&:hover .updating': {
           opacity: 1,
@@ -10384,7 +13237,7 @@ var DashupUIChatMessage = function DashupUIChatMessage() {
         bottom: -5,
         zIndex: -1,
         background: 'rgba(0, 0, 0, 0.15)',
-        borderRadius: 2
+        borderRadius: 1
       }
     }), !!(data.page && (_data$dashup = data.dashup) !== null && _data$dashup !== void 0 && _data$dashup.can(data.page, 'manage') || (_data$dashup2 = data.dashup) !== null && _data$dashup2 !== void 0 && _data$dashup2.can('admin') || isMine) && /*#__PURE__*/React__default['default'].createElement(material.Box, {
       sx: {
@@ -10431,7 +13284,10 @@ var DashupUIChatMessage = function DashupUIChatMessage() {
         width: data.size === 'sm' ? 25 : 40
       }
     }), /*#__PURE__*/React__default['default'].createElement(material.Stack, {
-      spacing: .5
+      spacing: .5,
+      sx: {
+        flex: isMobile ? 1 : undefined
+      }
     }, !inThread() && /*#__PURE__*/React__default['default'].createElement(material.Stack, {
       spacing: 1,
       direction: "row",
@@ -10452,10 +13308,9 @@ var DashupUIChatMessage = function DashupUIChatMessage() {
           verticalAlign: 'middle'
         }
       }
-    }, parseContent(data.dashup, props.message.parsed || props.message.message)), !!getEmbeds().length && /*#__PURE__*/React__default['default'].createElement(material.Stack, {
+    }, parseContent(data.dashup, props.message.parsed || props.message.message)), !!getEmbeds().length && /*#__PURE__*/React__default['default'].createElement(SimpleBar__default['default'], null, /*#__PURE__*/React__default['default'].createElement(material.Stack, {
       spacing: 2,
-      direction: "row",
-      flexWrap: "wrap"
+      direction: "row"
     }, getEmbeds().map(function (embed, i) {
       // return jsx
       return /*#__PURE__*/React__default['default'].createElement(Embed, {
@@ -10464,7 +13319,7 @@ var DashupUIChatMessage = function DashupUIChatMessage() {
         message: props.message,
         noChat: props.noChat
       });
-    })))));
+    }))))));
   }; // return jsx
 
 
@@ -10543,14 +13398,16 @@ var DashupUIChatThread = function DashupUIChatThread() {
         flexDirection: 'column-reverse'
       }
     }
-  }, !!((_scrollRef$current2 = scrollRef.current) !== null && _scrollRef$current2 !== void 0 && _scrollRef$current2.getScrollElement()) && /*#__PURE__*/React__default['default'].createElement(InfiniteScroll__default['default'], {
+  }, !!((_scrollRef$current2 = scrollRef.current) !== null && _scrollRef$current2 !== void 0 && _scrollRef$current2.getScrollElement()) && /*#__PURE__*/React__default['default'].createElement(material.Stack, {
     next: props.onNext,
     style: {
       display: 'flex',
       flexDirection: 'column-reverse'
     },
     inverse: true,
+    spacing: .5,
     hasMore: props.hasMore,
+    component: InfiniteScroll__default['default'],
     dataLength: (messages || []).length,
     loader: /*#__PURE__*/React__default['default'].createElement(material.Box, {
       display: "flex",
@@ -10559,8 +13416,8 @@ var DashupUIChatThread = function DashupUIChatThread() {
       alignItems: "center"
     }, /*#__PURE__*/React__default['default'].createElement(material.CircularProgress, null)),
     endMessage: /*#__PURE__*/React__default['default'].createElement(material.Typography, {
-      variant: "h5",
       sx: {
+        py: 2,
         textAlign: 'center'
       },
       gutterBottom: true
@@ -10583,7 +13440,7 @@ var DashupUIChatWrapper = function DashupUIChatWrapper() {
   // return jsx
   return /*#__PURE__*/React__default['default'].createElement(DashupUIContext$4.Consumer, null, function (data) {
     // return jsx
-    return /*#__PURE__*/React__default['default'].createElement(DashupUIChatThread, _extends({}, data, props));
+    return /*#__PURE__*/React__default['default'].createElement(DashupUIChatThread, _extends$1({}, data, props));
   });
 }; // export default page menu
 
@@ -11320,7 +14177,7 @@ var dotProp = {
 
 var _onEnd = /*#__PURE__*/(function () {
   var _ref = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee(e, fields, setFields, setSaving, setConfig, setMenu) {
-    var to, item, newIndex, parent, id, create, type, children, newFields, allFields, _loop, _i, _arr;
+    var to, item, newIndex, parent, id, create, type, _allFields, children, newFields, allFields, _loop, _i, _arr;
 
     return regeneratorRuntime.wrap(function _callee$(_context) {
       while (1) {
@@ -11343,6 +14200,36 @@ var _onEnd = /*#__PURE__*/(function () {
             return _context.abrupt("return");
 
           case 7:
+            if (!(id && parent === 'menu')) {
+              _context.next = 15;
+              break;
+            }
+
+            // remove field
+            _allFields = fields.filter(function (f) {
+              return f.uuid !== id;
+            }); // loading
+
+            setSaving(true); // set page
+
+            _context.next = 12;
+            return setFields(_allFields);
+
+          case 12:
+            // loading
+            setSaving(false);
+            _context.next = 17;
+            break;
+
+          case 15:
+            if (!(parent === 'menu')) {
+              _context.next = 17;
+              break;
+            }
+
+            return _context.abrupt("return");
+
+          case 17:
             // add field if it doesn't exist
             if (!id && type) {
               // set id
@@ -11395,10 +14282,10 @@ var _onEnd = /*#__PURE__*/(function () {
             } // set page
 
 
-            _context.next = 18;
+            _context.next = 28;
             return setFields(allFields);
 
-          case 18:
+          case 28:
             // loading
             setSaving(false); // show config
 
@@ -11409,7 +14296,7 @@ var _onEnd = /*#__PURE__*/(function () {
               }));
             }
 
-          case 20:
+          case 30:
           case "end":
             return _context.stop();
         }
@@ -11469,7 +14356,8 @@ var DashupUIFormMenu = function DashupUIFormMenu() {
       ModalProps: {
         sx: {
           right: 'auto'
-        }
+        },
+        disableScrollLock: true
       }
     }, /*#__PURE__*/React__default['default'].createElement(material.Box, {
       px: 3,
@@ -12233,7 +15121,14 @@ var DashupUIFormField = function DashupUIFormField() {
   var _struct$data, _struct$data$actions, _props$field, _props$field2, _struct$data2, _struct$data2$actions, _struct$data3, _struct$data3$actions, _props$field3, _props$field7;
 
   var props = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-  // theme
+
+  // state
+  var _useState = React.useState(false),
+      _useState2 = _slicedToArray(_useState, 2),
+      hovered = _useState2[0],
+      setHovered = _useState2[1]; // theme
+
+
   var theme = styles$1.useTheme(); // get field struct
 
   var struct = props.getFieldStruct(props.field.type); // clean data
@@ -12247,8 +15142,8 @@ var DashupUIFormField = function DashupUIFormField() {
 
       if (key.includes('.') && Array.isArray(dotProp.get(props.clean || {}, key.split('.')[0]))) {
         // make elemmatch
-        return obj = _defineProperty({}, key.split('.')[0], {
-          $elemMatch: _defineProperty({}, key.split('.')[1], val)
+        return obj = _defineProperty$1({}, key.split('.')[0], {
+          $elemMatch: _defineProperty$1({}, key.split('.')[1], val)
         });
       } // check key
 
@@ -12282,22 +15177,22 @@ var DashupUIFormField = function DashupUIFormField() {
     return obj;
   }, [JSON.stringify(props.clean)]); // use state
 
-  var _useState = React.useState(struct !== null && struct !== void 0 && (_struct$data = struct.data) !== null && _struct$data !== void 0 && (_struct$data$actions = _struct$data.actions) !== null && _struct$data$actions !== void 0 && _struct$data$actions.includes('sanitise') ? null : cleanQuery({
+  var _useState3 = React.useState(struct !== null && struct !== void 0 && (_struct$data = struct.data) !== null && _struct$data !== void 0 && (_struct$data$actions = _struct$data.actions) !== null && _struct$data$actions !== void 0 && _struct$data$actions.includes('sanitise') ? null : cleanQuery({
     val: (_props$field = props.field) === null || _props$field === void 0 ? void 0 : _props$field["default"]
   }).val),
-      _useState2 = _slicedToArray(_useState, 2),
-      defaultValue = _useState2[0],
-      setDefaultValue = _useState2[1];
-
-  var _useState3 = React.useState(!defaultValue && !props.value && !!((_props$field2 = props.field) !== null && _props$field2 !== void 0 && _props$field2["default"]) && (struct === null || struct === void 0 ? void 0 : (_struct$data2 = struct.data) === null || _struct$data2 === void 0 ? void 0 : (_struct$data2$actions = _struct$data2.actions) === null || _struct$data2$actions === void 0 ? void 0 : _struct$data2$actions.includes('sanitise'))),
       _useState4 = _slicedToArray(_useState3, 2),
-      loading = _useState4[0],
-      setLoading = _useState4[1];
+      defaultValue = _useState4[0],
+      setDefaultValue = _useState4[1];
 
-  var _useState5 = React.useState(struct !== null && struct !== void 0 && (_struct$data3 = struct.data) !== null && _struct$data3 !== void 0 && (_struct$data3$actions = _struct$data3.actions) !== null && _struct$data3$actions !== void 0 && _struct$data3$actions.includes('sanitise') ? null : (_props$field3 = props.field) === null || _props$field3 === void 0 ? void 0 : _props$field3["default"]),
+  var _useState5 = React.useState(!defaultValue && !props.value && !!((_props$field2 = props.field) !== null && _props$field2 !== void 0 && _props$field2["default"]) && (struct === null || struct === void 0 ? void 0 : (_struct$data2 = struct.data) === null || _struct$data2 === void 0 ? void 0 : (_struct$data2$actions = _struct$data2.actions) === null || _struct$data2$actions === void 0 ? void 0 : _struct$data2$actions.includes('sanitise'))),
       _useState6 = _slicedToArray(_useState5, 2),
-      actualDefaultValue = _useState6[0],
-      setActualDefaultValue = _useState6[1]; // on break
+      loading = _useState6[0],
+      setLoading = _useState6[1];
+
+  var _useState7 = React.useState(struct !== null && struct !== void 0 && (_struct$data3 = struct.data) !== null && _struct$data3 !== void 0 && (_struct$data3$actions = _struct$data3.actions) !== null && _struct$data3$actions !== void 0 && _struct$data3$actions.includes('sanitise') ? null : (_props$field3 = props.field) === null || _props$field3 === void 0 ? void 0 : _props$field3["default"]),
+      _useState8 = _slicedToArray(_useState7, 2),
+      actualDefaultValue = _useState8[0],
+      setActualDefaultValue = _useState8[1]; // on break
 
 
   var onBreak = function onBreak(e) {
@@ -12398,17 +15293,25 @@ var DashupUIFormField = function DashupUIFormField() {
 
   return !struct ? null : /*#__PURE__*/React__default['default'].createElement(material.Box, {
     sx: {
-      width: props.col ? 'auto' : '100%',
+      flex: props.field.col ? 1 : undefined,
+      width: props.field.col ? 'auto' : '100%',
       display: isViewOnly(props.clean || {}) && !props.updating ? 'none' : 'block',
       position: 'relative',
+      marginLeft: theme.spacing(1),
       '&:hover > .updating': {
         display: 'flex'
       }
     },
     "data-field": props.field.uuid,
     "data-type": props.field.type,
-    id: "field-".concat(props.field.uuid).concat(props.iKey ? "-".concat(props.iKey) : '')
-  }, props.updating && /*#__PURE__*/React__default['default'].createElement(React__default['default'].Fragment, null, /*#__PURE__*/React__default['default'].createElement(material.Box, {
+    id: "field-".concat(props.field.uuid).concat(props.iKey ? "-".concat(props.iKey) : ''),
+    onMouseEnter: function onMouseEnter() {
+      return props.updating && setHovered(true);
+    },
+    onMouseLeave: function onMouseLeave() {
+      return props.updating && setHovered(false);
+    }
+  }, props.updating && hovered && /*#__PURE__*/React__default['default'].createElement(React__default['default'].Fragment, null, /*#__PURE__*/React__default['default'].createElement(material.Box, {
     sx: {
       top: 2,
       left: -5,
@@ -12486,7 +15389,9 @@ var DashupUIFormField = function DashupUIFormField() {
   }, /*#__PURE__*/React__default['default'].createElement(material.ToggleButton, {
     value: "move",
     className: "moves",
-    sx: buttonSx
+    sx: _objectSpread2(_objectSpread2({}, buttonSx), {}, {
+      cursor: 'move'
+    })
   }, /*#__PURE__*/React__default['default'].createElement(DashupUIIcon, {
     type: "fas",
     icon: "grip-vertical",
@@ -12522,7 +15427,7 @@ var DashupUIFormField = function DashupUIFormField() {
     sx: {
       opacity: isViewOnly(props.clean || {}) ? .5 : 1
     }
-  }, /*#__PURE__*/React__default['default'].createElement(View__default['default'], _extends({}, props, {
+  }, /*#__PURE__*/React__default['default'].createElement(View__default['default'], _extends$1({}, props, {
     view: "input",
     type: "field",
     dashup: props.dashup || props.dashup,
@@ -12541,7 +15446,7 @@ var DashupUIFormFieldWrap = function DashupUIFormFieldWrap() {
   var props = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
   // return JSX
   return /*#__PURE__*/React__default['default'].createElement(DashupUIContext$1.Consumer, null, function (data) {
-    return /*#__PURE__*/React__default['default'].createElement(DashupUIFormField, _extends({}, data, props));
+    return /*#__PURE__*/React__default['default'].createElement(DashupUIFormField, _extends$1({}, data, props));
   });
 }; // export default page menu
 
@@ -12642,10 +15547,10 @@ var DashupUIFormConfig = function DashupUIFormConfig() {
 
   var setField = function setField(field, key, value) {
     // check object
-    var obj = _defineProperty({}, key, value); // check type
+    var obj = _defineProperty$1({}, key, value); // check type
 
 
-    if (_typeof(key) === 'object') obj = key; // set values
+    if (_typeof$1(key) === 'object') obj = key; // set values
 
     Object.keys(obj).forEach(function (key) {
       field[key] = obj[key];
@@ -12912,7 +15817,7 @@ var DashupUIFormConfigWrap = function DashupUIFormConfigWrap() {
   var props = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
   // return JSX
   return /*#__PURE__*/React__default['default'].createElement(DashupContext.Consumer, null, function (data) {
-    return /*#__PURE__*/React__default['default'].createElement(DashupUIFormConfig, _extends({}, data, props));
+    return /*#__PURE__*/React__default['default'].createElement(DashupUIFormConfig, _extends$1({}, data, props));
   });
 }; // export default page menu
 
@@ -12948,8 +15853,9 @@ var debounce$1 = function debounce(func) {
 
 var DashupUIForm = function DashupUIForm() {
   var props = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+  // theme
+  var theme = styles$1.useTheme(); // set saving
 
-  // set saving
   var _useState = React.useState(false),
       _useState2 = _slicedToArray(_useState, 2);
       _useState2[0];
@@ -13037,13 +15943,13 @@ var DashupUIForm = function DashupUIForm() {
           switch (_context.prev = _context.next) {
             case 0:
               // updates
-              updates = _defineProperty({}, key, value); // find field
+              updates = _defineProperty$1({}, key, value); // find field
 
               actualField = (props.fields || []).find(function (f) {
                 return f.uuid === field.uuid;
               }); // fix obj
 
-              if (_typeof(key) === 'object') {
+              if (_typeof$1(key) === 'object') {
                 updates = key;
                 prevent = value;
               } // loading
@@ -13217,12 +16123,25 @@ var DashupUIForm = function DashupUIForm() {
     },
     handle: ".moves",
     style: {
-      paddingTop: getChildren(props.parent).length ? 0 : 15,
-      paddingBottom: getChildren(props.parent).length ? 0 : 15
+      display: 'flex',
+      flexWrap: 'wrap',
+      minHeight: 30,
+      marginLeft: theme.spacing(-1)
     },
     setList: function setList() {},
-    swapThreshold: 5
-  }, fieldsJsx) : /*#__PURE__*/React__default['default'].createElement(material.Box, null, fieldsJsx); // return jsx
+    disabled: !props.updating,
+    animation: 0,
+    swapThreshold: 5,
+    emptyInsertThreshold: 1
+  }, fieldsJsx) : /*#__PURE__*/React__default['default'].createElement(material.Box, {
+    id: "".concat(props.id, "-").concat(props.parent || 'root'),
+    style: {
+      display: 'flex',
+      flexWrap: 'wrap',
+      minHeight: 30,
+      marginLeft: theme.spacing(-1)
+    }
+  }, fieldsJsx); // return jsx
 
   return /*#__PURE__*/React__default['default'].createElement(DashupUIContext.Provider, {
     value: ctx
@@ -13463,6 +16382,7 @@ var DashupUIItem = function DashupUIItem() {
     sx: {
       pt: props.size === 'sm' ? 1 : undefined,
       pb: 0,
+      px: props.size === 'sm' ? 1 : undefined,
       color: props.color && theme.palette.getContrastText(dotProp.get(theme.palette, props.color))
     }
   }, /*#__PURE__*/React__default['default'].createElement(material.Stack, {
@@ -13518,21 +16438,24 @@ var DashupUIItem = function DashupUIItem() {
       icon: "tag",
       fontSize: "small"
     }))));
-  }))), /*#__PURE__*/React__default['default'].createElement(material.CardContent, _extends({}, props.BodyProps, {
+  }))), /*#__PURE__*/React__default['default'].createElement(material.CardContent, _extends$1({}, props.BodyProps, {
     onClick: function onClick(e) {
       return props.onClick(props.item);
     },
     sx: _objectSpread2({
       py: props.size === 'sm' ? 1 : undefined,
+      px: props.size === 'sm' ? 1 : undefined,
       color: props.color && theme.palette.getContrastText(dotProp.get(theme.palette, props.color)),
       cursor: 'pointer'
     }, (_props$BodyProps = props.BodyProps) === null || _props$BodyProps === void 0 ? void 0 : _props$BodyProps.sx)
   }), !!props.repeat && /*#__PURE__*/React__default['default'].createElement(material.Tooltip, {
     title: props.repeat
+  }, /*#__PURE__*/React__default['default'].createElement(material.IconButton, {
+    size: "small"
   }, /*#__PURE__*/React__default['default'].createElement(DashupUIIcon, {
     type: "fas",
     icon: "repeat"
-  })), /*#__PURE__*/React__default['default'].createElement(DashupUIHbs, {
+  }))), /*#__PURE__*/React__default['default'].createElement(DashupUIHbs, {
     template: props.template,
     data: props.item ? props.item.toJSON() : {},
     isInline: props.size === 'sm'
@@ -13540,6 +16463,7 @@ var DashupUIItem = function DashupUIItem() {
     sx: {
       pt: 0,
       pb: props.size === 'sm' ? 1 : undefined,
+      px: props.size === 'sm' ? 1 : undefined,
       color: props.color && theme.palette.getContrastText(dotProp.get(theme.palette, props.color)),
       display: 'flex',
       flexWrap: 'wrap',
@@ -13558,17 +16482,20 @@ var DashupUIItem = function DashupUIItem() {
     return /*#__PURE__*/React__default['default'].createElement(React__default['default'].Fragment, {
       key: "user-".concat(type.uuid)
     }, getUsers(type).map(function (user, a) {
-      // return jsx
+      // get image
+      var image = Array.isArray(user.image || user.avatar) ? (user.image || user.avatar)[0] : user.image || user.avatar;
+      image = typeof image === 'string' ? image : dotProp.get(image, 'thumbs.1x-sq.url'); // return jsx
+
       return /*#__PURE__*/React__default['default'].createElement(material.Tooltip, {
         key: "tag-".concat(type.uuid, "-").concat(user._id || user.id),
         title: "".concat(type.label, ": ").concat(user.name)
       }, /*#__PURE__*/React__default['default'].createElement(material.Chip, {
         size: "small",
         label: user.name,
-        avatar: /*#__PURE__*/React__default['default'].createElement(DashupAvatar, {
-          image: user.image || user.avatar,
+        avatar: image ? /*#__PURE__*/React__default['default'].createElement(DashupAvatar, {
+          src: image,
           name: user.name
-        }),
+        }) : null,
         onClick: function onClick(e) {
           return setUserOpen(_objectSpread2(_objectSpread2({}, type), {}, {
             el: e.target
@@ -13600,7 +16527,7 @@ var DashupUIItem = function DashupUIItem() {
     title: "Discuss Item"
   }, /*#__PURE__*/React__default['default'].createElement(material.Badge, {
     badgeContent: props.item.get('_alert.all') || count,
-    color: props.item.get('_alert.important') ? 'primary' : props.item.get('_alert.all') ? 'info' : undefined
+    color: props.item.get('_alert.important') ? 'primary' : props.item.get('_alert.all') ? 'info' : 'light'
   }, /*#__PURE__*/React__default['default'].createElement(material.IconButton, {
     size: "small",
     color: props.item.get('_alert.important') ? 'primary' : props.item.get('_alert.all') ? 'info' : undefined,
@@ -13618,7 +16545,8 @@ var DashupUIItem = function DashupUIItem() {
     anchorEl: userOpen.el,
     MenuListProps: {
       sx: {
-        width: 240
+        width: 240,
+        padding: theme.spacing(1)
       }
     }
   }, /*#__PURE__*/React__default['default'].createElement(View__default['default'], {
@@ -13639,7 +16567,8 @@ var DashupUIItem = function DashupUIItem() {
     anchorEl: tagOpen.el,
     MenuListProps: {
       sx: {
-        width: 240
+        width: 240,
+        padding: theme.spacing(1)
       }
     }
   }, /*#__PURE__*/React__default['default'].createElement(View__default['default'], {
@@ -13659,7 +16588,9 @@ var DashupUIItem = function DashupUIItem() {
 
 var DashupUIModal = function DashupUIModal() {
   var props = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-  // return JSX
+  // is mobile
+  var isMobile = material.useMediaQuery('(max-width:800px)'); // return JSX
+
   return /*#__PURE__*/React__default['default'].createElement(material.Dialog, {
     open: !!props.show || !!props.open,
     onClose: props.onClose,
@@ -13680,15 +16611,21 @@ var DashupUIModal = function DashupUIModal() {
   }, /*#__PURE__*/React__default['default'].createElement(material.Paper, {
     sx: {
       flex: 1,
-      maxWidth: '66%',
+      maxWidth: isMobile ? undefined : '66%',
+      position: 'relative',
       borderRadius: 0
+    }
+  }, /*#__PURE__*/React__default['default'].createElement(SimpleBar__default['default'], {
+    style: {
+      width: '100%',
+      height: '75vh'
     }
   }, /*#__PURE__*/React__default['default'].createElement(material.Box, {
     p: 2,
     flex: 1,
     sx: {
-      height: '100%',
       display: 'flex',
+      minHeight: '75vh',
       flexDirection: 'column'
     }
   }, !!props.title && /*#__PURE__*/React__default['default'].createElement(material.DialogTitle, {
@@ -13706,9 +16643,9 @@ var DashupUIModal = function DashupUIModal() {
     fixedWidth: true
   })), props.title, !!props.headerButtons && /*#__PURE__*/React__default['default'].createElement(material.Box, {
     ml: "auto"
-  }, props.headerButtons))), props.children)), /*#__PURE__*/React__default['default'].createElement(material.Box, {
+  }, props.headerButtons))), props.children))), /*#__PURE__*/React__default['default'].createElement(material.Box, {
     sx: {
-      display: 'flex',
+      display: isMobile ? 'none' : 'flex',
       maxWidth: '34%',
       flexDirection: 'column',
       backgroundColor: 'background.default'
@@ -13778,8 +16715,9 @@ var Chart = null; // export default
 
 var DashupUIChart = function DashupUIChart() {
   var props = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-
   // create chat
+  var theme = styles$1.useTheme();
+
   var _useState = React.useState(!!Chart),
       _useState2 = _slicedToArray(_useState, 2),
       chart = _useState2[0],
@@ -13812,9 +16750,12 @@ var DashupUIChart = function DashupUIChart() {
         backgroundColor: 'background.paper'
       }
     }
-  }, /*#__PURE__*/React__default['default'].createElement(Chart, _extends({
+  }, /*#__PURE__*/React__default['default'].createElement(Chart, _extends$1({
     width: "100%",
-    height: "100%"
+    height: "100%",
+    theme: {
+      mode: theme.palette.mode
+    }
   }, props))) : /*#__PURE__*/React__default['default'].createElement(material.Box, null);
 }; // export default
 
@@ -14110,7 +17051,7 @@ var DashupUIBlock = function DashupUIBlock() {
     size: "small",
     color: "primary"
   }, /*#__PURE__*/React__default['default'].createElement(material.Tooltip, {
-    title: "Clone Field"
+    title: "Clone Block"
   }, /*#__PURE__*/React__default['default'].createElement(material.ToggleButton, {
     value: "clone",
     onClick: function onClick(e) {
@@ -14122,7 +17063,7 @@ var DashupUIBlock = function DashupUIBlock() {
     icon: "clone",
     fontSize: "small"
   }))), /*#__PURE__*/React__default['default'].createElement(material.Tooltip, {
-    title: "Field Config"
+    title: "Block Config"
   }, /*#__PURE__*/React__default['default'].createElement(material.ToggleButton, {
     value: "config",
     onClick: function onClick(e) {
@@ -14148,7 +17089,7 @@ var DashupUIBlock = function DashupUIBlock() {
     type: "fas",
     icon: "trash",
     fontSize: "small"
-  }))))), /*#__PURE__*/React__default['default'].createElement(View__default['default'], _extends({
+  }))))), /*#__PURE__*/React__default['default'].createElement(View__default['default'], _extends$1({
     type: "block",
     view: "view",
     struct: props.block.type
@@ -14180,7 +17121,7 @@ var DashupUIQueryRule = function DashupUIQueryRule() {
     // data value
     var dataValue = ((props.value || {})[key] || {})[op] || null; // get current key
 
-    props.setValue(_defineProperty({}, key, _defineProperty({}, val, dataValue)));
+    props.setValue(_defineProperty$1({}, key, _defineProperty$1({}, val, dataValue)));
   }; // on part
 
 
@@ -14200,7 +17141,7 @@ var DashupUIQueryRule = function DashupUIQueryRule() {
 
     setKey(newParts.join('.')); // get current key
 
-    props.setValue(_defineProperty({}, newParts.join('.'), dataValue));
+    props.setValue(_defineProperty$1({}, newParts.join('.'), dataValue));
   }; // on value
 
 
@@ -14213,7 +17154,7 @@ var DashupUIQueryRule = function DashupUIQueryRule() {
     });
     if (!['$in', '$nin'].includes(op) && Array.isArray(val)) val = val[0]; // data value
 
-    props.setValue(_defineProperty({}, key, _defineProperty({}, op, val)));
+    props.setValue(_defineProperty$1({}, key, _defineProperty$1({}, op, val)));
   }; // get bottom
 
 
@@ -14449,7 +17390,7 @@ var DashupUIQueryGroup = function DashupUIQueryGroup() {
     // op
     var dv = props.value[op] || []; // check value
 
-    props.setValue(_defineProperty({}, val, dv));
+    props.setValue(_defineProperty$1({}, val, dv));
   }; // set value
 
 
@@ -14459,7 +17400,7 @@ var DashupUIQueryGroup = function DashupUIQueryGroup() {
 
     dv[i] = val; // check value
 
-    props.setValue(_defineProperty({}, op, dv));
+    props.setValue(_defineProperty$1({}, op, dv));
   }; // on remove
 
 
@@ -14469,7 +17410,7 @@ var DashupUIQueryGroup = function DashupUIQueryGroup() {
 
     dv.splice(i, 1); // remove
 
-    props.setValue(_defineProperty({}, op, dv));
+    props.setValue(_defineProperty$1({}, op, dv));
   }; // return jsx
 
 
@@ -14510,7 +17451,7 @@ var DashupUIQueryGroup = function DashupUIQueryGroup() {
     ml: "auto"
   }, /*#__PURE__*/React__default['default'].createElement(material.IconButton, {
     onClick: function onClick(e) {
-      return !props.setValue(_defineProperty({}, op, [].concat(_toConsumableArray(props.value[op]), [{
+      return !props.setValue(_defineProperty$1({}, op, [].concat(_toConsumableArray(props.value[op]), [{
         $eq: {}
       }]))) && e.preventDefault();
     }
@@ -14826,17 +17767,17 @@ var DashupAvatar = function DashupAvatar() {
 
   if (props.children) {
     // return original
-    return /*#__PURE__*/React__default['default'].createElement(material.Avatar, _extends({}, goodProps, {
+    return /*#__PURE__*/React__default['default'].createElement(material.Avatar, _extends$1({}, goodProps, {
       sx: sx
     }));
   } // return value
 
 
-  return thumb ? /*#__PURE__*/React__default['default'].createElement(material.Avatar, _extends({}, goodProps, {
+  return thumb ? /*#__PURE__*/React__default['default'].createElement(material.Avatar, _extends$1({}, goodProps, {
     sx: sx,
     alt: name,
     src: thumb
-  })) : /*#__PURE__*/React__default['default'].createElement(material.Avatar, _extends({}, goodProps, {
+  })) : /*#__PURE__*/React__default['default'].createElement(material.Avatar, _extends$1({}, goodProps, {
     sx: sx
   }, stringAvatar()));
 }; // export default
@@ -15166,6 +18107,12 @@ Object.defineProperty(exports, 'alpha', {
     return styles$1.alpha;
   }
 });
+Object.defineProperty(exports, 'colorManipulator', {
+  enumerable: true,
+  get: function () {
+    return styles$1.colorManipulator;
+  }
+});
 Object.defineProperty(exports, 'styled', {
   enumerable: true,
   get: function () {
@@ -15176,6 +18123,12 @@ Object.defineProperty(exports, 'useTheme', {
   enumerable: true,
   get: function () {
     return styles$1.useTheme;
+  }
+});
+Object.defineProperty(exports, 'CalendarPicker', {
+  enumerable: true,
+  get: function () {
+    return lab.CalendarPicker;
   }
 });
 Object.defineProperty(exports, 'DatePicker', {
@@ -15232,10 +18185,10 @@ Object.defineProperty(exports, 'Masonry', {
     return Masonry__default['default'];
   }
 });
-Object.defineProperty(exports, 'AdapterMoment', {
+Object.defineProperty(exports, 'AdapterDateFns', {
   enumerable: true,
   get: function () {
-    return AdapterMoment__default['default'];
+    return AdapterDateFns__default['default'];
   }
 });
 Object.defineProperty(exports, 'DataGrid', {

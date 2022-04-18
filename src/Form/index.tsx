@@ -3,7 +3,7 @@
 import clone from 'clone-deep';
 import { ReactSortable } from 'react-sortablejs';
 import React, { useState, useEffect, createContext } from 'react';
-import { Icon, Box, Fab, Button, Tooltip, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions } from '../';
+import { Icon, Box, Fab, useTheme, Button, Tooltip, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions } from '../';
 
 // import local modules
 import Menu from './Menu';
@@ -32,6 +32,9 @@ const debounce = (func, timeout = 1000) => {
 
 // create menu component
 const DashupUIForm = (props = {}) => {
+  // theme
+  const theme = useTheme();
+
   // set saving
   const [saving, setSaving] = useState(false);
   const [config, setConfig] = useState(null);
@@ -232,16 +235,29 @@ const DashupUIForm = (props = {}) => {
       onEnd={ (e) => onEnd(e, props.fields, props.setFields, setSaving, setConfig, setMenu) }
       handle=".moves"
       style={ {
-        paddingTop    : getChildren(props.parent).length ? 0 : 15,
-        paddingBottom : getChildren(props.parent).length ? 0 : 15,
+        display    : 'flex',
+        flexWrap   : 'wrap',
+        minHeight  : 30,
+        marginLeft : theme.spacing(-1),
       } }
       setList={ () => {} }
+      disabled={ !props.updating }
+      animation={ 0 }
       swapThreshold={ 5 }
+      emptyInsertThreshold={ 1 }
     >
       { fieldsJsx }
     </ReactSortable>
   ) : (
-    <Box>
+    <Box
+      id={ `${props.id}-${props.parent || 'root'}` }
+      style={ {
+        display    : 'flex',
+        flexWrap   : 'wrap',
+        minHeight  : 30,
+        marginLeft : theme.spacing(-1),
+      } }
+    >
       { fieldsJsx }
     </Box>
   );

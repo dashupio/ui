@@ -2,8 +2,9 @@
 import React from 'react';
 import moment from 'moment';
 import markdown from 'simple-markdown';
+import SimpleBar from 'simplebar-react';
 import defaultRules from './rules';
-import { Chip, Avatar, useTheme, Stack, Tooltip, Box, Icon, View, ToggleButton } from '../';
+import { Chip, Avatar, useTheme, Stack, Tooltip, Box, Icon, View, ToggleButton, useMediaQuery } from '../';
 
 // import message
 import DashupUIChatEmbed from './Embed';
@@ -16,6 +17,9 @@ let DashupUIContext = null;
 const DashupUIChatMessage = (props = {}) => {
   // theme
   const theme = useTheme();
+
+  // is mobile
+  const isMobile = useMediaQuery('(max-width:800px)');
 
   // get embeds
   const getEmbeds = () => {
@@ -133,8 +137,8 @@ const DashupUIChatMessage = (props = {}) => {
             
             '& .CodeMirror.cm-s-one-dark' : {
               height   : 'auto',
-              maxWidth : 480,
-              minWidth : 480,
+              maxWidth : isMobile ? '60vw' : 480,
+              minWidth : isMobile ? '60vw' : 480,
             }
           } }>
             <View
@@ -190,6 +194,7 @@ const DashupUIChatMessage = (props = {}) => {
     // return jsx
     return (
       <Box mt={ inThread() ? 0 : (props.size === 'sm' ? 1 : 1.5) } sx={ {
+        flex     : isMobile ? 1 : undefined,
         position : 'relative',
 
         '&:hover .updating' : {
@@ -209,7 +214,7 @@ const DashupUIChatMessage = (props = {}) => {
           zIndex : -1,
 
           background   : 'rgba(0, 0, 0, 0.15)',
-          borderRadius : 2,
+          borderRadius : 1,
         } } />
         { !!(((data.page && data.dashup?.can(data.page, 'manage')) || data.dashup?.can('admin')) || isMine) && (
           <Box
@@ -245,7 +250,9 @@ const DashupUIChatMessage = (props = {}) => {
               width : data.size === 'sm' ? 25 : 40,
             } } />
           ) }
-          <Stack spacing={ .5 }>
+          <Stack spacing={ .5 } sx={ {
+            flex : isMobile ? 1 : undefined,
+          } }>
             { !inThread() && (
               <Stack spacing={ 1 } direction="row" alignItems="center">
                 <Box sx={ { fontWeight : 'bold' } }>
@@ -269,14 +276,16 @@ const DashupUIChatMessage = (props = {}) => {
               { parseContent(data.dashup, props.message.parsed || props.message.message) }
             </Box>
             { !!getEmbeds().length && (
-              <Stack spacing={ 2 } direction="row" flexWrap="wrap">
-                { getEmbeds().map((embed, i) => {
-                  // return jsx
-                  return (
-                    <Embed key={ `embed-${i}` } embed={ embed } message={ props.message } noChat={ props.noChat } />
-                  );
-              }) }
-              </Stack>
+              <SimpleBar>
+                <Stack spacing={ 2 } direction="row">
+                  { getEmbeds().map((embed, i) => {
+                    // return jsx
+                    return (
+                      <Embed key={ `embed-${i}` } embed={ embed } message={ props.message } noChat={ props.noChat } />
+                    );
+                }) }
+                </Stack>
+              </SimpleBar>
             ) }
           </Stack>
         </Stack>

@@ -167,6 +167,7 @@ const DashupUIItem = (props = {}) => {
           <CardContent sx={ {
             pt    : props.size === 'sm' ? 1 : undefined,
             pb    : 0,
+            px    : props.size === 'sm' ? 1 : undefined,
             color : props.color && theme.palette.getContrastText(dotProp.get(theme.palette, props.color)),
           } }>
             <Stack spacing={ 1 } direction="row" alignItems="center" flexWrap="wrap" sx={ {
@@ -210,6 +211,7 @@ const DashupUIItem = (props = {}) => {
         ) }
         <CardContent { ...props.BodyProps } onClick={ (e) => props.onClick(props.item) } sx={ {
           py     : props.size === 'sm' ? 1 : undefined,
+          px     : props.size === 'sm' ? 1 : undefined,
           color  : props.color && theme.palette.getContrastText(dotProp.get(theme.palette, props.color)),
           cursor : 'pointer',
 
@@ -217,7 +219,9 @@ const DashupUIItem = (props = {}) => {
         } }>
           { !!props.repeat && (
             <Tooltip title={ props.repeat }>
-              <Icon type="fas" icon="repeat" />
+              <IconButton size="small">
+                <Icon type="fas" icon="repeat" />
+              </IconButton>
             </Tooltip>
           ) }
           <Hbs template={ props.template } data={ props.item ? props.item.toJSON() : {} } isInline={ props.size === 'sm' } />
@@ -225,6 +229,7 @@ const DashupUIItem = (props = {}) => {
         <CardContent sx={ {
           pt            : 0,
           pb            : props.size === 'sm' ? 1 : undefined,
+          px            : props.size === 'sm' ? 1 : undefined,
           color         : props.color && theme.palette.getContrastText(dotProp.get(theme.palette, props.color)),
           display       : 'flex',
           flexWrap      : 'wrap',
@@ -238,13 +243,17 @@ const DashupUIItem = (props = {}) => {
                 return (
                   <React.Fragment key={ `user-${type.uuid}` }>
                     { getUsers(type).map((user, a) => {
+                      // get image
+                      let image = Array.isArray(user.image || user.avatar) ? (user.image || user.avatar)[0] : (user.image || user.avatar);
+                          image = typeof image === 'string' ? image : dotProp.get(image, 'thumbs.1x-sq.url');
+                          
                       // return jsx
                       return (
                         <Tooltip key={ `tag-${type.uuid}-${user._id || user.id}` } title={ `${type.label}: ${user.name}`}>
                           <Chip
                             size="small"
                             label={ user.name }
-                            avatar={ <Avatar image={ user.image || user.avatar } name={ user.name } /> }
+                            avatar={ image ? <Avatar src={ image } name={ user.name } /> : null }
                             onClick={ (e) => setUserOpen({ ...type, el : e.target }) }
                             onDelete={ () => onUser(type, getUsers(type).filter((u) => u.id !== user.id)) }
                           />
@@ -264,7 +273,7 @@ const DashupUIItem = (props = {}) => {
             
             <Box ml="auto!important">
               <Tooltip title="Discuss Item">
-                <Badge badgeContent={ props.item.get('_alert.all') || count } color={ props.item.get('_alert.important') ? 'primary' : (props.item.get('_alert.all') ? 'info' : undefined) }>
+                <Badge badgeContent={ props.item.get('_alert.all') || count } color={ props.item.get('_alert.important') ? 'primary' : (props.item.get('_alert.all') ? 'info' : 'light') }>
                   <IconButton size="small" color={ props.item.get('_alert.important') ? 'primary' : (props.item.get('_alert.all') ? 'info' : undefined) } onClick={ (e) => props.onClick(props.item) }>
                     <Icon type="fas" icon="comments" />
                   </IconButton>
@@ -283,7 +292,8 @@ const DashupUIItem = (props = {}) => {
           anchorEl={ userOpen.el }
           MenuListProps={ {
             sx : {
-              width : 240,
+              width   : 240,
+              padding : theme.spacing(1),
             },
           } }
         >
@@ -309,7 +319,8 @@ const DashupUIItem = (props = {}) => {
           anchorEl={ tagOpen.el }
           MenuListProps={ {
             sx : {
-              width : 240,
+              width   : 240,
+              padding : theme.spacing(1),
             },
           } }
         >
